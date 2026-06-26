@@ -131,7 +131,6 @@
         }
     </style>
 
-    <!-- html2canvas for LiquidGlass fallback -->
     @vite('resources/css/liquidglass.css')
 </head>
 <body class="relative antialiased selection:bg-primary selection:text-white">
@@ -141,13 +140,16 @@
     <div class="ambient-light-2"></div>
 
     <!-- Navigation -->
-    <nav class="liquid-glass fixed w-[calc(100%-2rem)] sm:w-[calc(100%-3rem)] lg:w-[calc(100%-4rem)] max-w-7xl left-1/2 -translate-x-1/2 top-4 z-50 rounded-2xl px-6 py-4 flex items-center justify-between transition-all duration-300">
-                <a href="{{ url('/') }}" class="flex items-center gap-3">
-                    <div class="bg-gradient-to-br from-primary to-orange-400 w-10 h-10 rounded-xl flex items-center justify-center shadow-[0_0_15px_rgba(255,107,0,0.4)]">
-                        <img src="{{ Vite::asset('resources/img/Techforge_Logo.png') }}" alt="TechForge Logo" class="h-6 w-auto object-contain">
-                    </div>
-                    <span class="text-xl font-bold tracking-wide text-white">TECHFORGE</span>
-                </a>
+    <nav class="fixed w-[calc(100%-2rem)] sm:w-[calc(100%-3rem)] lg:w-[calc(100%-4rem)] max-w-7xl left-1/2 -translate-x-1/2 top-4 z-50 px-6 py-4 flex items-center justify-between transition-all duration-300">
+        <!-- Background for Nav to prevent backdrop-filter nesting bug -->
+        <div class="absolute inset-0 liquid-glass rounded-2xl -z-10 pointer-events-none"></div>
+
+        <a href="{{ url('/') }}" class="flex items-center gap-3">
+            <div class="bg-gradient-to-br from-primary to-orange-400 w-10 h-10 rounded-xl flex items-center justify-center shadow-[0_0_15px_rgba(255,107,0,0.4)]">
+                <img src="{{ Vite::asset('resources/img/Techforge_Logo.png') }}" alt="TechForge Logo" class="h-6 w-auto object-contain">
+            </div>
+            <span class="text-xl font-bold tracking-wide text-white">TECHFORGE</span>
+        </a>
 
                 <!-- Desktop Menu -->
                 <div class="hidden md:flex items-center space-x-8 text-sm font-medium text-gray-300">
@@ -158,15 +160,112 @@
                 </div>
 
                 <!-- Actions -->
-                <div class="flex items-center gap-4">
-                    <button class="text-gray-300 hover:text-white transition-colors">
-                        <i class="ph ph-magnifying-glass text-xl"></i>
-                    </button>
-                    <button class="text-gray-300 hover:text-white transition-colors relative">
-                        <i class="ph ph-shopping-cart text-xl"></i>
-                        <span class="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full"></span>
-                    </button>
-                    <button class="hidden sm:block bg-primary hover:bg-primary-hover text-white px-5 py-2 rounded-lg text-sm font-semibold transition-all shadow-[0_0_15px_rgba(255,107,0,0.3)]">
+                <div class="flex items-center gap-3">
+                    <!-- Search Container -->
+                    <div id="search-container" class="relative z-50 flex items-center justify-end">
+                        <div id="search-wrapper" class="relative flex items-center border border-white/10 hover:bg-white/5 transition-all duration-500 ease-out overflow-visible w-11 h-11 rounded-2xl cursor-pointer group">
+                            
+                            <!-- Search Icon (acts as the button trigger when collapsed) -->
+                            <div id="search-trigger" class="absolute left-0 top-0 w-11 h-11 flex items-center justify-center z-10 text-gray-300 group-hover:text-white transition-colors">
+                                <i class="ph ph-magnifying-glass text-xl"></i>
+                            </div>
+                            
+                            <!-- Input Field -->
+                            <input type="text" id="search-input" placeholder="What are we searching?" class="w-full h-full bg-transparent outline-none pl-11 pr-4 text-sm text-white placeholder-gray-400 opacity-0 transition-opacity duration-300 pointer-events-none rounded-2xl font-light">
+                        </div>
+                        
+                        <!-- Search Dropdown -->
+                        <div id="search-dropdown" class="liquid-glass-heavy absolute top-[calc(100%+0.5rem)] right-0 w-72 sm:w-80 rounded-2xl overflow-hidden shadow-2xl py-3 opacity-0 pointer-events-none transition-all duration-300 transform -translate-y-2 origin-top">
+                            <ul class="text-sm text-gray-300 flex flex-col">
+                                <li>
+                                    <a href="#" class="flex items-center gap-3 px-4 py-2 hover:bg-white/5 transition-colors group">
+                                        <i class="ph ph-trend-up text-primary text-lg group-hover:scale-110 transition-transform"></i>
+                                        <span class="text-gray-200 font-light">RTX 5090</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" class="flex items-center gap-3 px-4 py-2 hover:bg-white/5 transition-colors group">
+                                        <i class="ph ph-trend-up text-primary text-lg group-hover:scale-110 transition-transform"></i>
+                                        <span class="text-gray-200 font-light">RTX 3060</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" class="flex items-center gap-3 px-4 py-2 hover:bg-white/5 transition-colors group">
+                                        <i class="ph ph-trend-up text-primary text-lg group-hover:scale-110 transition-transform"></i>
+                                        <span class="text-gray-200 font-light">RYZEN 5</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" class="flex items-center gap-3 px-4 py-2 hover:bg-white/5 transition-colors">
+                                        <span class="text-gray-300 font-light">650W PSU</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" class="flex items-center gap-3 px-4 py-2 hover:bg-white/5 transition-colors">
+                                        <span class="text-gray-300 font-light">DDR4 Motherboard</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" class="flex items-center gap-3 px-4 py-2 hover:bg-white/5 transition-colors">
+                                        <span class="text-gray-300 font-light">32GB Desktop RAM</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Cart Container -->
+                    <div id="cart-container" class="relative z-50">
+                        <button id="cart-btn" class="w-11 h-11 flex items-center justify-center rounded-2xl border border-white/10 hover:border-white/20 hover:bg-white/5 transition-all text-gray-300 hover:text-white relative">
+                            <i class="ph ph-shopping-cart text-xl"></i>
+                            <span class="absolute top-[8px] right-[8px] w-2 h-2 bg-primary rounded-full shadow-[0_0_8px_rgba(255,107,0,0.8)]"></span>
+                        </button>
+
+                        <!-- Cart Dropdown -->
+                        <div id="cart-dropdown" class="liquid-glass-heavy absolute top-[calc(100%+0.5rem)] right-0 w-80 sm:w-96 rounded-2xl overflow-hidden shadow-2xl p-5 opacity-0 pointer-events-none transition-all duration-300 transform -translate-y-2 origin-top">
+                            <h3 class="text-lg font-bold text-white mb-4">Recently Added Items</h3>
+                            
+                            <div class="flex flex-col gap-4 mb-6">
+                                <!-- Cart Item 1 -->
+                                <div class="flex items-center gap-4">
+                                    <div class="w-14 h-14 rounded-xl overflow-hidden border border-white/10 shrink-0 bg-white/5">
+                                        <img src="https://images.unsplash.com/photo-1595225476474-87563907a212?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" alt="Keyboard" class="w-full h-full object-cover">
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <h4 class="text-sm font-bold text-white truncate">Gamakay</h4>
+                                        <p class="text-xs text-gray-400 font-light truncate">TM680 Keyboard</p>
+                                    </div>
+                                    <div class="text-right shrink-0">
+                                        <p class="text-sm font-bold text-primary">₱4,845</p>
+                                        <p class="text-xs text-gray-400 font-light mt-1">x1</p>
+                                    </div>
+                                </div>
+
+                                <!-- Cart Item 2 -->
+                                <div class="flex items-center gap-4">
+                                    <div class="w-14 h-14 rounded-xl overflow-hidden border border-white/10 shrink-0 bg-white/5">
+                                        <img src="https://images.unsplash.com/photo-1758577675588-c5bbbbbf8e97?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Keyboard" class="w-full h-full object-cover">
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <h4 class="text-sm font-bold text-white truncate">T-Force</h4>
+                                        <p class="text-xs text-gray-400 font-light truncate">DDR4 RGB RAM</p>
+                                    </div>
+                                    <div class="text-right shrink-0">
+                                        <p class="text-sm font-bold text-primary">₱4,995</p>
+                                        <p class="text-xs text-gray-400 font-light mt-1">x2</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex justify-end pt-2">
+                                <button class="bg-gradient-to-r from-primary to-orange-400 hover:from-primary-hover hover:to-primary text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-all shadow-[0_0_15px_rgba(255,107,0,0.3)]">
+                                    View My Cart
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="hidden sm:block bg-primary hover:bg-primary-hover text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-all shadow-[0_0_15px_rgba(255,107,0,0.3)] ml-2">
                         Sign in
                     </button>
                 </div>
@@ -459,7 +558,7 @@
             </p>
             
             <div class="flex flex-col items-center justify-center gap-3 relative z-10">
-                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User" crossorigin="anonymous" class="w-12 h-12 rounded-full object-cover border-2 border-primary/50">
+                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User" class="w-12 h-12 rounded-full object-cover border-2 border-primary/50">
                 <div>
                     <h4 class="font-bold text-sm">Aldous Manaboots</h4>
                     <div class="flex text-primary text-[10px] justify-center mt-1">
@@ -561,7 +660,5 @@
 
     <!-- Load our compiled JavaScript (You can remove LiquidGlass initialization from inside this file) -->
     @vite('resources/js/HomePage/Homepage.js')
-    @vite('resources/js/LiquidGL/liquidGL.js')
-    @vite('resources/js/LiquidGL/html2canvas.min.js')
 </body>
 </html>
