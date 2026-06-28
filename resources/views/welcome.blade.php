@@ -139,136 +139,202 @@
     <div class="ambient-light-1"></div>
     <div class="ambient-light-2"></div>
 
+    <!-- Sidebar Overlay -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[55] opacity-0 pointer-events-none transition-all duration-300"></div>
+
+    <!-- Sidebar Menu Wrapper -->
+    <aside id="sidebar-wrapper" class="fixed left-4 lg:left-8 top-1/2 -translate-y-1/2 z-[60] flex items-start pointer-events-none">
+        
+        <!-- Main Sidebar -->
+        <div id="main-sidebar" class="w-[72px] bg-[#161212]/95 backdrop-blur-md border border-white/5 rounded-[2.5rem] transition-all duration-500 ease-in-out flex flex-col relative z-20 overflow-hidden pointer-events-auto py-5 shadow-2xl">
+            
+            <!-- Hamburger Button -->
+            <div id="hamburger-btn" class="flex items-center shrink-0 w-full cursor-pointer relative h-12 mb-3">
+                <div class="w-12 h-12 bg-gradient-to-br from-[#ff8c33] to-[#d65a00] rounded-[14px] flex items-center justify-center absolute left-3 shadow-[0_4px_15px_rgba(214,90,0,0.4)] transition-transform duration-300 hover:scale-105">
+                    <i class="ph ph-list text-xl text-white"></i>
+                </div>
+                <span id="sidebar-title" class="absolute left-20 font-bold tracking-wider text-sm whitespace-nowrap opacity-0 transition-opacity duration-300 text-white pointer-events-none">ALL DEPARTMENTS</span>
+            </div>
+
+            <!-- Divider -->
+            <div id="sidebar-divider" class="w-8 h-[1px] bg-white/10 mx-auto my-3 shrink-0 transition-all duration-300"></div>
+
+            <!-- Categories -->
+            <nav class="flex-1 flex flex-col gap-2 px-3 py-2 custom-scrollbar">
+                
+                <a href="#" class="sidebar-item flex items-center px-0 py-3 rounded-2xl transition-colors text-gray-400 hover:text-white w-[240px] relative h-12 group/item" data-category="components">
+                    <div class="w-12 h-12 flex items-center justify-center shrink-0 absolute left-0">
+                        <i class="ph ph-cpu text-2xl text-primary transition-transform duration-300 group-hover/item:scale-110 drop-shadow-[0_0_8px_rgba(255,107,0,0.4)]"></i>
+                    </div>
+                    <span class="sidebar-label text-sm font-medium whitespace-nowrap absolute left-16 opacity-0 transition-opacity duration-300 text-gray-300">Components & Storage</span>
+                    <i class="ph ph-caret-right text-xs absolute right-6 opacity-0 transition-opacity duration-300"></i>
+                </a>
+
+                <a href="#" class="sidebar-item flex items-center px-0 py-3 rounded-2xl transition-colors text-gray-400 hover:text-white w-[240px] relative h-12 group/item" data-category="systems">
+                    <div class="w-12 h-12 flex items-center justify-center shrink-0 absolute left-0">
+                        <i class="ph ph-desktop text-2xl text-primary transition-transform duration-300 group-hover/item:scale-110 drop-shadow-[0_0_8px_rgba(255,107,0,0.4)]"></i>
+                    </div>
+                    <span class="sidebar-label text-sm font-medium whitespace-nowrap absolute left-16 opacity-0 transition-opacity duration-300 text-gray-300">Computer Systems</span>
+                    <i class="ph ph-caret-right text-xs absolute right-6 opacity-0 transition-opacity duration-300"></i>
+                </a>
+
+                <a href="#" class="sidebar-item flex items-center px-0 py-3 rounded-2xl transition-colors text-gray-400 hover:text-white w-[240px] relative h-12 group/item" data-category="peripherals">
+                    <div class="w-12 h-12 flex items-center justify-center shrink-0 absolute left-0">
+                        <i class="ph ph-mouse text-2xl text-primary transition-transform duration-300 group-hover/item:scale-110 drop-shadow-[0_0_8px_rgba(255,107,0,0.4)]"></i>
+                    </div>
+                    <span class="sidebar-label text-sm font-medium whitespace-nowrap absolute left-16 opacity-0 transition-opacity duration-300 text-gray-300">Computer Peripherals</span>
+                    <i class="ph ph-caret-right text-xs absolute right-6 opacity-0 transition-opacity duration-300"></i>
+                </a>
+
+                <a href="#" class="sidebar-item flex items-center px-0 py-3 rounded-2xl transition-colors text-gray-400 hover:text-white w-[240px] relative h-12 group/item" data-category="electronics">
+                    <div class="w-12 h-12 flex items-center justify-center shrink-0 absolute left-0">
+                        <i class="ph ph-headphones text-2xl text-primary transition-transform duration-300 group-hover/item:scale-110 drop-shadow-[0_0_8px_rgba(255,107,0,0.4)]"></i>
+                    </div>
+                    <span class="sidebar-label text-sm font-medium whitespace-nowrap absolute left-16 opacity-0 transition-opacity duration-300 text-gray-300">Electronics</span>
+                    <i class="ph ph-caret-right text-xs absolute right-6 opacity-0 transition-opacity duration-300"></i>
+                </a>
+
+                <a href="#" class="sidebar-item flex items-center px-0 py-3 rounded-2xl transition-colors text-gray-400 hover:text-white w-[240px] relative h-12 group/item" data-category="gaming">
+                    <div class="w-12 h-12 flex items-center justify-center shrink-0 absolute left-0">
+                        <i class="ph ph-game-controller text-2xl text-primary transition-transform duration-300 group-hover/item:scale-110 drop-shadow-[0_0_8px_rgba(255,107,0,0.4)]"></i>
+                    </div>
+                    <span class="sidebar-label text-sm font-medium whitespace-nowrap absolute left-16 opacity-0 transition-opacity duration-300 text-gray-300">Gaming</span>
+                    <i class="ph ph-caret-right text-xs absolute right-6 opacity-0 transition-opacity duration-300"></i>
+                </a>
+
+            </nav>
+        </div>
+
+        <!-- Mega Menu -->
+        <div id="mega-menu" class="bg-[#120f0f]/98 backdrop-blur-xl border border-white/10 rounded-3xl opacity-0 pointer-events-none transition-all duration-500 -translate-x-8 absolute left-full top-1/2 -translate-y-1/2 z-10 shadow-2xl flex px-10 py-8 gap-16 ml-4 max-h-[80vh] overflow-y-auto custom-scrollbar w-auto min-w-[600px] max-w-[900px]">
+            <!-- JS populated content -->
+        </div>
+
+    </aside>
+
     <!-- Navigation -->
-    <nav class="fixed w-[calc(100%-2rem)] sm:w-[calc(100%-3rem)] lg:w-[calc(100%-4rem)] max-w-7xl left-1/2 -translate-x-1/2 top-4 z-50 px-6 py-4 flex items-center justify-between transition-all duration-300">
+    <nav class="fixed w-[calc(100%-2rem)] sm:w-[calc(100%-3rem)] lg:w-[calc(100%-4rem)] max-w-7xl left-1/2 -translate-x-1/2 top-4 z-50 px-4 sm:px-6 py-3 flex items-center justify-between gap-4 sm:gap-6 transition-all duration-300">
+        <!-- Search Overlay inside Nav -->
+        <div id="search-overlay" class="absolute bg-black/80 backdrop-blur-sm z-40 opacity-0 pointer-events-none transition-all duration-300" style="top: -1rem; left: calc(-50vw + 50%); width: 100vw; height: 100vh;"></div>
+
         <!-- Background for Nav to prevent backdrop-filter nesting bug -->
         <div class="absolute inset-0 liquid-glass rounded-2xl -z-10 pointer-events-none"></div>
 
-        <a href="{{ url('/') }}" class="flex items-center gap-3">
+        <!-- Logo & Name -->
+        <a href="{{ url('/') }}" class="flex items-center gap-3 shrink-0 relative z-30">
             <div class="bg-gradient-to-br from-primary to-orange-400 w-10 h-10 rounded-xl flex items-center justify-center shadow-[0_0_15px_rgba(255,107,0,0.4)]">
                 <img src="{{ Vite::asset('resources/img/Techforge_Logo.png') }}" alt="TechForge Logo" class="h-6 w-auto object-contain">
             </div>
-            <span class="text-xl font-bold tracking-wide text-white">TECHFORGE</span>
+            <span class="hidden md:block text-xl font-bold tracking-wide text-white">TECHFORGE</span>
         </a>
 
-                <!-- Desktop Menu -->
-                <div class="hidden md:flex items-center space-x-8 text-sm font-medium text-gray-300">
-                    <a href="#" class="hover:text-primary transition-colors">Shop</a>
-                    <a href="#categories" class="hover:text-primary transition-colors">Collections</a>
-                    <a href="#" class="hover:text-primary transition-colors">Lookbook</a>
-                    <a href="#" class="hover:text-primary transition-colors">About</a>
+        <!-- Search Bar (Automatically Enlarged) -->
+        <div id="search-container" class="flex-1 max-w-3xl relative z-50">
+            <div id="search-wrapper" class="relative flex items-center w-full h-11 bg-neutral-900 border border-white/10 hover:border-white/20 hover:bg-white/5 transition-all duration-300 rounded-2xl group">
+                <input type="text" id="search-input" placeholder="What are we searching?" class="w-full h-full bg-transparent outline-none pl-5 pr-20 text-sm text-white placeholder-gray-400 font-light rounded-2xl relative z-10">
+                
+                <!-- Clear Button -->
+                <button id="search-clear" class="absolute right-12 w-7 h-7 flex items-center justify-center text-gray-400 hover:text-white transition-all opacity-0 pointer-events-none z-20">
+                    <i class="ph ph-x text-sm"></i>
+                </button>
+
+                <button class="absolute right-1 w-9 h-9 flex items-center justify-center bg-primary hover:bg-primary-hover text-white rounded-xl transition-colors shadow-[0_0_10px_rgba(255,107,0,0.3)] z-20">
+                    <i class="ph ph-magnifying-glass text-lg"></i>
+                </button>
+            </div>
+            
+            <!-- Search Dropdown -->
+            <div id="search-dropdown" class="liquid-glass-heavy absolute top-[calc(100%+0.5rem)] left-0 w-full rounded-2xl overflow-hidden shadow-2xl py-3 opacity-0 pointer-events-none transition-all duration-300 transform -translate-y-2 origin-top">
+                <ul class="text-sm text-gray-300 flex flex-col">
+                </ul>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex items-center gap-4 shrink-0">
+            
+            <!-- Location -->
+            <div class="hidden lg:flex items-center gap-2 cursor-pointer hover:text-white group">
+                <i class="ph ph-map-pin text-xl text-gray-400 group-hover:text-primary transition-colors"></i>
+                <div class="flex flex-col text-left">
+                    <span class="text-[10px] text-gray-400 leading-tight">Deliver to</span>
+                    <span class="text-sm font-bold text-white leading-tight">Philippines</span>
                 </div>
+            </div>
 
-                <!-- Actions -->
-                <div class="flex items-center gap-3">
-                    <!-- Search Container -->
-                    <div id="search-container" class="relative z-50 flex items-center justify-end">
-                        <div id="search-wrapper" class="relative flex items-center border border-white/10 hover:bg-white/5 transition-all duration-500 ease-out overflow-visible w-11 h-11 rounded-2xl cursor-pointer group">
-                            
-                            <!-- Search Icon (acts as the button trigger when collapsed) -->
-                            <div id="search-trigger" class="absolute left-0 top-0 w-11 h-11 flex items-center justify-center z-10 text-gray-300 group-hover:text-white transition-colors">
-                                <i class="ph ph-magnifying-glass text-xl"></i>
-                            </div>
-                            
-                            <!-- Input Field -->
-                            <input type="text" id="search-input" placeholder="What are we searching?" class="w-full h-full bg-transparent outline-none pl-11 pr-4 text-sm text-white placeholder-gray-400 opacity-0 transition-opacity duration-300 pointer-events-none rounded-2xl font-light">
-                        </div>
-                        
-                        <!-- Search Dropdown -->
-                        <div id="search-dropdown" class="liquid-glass-heavy absolute top-[calc(100%+0.5rem)] right-0 w-72 sm:w-80 rounded-2xl overflow-hidden shadow-2xl py-3 opacity-0 pointer-events-none transition-all duration-300 transform -translate-y-2 origin-top">
-                            <ul class="text-sm text-gray-300 flex flex-col">
-                                <li>
-                                    <a href="#" class="flex items-center gap-3 px-4 py-2 hover:bg-white/5 transition-colors group">
-                                        <i class="ph ph-trend-up text-primary text-lg group-hover:scale-110 transition-transform"></i>
-                                        <span class="text-gray-200 font-light">RTX 5090</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#" class="flex items-center gap-3 px-4 py-2 hover:bg-white/5 transition-colors group">
-                                        <i class="ph ph-trend-up text-primary text-lg group-hover:scale-110 transition-transform"></i>
-                                        <span class="text-gray-200 font-light">RTX 3060</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#" class="flex items-center gap-3 px-4 py-2 hover:bg-white/5 transition-colors group">
-                                        <i class="ph ph-trend-up text-primary text-lg group-hover:scale-110 transition-transform"></i>
-                                        <span class="text-gray-200 font-light">RYZEN 5</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#" class="flex items-center gap-3 px-4 py-2 hover:bg-white/5 transition-colors">
-                                        <span class="text-gray-300 font-light">650W PSU</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#" class="flex items-center gap-3 px-4 py-2 hover:bg-white/5 transition-colors">
-                                        <span class="text-gray-300 font-light">DDR4 Motherboard</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#" class="flex items-center gap-3 px-4 py-2 hover:bg-white/5 transition-colors">
-                                        <span class="text-gray-300 font-light">32GB Desktop RAM</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
+            <!-- Sign In -->
+            <div class="hidden lg:flex items-center gap-2 cursor-pointer group">
+                <i class="ph ph-user text-xl text-gray-400 group-hover:text-primary transition-colors"></i>
+                <div class="flex flex-col text-left">
+                    <span class="text-[10px] text-gray-400 leading-tight">Welcome</span>
+                    <span class="text-sm font-bold text-white group-hover:text-primary transition-colors leading-tight">Sign In / Register</span>
+                </div>
+            </div>
+
+            <!-- Notification -->
+            <button class="w-11 h-11 flex items-center justify-center rounded-2xl border border-white/10 hover:border-white/20 hover:bg-white/5 transition-all text-gray-300 hover:text-white relative shrink-0">
+                <i class="ph ph-bell text-xl"></i>
+                <span class="absolute top-[10px] right-[10px] w-2 h-2 bg-primary rounded-full shadow-[0_0_8px_rgba(255,107,0,0.8)]"></span>
+            </button>
+
+            <!-- Cart Container -->
+            <div id="cart-container" class="relative z-30 shrink-0">
+                <button id="cart-btn" class="flex items-center gap-2 w-auto h-11 px-3 sm:px-4 rounded-2xl border border-white/10 hover:border-white/20 hover:bg-white/5 transition-all text-gray-300 hover:text-white relative">
+                    <div class="relative">
+                        <i class="ph ph-shopping-cart text-xl"></i>
+                        <span class="absolute -top-1 -right-1 w-3.5 h-3.5 flex items-center justify-center text-[8px] font-bold bg-primary text-white rounded-full">3</span>
                     </div>
+                    <div class="hidden sm:flex flex-col text-left ml-1">
+                        <span class="text-[10px] text-gray-400 leading-tight">Returns</span>
+                        <span class="text-sm font-bold text-white leading-tight">& Cart</span>
+                    </div>
+                </button>
 
-                    <!-- Cart Container -->
-                    <div id="cart-container" class="relative z-50">
-                        <button id="cart-btn" class="w-11 h-11 flex items-center justify-center rounded-2xl border border-white/10 hover:border-white/20 hover:bg-white/5 transition-all text-gray-300 hover:text-white relative">
-                            <i class="ph ph-shopping-cart text-xl"></i>
-                            <span class="absolute top-[8px] right-[8px] w-2 h-2 bg-primary rounded-full shadow-[0_0_8px_rgba(255,107,0,0.8)]"></span>
-                        </button>
-
-                        <!-- Cart Dropdown -->
-                        <div id="cart-dropdown" class="liquid-glass-heavy absolute top-[calc(100%+0.5rem)] right-0 w-80 sm:w-96 rounded-2xl overflow-hidden shadow-2xl p-5 opacity-0 pointer-events-none transition-all duration-300 transform -translate-y-2 origin-top">
-                            <h3 class="text-lg font-bold text-white mb-4">Recently Added Items</h3>
-                            
-                            <div class="flex flex-col gap-4 mb-6">
-                                <!-- Cart Item 1 -->
-                                <div class="flex items-center gap-4">
-                                    <div class="w-14 h-14 rounded-xl overflow-hidden border border-white/10 shrink-0 bg-white/5">
-                                        <img src="https://images.unsplash.com/photo-1595225476474-87563907a212?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" alt="Keyboard" class="w-full h-full object-cover">
-                                    </div>
-                                    <div class="flex-1 min-w-0">
-                                        <h4 class="text-sm font-bold text-white truncate">Gamakay</h4>
-                                        <p class="text-xs text-gray-400 font-light truncate">TM680 Keyboard</p>
-                                    </div>
-                                    <div class="text-right shrink-0">
-                                        <p class="text-sm font-bold text-primary">₱4,845</p>
-                                        <p class="text-xs text-gray-400 font-light mt-1">x1</p>
-                                    </div>
-                                </div>
-
-                                <!-- Cart Item 2 -->
-                                <div class="flex items-center gap-4">
-                                    <div class="w-14 h-14 rounded-xl overflow-hidden border border-white/10 shrink-0 bg-white/5">
-                                        <img src="https://images.unsplash.com/photo-1758577675588-c5bbbbbf8e97?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Keyboard" class="w-full h-full object-cover">
-                                    </div>
-                                    <div class="flex-1 min-w-0">
-                                        <h4 class="text-sm font-bold text-white truncate">T-Force</h4>
-                                        <p class="text-xs text-gray-400 font-light truncate">DDR4 RGB RAM</p>
-                                    </div>
-                                    <div class="text-right shrink-0">
-                                        <p class="text-sm font-bold text-primary">₱4,995</p>
-                                        <p class="text-xs text-gray-400 font-light mt-1">x2</p>
-                                    </div>
-                                </div>
+                <!-- Cart Dropdown -->
+                <div id="cart-dropdown" class="liquid-glass-heavy absolute top-[calc(100%+0.5rem)] right-0 w-80 sm:w-96 rounded-2xl overflow-hidden shadow-2xl p-5 opacity-0 pointer-events-none transition-all duration-300 transform -translate-y-2 origin-top">
+                    <h3 class="text-lg font-bold text-white mb-4">Recently Added Items</h3>
+                    
+                    <div class="flex flex-col gap-4 mb-6">
+                        <!-- Cart Item 1 -->
+                        <div class="flex items-center gap-4">
+                            <div class="w-14 h-14 rounded-xl overflow-hidden border border-white/10 shrink-0 bg-white/5">
+                                <img src="https://images.unsplash.com/photo-1595225476474-87563907a212?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" alt="Keyboard" class="w-full h-full object-cover">
                             </div>
-                            
-                            <div class="flex justify-end pt-2">
-                                <button class="bg-gradient-to-r from-primary to-orange-400 hover:from-primary-hover hover:to-primary text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-all shadow-[0_0_15px_rgba(255,107,0,0.3)]">
-                                    View My Cart
-                                </button>
+                            <div class="flex-1 min-w-0">
+                                <h4 class="text-sm font-bold text-white truncate">Gamakay</h4>
+                                <p class="text-xs text-gray-400 font-light truncate">TM680 Keyboard</p>
+                            </div>
+                            <div class="text-right shrink-0">
+                                <p class="text-sm font-bold text-primary">₱4,845</p>
+                                <p class="text-xs text-gray-400 font-light mt-1">x1</p>
+                            </div>
+                        </div>
+
+                        <!-- Cart Item 2 -->
+                        <div class="flex items-center gap-4">
+                            <div class="w-14 h-14 rounded-xl overflow-hidden border border-white/10 shrink-0 bg-white/5">
+                                <img src="https://images.unsplash.com/photo-1758577675588-c5bbbbbf8e97?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Keyboard" class="w-full h-full object-cover">
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h4 class="text-sm font-bold text-white truncate">T-Force</h4>
+                                <p class="text-xs text-gray-400 font-light truncate">DDR4 RGB RAM</p>
+                            </div>
+                            <div class="text-right shrink-0">
+                                <p class="text-sm font-bold text-primary">₱4,995</p>
+                                <p class="text-xs text-gray-400 font-light mt-1">x2</p>
                             </div>
                         </div>
                     </div>
                     
-                    <button class="hidden sm:block bg-primary hover:bg-primary-hover text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-all shadow-[0_0_15px_rgba(255,107,0,0.3)] ml-2">
-                        Sign in
-                    </button>
+                    <div class="flex justify-end pt-2">
+                        <button class="bg-gradient-to-r from-primary to-orange-400 hover:from-primary-hover hover:to-primary text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-all shadow-[0_0_15px_rgba(255,107,0,0.3)]">
+                            View My Cart
+                        </button>
+                    </div>
                 </div>
+            </div>
+            
+        </div>
     </nav>
 
     <!-- Hero Section -->
