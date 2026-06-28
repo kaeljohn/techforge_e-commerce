@@ -43,9 +43,9 @@ if (imgEl) {
     function updateCarousel(index) {
         currentIndex = index;
 
-        // Fade out
+        // Fade out with slight slide down
         [imgEl, titleEl, descEl, priceEl].forEach(el => {
-            el.classList.add('opacity-0');
+            el.classList.add('opacity-0', 'translate-y-2');
         });
 
         setTimeout(() => {
@@ -58,17 +58,17 @@ if (imgEl) {
             // Update dots
             dots.forEach((dot, i) => {
                 if (i === index) {
-                    dot.className = 'w-2 h-2 rounded-full bg-primary shadow-[0_0_10px_rgba(255,107,0,0.8)] transition-all duration-300 focus:outline-none';
+                    dot.className = 'w-2.5 h-2.5 rounded-full bg-primary shadow-[0_0_12px_rgba(255,107,0,0.8)] transition-all duration-300 focus:outline-none';
                 } else {
-                    dot.className = 'w-2 h-2 rounded-full bg-gray-600 transition-all duration-300 hover:bg-gray-400 focus:outline-none';
+                    dot.className = 'w-2.5 h-2.5 rounded-full bg-white/20 transition-all duration-300 hover:bg-white/50 focus:outline-none';
                 }
             });
 
-            // Fade in
+            // Fade in with slight slide up
             [imgEl, titleEl, descEl, priceEl].forEach(el => {
-                el.classList.remove('opacity-0');
+                el.classList.remove('opacity-0', 'translate-y-2');
             });
-        }, 300); // Wait for fade out to complete
+        }, 500); // Wait for fade out to complete (matching CSS transition duration)
     }
 
     // Auto rotate every 3 seconds
@@ -203,8 +203,11 @@ if (searchInput && searchDropdown) {
 
     document.addEventListener('click', (e) => {
         if (!searchContainer.contains(e.target)) {
-            // Enable scroll
-            lenis.start();
+            // Enable scroll only if sidebar isn't expanded
+            const mainSidebar = document.getElementById('main-sidebar');
+            if (!mainSidebar || !mainSidebar.classList.contains('w-[280px]')) {
+                lenis.start();
+            }
 
             // Hide search dropdown
             searchDropdown.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
@@ -381,53 +384,74 @@ const sidebarLabels = document.querySelectorAll('.sidebar-label');
 if (sidebarWrapper && megaMenu && generalOverlay && hamburgerBtn) {
     let isSidebarExpanded = false;
 
-    hamburgerBtn.addEventListener('click', () => {
-        isSidebarExpanded = !isSidebarExpanded;
+    function openSidebar() {
+        isSidebarExpanded = true;
         
-        if (isSidebarExpanded) {
-            // Expand sidebar
-            mainSidebar.classList.remove('w-[72px]');
-            mainSidebar.classList.add('w-[280px]');
+        // Elevate z-index so it sits above the navigation bar
+        sidebarWrapper.classList.remove('z-[60]');
+        sidebarWrapper.classList.add('z-[80]');
+        generalOverlay.classList.remove('z-[55]');
+        generalOverlay.classList.add('z-[75]');
+        
+        // Expand sidebar
+        mainSidebar.classList.remove('w-[72px]');
+        mainSidebar.classList.add('w-[280px]');
 
-            // Fade in text
-            sidebarTitle.classList.remove('opacity-0');
-            sidebarTitle.classList.add('opacity-100');
-            sidebarDivider.classList.remove('w-8');
-            sidebarDivider.classList.add('w-[240px]', 'opacity-20');
-            
-            sidebarLabels.forEach(label => {
-                label.classList.remove('opacity-0');
-                label.classList.add('opacity-100');
-            });
-            
-            // Allow pointer events on wrapper so hovering mega menu doesn't close
-            sidebarWrapper.classList.remove('pointer-events-none');
-            sidebarWrapper.classList.add('pointer-events-auto');
-        } else {
-            // Collapse sidebar
-            mainSidebar.classList.remove('w-[280px]');
-            mainSidebar.classList.add('w-[72px]');
+        // Fade in text
+        sidebarTitle.classList.remove('opacity-0');
+        sidebarTitle.classList.add('opacity-100');
+        sidebarDivider.classList.remove('w-8');
+        sidebarDivider.classList.add('w-[240px]', 'opacity-20');
+        
+        sidebarLabels.forEach(label => {
+            label.classList.remove('opacity-0');
+            label.classList.add('opacity-100');
+        });
+        
+        // Allow pointer events on wrapper so hovering mega menu doesn't close
+        sidebarWrapper.classList.remove('pointer-events-none');
+        sidebarWrapper.classList.add('pointer-events-auto');
 
-            // Fade out text
-            sidebarTitle.classList.remove('opacity-100');
-            sidebarTitle.classList.add('opacity-0');
-            sidebarDivider.classList.remove('w-[240px]', 'opacity-20');
-            sidebarDivider.classList.add('w-8');
-            
-            sidebarLabels.forEach(label => {
-                label.classList.remove('opacity-100');
-                label.classList.add('opacity-0');
-            });
-        }
-    });
+        // Dim background and lock scroll globally when sidebar is open
+        generalOverlay.classList.remove('opacity-0', 'pointer-events-none');
+        generalOverlay.classList.add('opacity-100', 'pointer-events-auto');
+        lenis.stop();
+    }
 
-    sidebarWrapper.addEventListener('mouseleave', () => {
-        // Undim background and unlock scroll
+    function closeSidebar() {
+        isSidebarExpanded = false;
+
+        // Revert z-index back below the navigation bar
+        sidebarWrapper.classList.remove('z-[80]');
+        sidebarWrapper.classList.add('z-[60]');
+        generalOverlay.classList.remove('z-[75]');
+        generalOverlay.classList.add('z-[55]');
+
+        // Collapse sidebar
+        mainSidebar.classList.remove('w-[280px]');
+        mainSidebar.classList.add('w-[72px]');
+
+        // Fade out text
+        sidebarTitle.classList.remove('opacity-100');
+        sidebarTitle.classList.add('opacity-0');
+        sidebarDivider.classList.remove('w-[240px]', 'opacity-20');
+        sidebarDivider.classList.add('w-8');
+        
+        sidebarLabels.forEach(label => {
+            label.classList.remove('opacity-100');
+            label.classList.add('opacity-0');
+        });
+
+        // Hide mega menu and undim background
         generalOverlay.classList.remove('opacity-100', 'pointer-events-auto');
         generalOverlay.classList.add('opacity-0', 'pointer-events-none');
-        lenis.start();
+        
+        // Only re-enable scrolling if search isn't active
+        const searchOverlay = document.getElementById('search-overlay');
+        if (!searchOverlay || !searchOverlay.classList.contains('opacity-100')) {
+            lenis.start();
+        }
 
-        // Hide mega menu
         megaMenu.classList.remove('opacity-100', 'pointer-events-auto', 'translate-x-0');
         megaMenu.classList.add('opacity-0', 'pointer-events-none', '-translate-x-8');
         
@@ -441,10 +465,37 @@ if (sidebarWrapper && megaMenu && generalOverlay && hamburgerBtn) {
         // Restore wrapper pointer events
         sidebarWrapper.classList.remove('pointer-events-auto');
         sidebarWrapper.classList.add('pointer-events-none');
+    }
+
+    hamburgerBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (isSidebarExpanded) {
+            closeSidebar();
+        } else {
+            openSidebar();
+        }
     });
 
+    document.addEventListener('click', (e) => {
+        if (isSidebarExpanded && !sidebarWrapper.contains(e.target)) {
+            closeSidebar();
+        }
+    });
+
+    // Mega menu will remain open as long as sidebar is active.
     sidebarItems.forEach(item => {
+        item.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (!isSidebarExpanded) {
+                openSidebar();
+                // Trigger mouseenter logic to show the mega menu for this item
+                const mouseEnterEvent = new Event('mouseenter');
+                item.dispatchEvent(mouseEnterEvent);
+            }
+        });
+
         item.addEventListener('mouseenter', () => {
+            if (!isSidebarExpanded) return;
             const category = item.getAttribute('data-category');
             const data = megaMenuData[category];
             
@@ -459,14 +510,6 @@ if (sidebarWrapper && megaMenu && generalOverlay && hamburgerBtn) {
             item.querySelector('.ph-caret-right').classList.add('opacity-100');
 
             if (data) {
-                // Dim background and lock scroll
-                generalOverlay.classList.remove('opacity-0', 'pointer-events-none');
-                generalOverlay.classList.add('opacity-100', 'pointer-events-auto');
-                lenis.stop();
-                
-                sidebarWrapper.classList.remove('pointer-events-none');
-                sidebarWrapper.classList.add('pointer-events-auto');
-
                 // Populate mega menu
                 let html = '<div class="columns-2 lg:columns-3 gap-x-16 gap-y-4 w-full">';
                 data.forEach(group => {
@@ -493,14 +536,6 @@ if (sidebarWrapper && megaMenu && generalOverlay && hamburgerBtn) {
                 megaMenu.classList.remove('opacity-0', 'pointer-events-none', '-translate-x-8');
                 megaMenu.classList.add('opacity-100', 'pointer-events-auto', 'translate-x-0');
             } else {
-                // Undim background and unlock scroll
-                generalOverlay.classList.remove('opacity-100', 'pointer-events-auto');
-                generalOverlay.classList.add('opacity-0', 'pointer-events-none');
-                lenis.start();
-
-                sidebarWrapper.classList.remove('pointer-events-auto');
-                sidebarWrapper.classList.add('pointer-events-none');
-
                 megaMenu.classList.remove('opacity-100', 'pointer-events-auto', 'translate-x-0');
                 megaMenu.classList.add('opacity-0', 'pointer-events-none', '-translate-x-8');
             }
