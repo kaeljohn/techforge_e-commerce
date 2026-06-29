@@ -1,0 +1,8 @@
+sources:
+  wamp-mysql:
+    kind: mysql
+    host: "127.0.0.1"        #Changed from 127.0.0.1 to fix the timeout
+    port: 3306               # Switched back to 3306 based on your phpMyAdmin
+    user: "root"
+    password: ""
+    database: "techforge-ecommerce"

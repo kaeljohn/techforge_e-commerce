@@ -17,3 +17,7 @@ Route::get('/cart', function () {
 Route::get('/notifications', function () {
     return view('notifications');
 })->name('notifications');
+
+Route::get('/build-pc', function () {
+    return view('build-pc');
+})->name('build-pc');

@@ -395,9 +395,9 @@
                         <button class="bg-gradient-to-r from-primary to-[#ff8c33] hover:from-[#ff8c33] hover:to-primary text-white px-9 py-4 rounded-xl font-bold flex items-center gap-3 transition-all duration-300 shadow-[0_0_25px_rgba(255,107,0,0.5)] hover:shadow-[0_0_35px_rgba(255,107,0,0.7)] hover:-translate-y-1 transform text-lg">
                             Claim 20% Off <i class="ph ph-shopping-bag text-xl"></i>
                         </button>
-                        <button class="liquid-glass hover:bg-white/10 text-white px-8 py-4 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 group border border-white/10 hover:border-white/20">
+                        <a href="{{ route('build-pc') }}" class="liquid-glass hover:bg-white/10 text-white px-8 py-4 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 group border border-white/10 hover:border-white/20">
                             Build Your PC <i class="ph ph-caret-right text-gray-400 group-hover:text-white group-hover:translate-x-1 transition-all"></i>
-                        </button>
+                        </a>
                     </div>
 
                     <!-- Trust Signals / Stats -->
