@@ -129,11 +129,53 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #ff6b00;
         }
+
+        /* Preloader Animations */
+        @keyframes spinFastOnce {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(720deg); }
+        }
+        .animate-spin-fast {
+            animation: spinFastOnce 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+        @keyframes slideTextOut {
+            0% { max-width: 0; opacity: 0; padding-left: 0; }
+            100% { max-width: 400px; opacity: 1; padding-left: 1.5rem; }
+        }
+        .animate-slide-text {
+            animation: slideTextOut 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+            animation-delay: 0.8s;
+            overflow: hidden;
+            white-space: nowrap;
+            opacity: 0;
+            max-width: 0;
+        }
     </style>
 
     @vite('resources/css/liquidglass.css')
 </head>
 <body class="relative antialiased selection:bg-primary selection:text-white">
+
+    <!-- Preloader -->
+    <div id="preloader" class="fixed inset-0 bg-[#050505] z-[100] flex items-center justify-center transition-opacity duration-1000 ease-in-out">
+        <script>
+            if (!sessionStorage.getItem('techforge_visited')) {
+                document.write(`
+                    <div class="relative flex items-center justify-center">
+                        <div class="absolute inset-0 bg-primary/20 blur-xl rounded-full animate-pulse"></div>
+                        <div class="flex items-center relative z-10">
+                            <img src="{{ Vite::asset('resources/img/Techforge_Logo.png') }}" alt="TechForge Logo" class="h-20 w-auto object-contain animate-spin-fast drop-shadow-[0_0_25px_rgba(255,107,0,0.6)]">
+                            <span class="text-4xl md:text-5xl font-black text-white tracking-widest animate-slide-text">TECHFORGE</span>
+                        </div>
+                    </div>
+                `);
+            } else {
+                document.write(`
+                    <div class="w-16 h-16 border-4 border-white/10 border-t-primary rounded-full animate-spin shadow-[0_0_20px_rgba(255,107,0,0.3)]"></div>
+                `);
+            }
+        </script>
+    </div>
 
     <!-- Background Ambient Effects -->
     <div class="ambient-light-1"></div>
@@ -258,80 +300,70 @@
                 <i class="ph ph-map-pin text-xl text-gray-400 group-hover:text-primary transition-colors"></i>
                 <div class="flex flex-col text-left">
                     <span class="text-[10px] text-gray-400 leading-tight">Deliver to</span>
-                    <span class="text-sm font-bold text-white leading-tight">Philippines</span>
+                    <span class="text-sm font-bold text-white group-hover:text-primary transition-colors leading-tight">Philippines</span>
                 </div>
             </div>
 
             <!-- Sign In -->
-            <div class="hidden lg:flex items-center gap-2 cursor-pointer group">
+            <a href="{{ route('login') }}" class="hidden lg:flex items-center gap-2 cursor-pointer group">
                 <i class="ph ph-user text-xl text-gray-400 group-hover:text-primary transition-colors"></i>
                 <div class="flex flex-col text-left">
                     <span class="text-[10px] text-gray-400 leading-tight">Welcome</span>
                     <span class="text-sm font-bold text-white group-hover:text-primary transition-colors leading-tight">Sign In / Register</span>
                 </div>
-            </div>
+            </a>
 
-            <!-- Notification -->
-            <button class="w-11 h-11 flex items-center justify-center rounded-2xl border border-white/10 hover:border-white/20 hover:bg-white/5 transition-all text-gray-300 hover:text-white relative shrink-0">
-                <i class="ph ph-bell text-xl"></i>
-                <span class="absolute top-[10px] right-[10px] w-2 h-2 bg-primary rounded-full shadow-[0_0_8px_rgba(255,107,0,0.8)]"></span>
-            </button>
+            <!-- Notification Container -->
+            <div class="relative z-30 shrink-0 group">
+                <!-- Notification Button -->
+                <a href="{{ route('notifications') }}" class="w-11 h-11 flex items-center justify-center rounded-2xl border border-white/10 hover:border-white/20 hover:bg-white/5 transition-all text-gray-300 hover:text-white relative shrink-0">
+                    <i class="ph ph-bell text-xl"></i>
+                    <span class="absolute top-[10px] right-[10px] w-2 h-2 bg-primary rounded-full shadow-[0_0_8px_rgba(255,107,0,0.8)]"></span>
+                </a>
+
+                <!-- Notification Dropdown -->
+                <div class="liquid-glass-heavy absolute top-[calc(100%+0.5rem)] right-0 w-80 sm:w-96 rounded-2xl overflow-hidden shadow-2xl p-5 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-300 transform group-hover:translate-y-0 -translate-y-2 origin-top">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-bold text-white">Notifications</h3>
+                        <span class="bg-primary/20 text-primary text-[10px] font-bold px-2 py-1 rounded-md">1 New</span>
+                    </div>
+                    
+                    <div class="flex flex-col gap-3 mb-4">
+                        <!-- Notification Item -->
+                        <a href="{{ route('login') }}" class="flex items-start gap-4 p-3 rounded-xl hover:bg-white/5 transition-colors group/item border border-transparent hover:border-white/5">
+                            <div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
+                                <i class="ph-fill ph-ticket text-xl text-primary"></i>
+                            </div>
+                            <div class="flex-1 min-w-0 pt-0.5">
+                                <h4 class="text-sm font-bold text-white mb-1 group-hover/item:text-primary transition-colors">Special Offer!</h4>
+                                <p class="text-xs text-gray-400 leading-relaxed">Sign up for an account now to receive a 10% discount voucher on your first order.</p>
+                                <span class="text-[10px] text-gray-500 mt-2 block">Just now</span>
+                            </div>
+                        </a>
+                    </div>
+                    
+                    <div class="flex justify-center pt-3 border-t border-white/10 mt-2">
+                        <a href="{{ route('notifications') }}" class="text-xs font-bold text-gray-400 hover:text-primary transition-colors">
+                            View All Notifications
+                        </a>
+                    </div>
+                </div>
+            </div>
 
             <!-- Cart Container -->
             <div id="cart-container" class="relative z-30 shrink-0">
-                <button id="cart-btn" class="flex items-center gap-2 w-auto h-11 px-3 sm:px-4 rounded-2xl border border-white/10 hover:border-white/20 hover:bg-white/5 transition-all text-gray-300 hover:text-white relative">
+                <a href="{{ route('cart') }}" id="cart-btn" class="flex items-center gap-2 w-auto h-11 px-3 sm:px-4 rounded-2xl border border-white/10 hover:border-white/20 hover:bg-white/5 transition-all text-gray-300 hover:text-white relative">
                     <div class="relative">
                         <i class="ph ph-shopping-cart text-xl"></i>
-                        <span class="absolute -top-1 -right-1 w-3.5 h-3.5 flex items-center justify-center text-[8px] font-bold bg-primary text-white rounded-full">3</span>
+                        <span class="hidden absolute -top-1 -right-1 w-3.5 h-3.5 items-center justify-center text-[8px] font-bold bg-primary text-white rounded-full">0</span>
                     </div>
                     <div class="hidden sm:flex flex-col text-left ml-1">
                         <span class="text-[10px] text-gray-400 leading-tight">Returns</span>
                         <span class="text-sm font-bold text-white leading-tight">& Cart</span>
                     </div>
-                </button>
+                </a>
 
-                <!-- Cart Dropdown -->
-                <div id="cart-dropdown" class="liquid-glass-heavy absolute top-[calc(100%+0.5rem)] right-0 w-80 sm:w-96 rounded-2xl overflow-hidden shadow-2xl p-5 opacity-0 pointer-events-none transition-all duration-300 transform -translate-y-2 origin-top">
-                    <h3 class="text-lg font-bold text-white mb-4">Recently Added Items</h3>
-                    
-                    <div class="flex flex-col gap-4 mb-6">
-                        <!-- Cart Item 1 -->
-                        <div class="flex items-center gap-4">
-                            <div class="w-14 h-14 rounded-xl overflow-hidden border border-white/10 shrink-0 bg-white/5">
-                                <img src="https://images.unsplash.com/photo-1595225476474-87563907a212?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" alt="Keyboard" class="w-full h-full object-cover">
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <h4 class="text-sm font-bold text-white truncate">Gamakay</h4>
-                                <p class="text-xs text-gray-400 font-light truncate">TM680 Keyboard</p>
-                            </div>
-                            <div class="text-right shrink-0">
-                                <p class="text-sm font-bold text-primary">₱4,845</p>
-                                <p class="text-xs text-gray-400 font-light mt-1">x1</p>
-                            </div>
-                        </div>
 
-                        <!-- Cart Item 2 -->
-                        <div class="flex items-center gap-4">
-                            <div class="w-14 h-14 rounded-xl overflow-hidden border border-white/10 shrink-0 bg-white/5">
-                                <img src="https://images.unsplash.com/photo-1758577675588-c5bbbbbf8e97?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Keyboard" class="w-full h-full object-cover">
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <h4 class="text-sm font-bold text-white truncate">T-Force</h4>
-                                <p class="text-xs text-gray-400 font-light truncate">DDR4 RGB RAM</p>
-                            </div>
-                            <div class="text-right shrink-0">
-                                <p class="text-sm font-bold text-primary">₱4,995</p>
-                                <p class="text-xs text-gray-400 font-light mt-1">x2</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="flex justify-end pt-2">
-                        <button class="bg-gradient-to-r from-primary to-orange-400 hover:from-primary-hover hover:to-primary text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-all shadow-[0_0_15px_rgba(255,107,0,0.3)]">
-                            View My Cart
-                        </button>
-                    </div>
-                </div>
             </div>
             
         </div>
@@ -869,7 +901,25 @@
     </footer>
 
 
-    
+    <!-- Preloader Script -->
+    <script>
+        window.addEventListener('load', () => {
+            const preloader = document.getElementById('preloader');
+            if (preloader) {
+                if (!sessionStorage.getItem('techforge_visited')) {
+                    sessionStorage.setItem('techforge_visited', 'true');
+                    setTimeout(() => {
+                        preloader.classList.add('opacity-0');
+                        setTimeout(() => preloader.style.display = 'none', 1000); 
+                    }, 1800);
+                } else {
+                    preloader.classList.add('opacity-0');
+                    setTimeout(() => preloader.style.display = 'none', 1000);
+                }
+            }
+        });
+    </script>
+
     <!-- Script for subtle interactive effects -->
     <script>
         document.addEventListener('mousemove', (e) => {
