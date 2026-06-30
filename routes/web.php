@@ -19,5 +19,10 @@ Route::get('/notifications', function () {
 })->name('notifications');
 
 Route::get('/build-pc', function () {
-    return view('build-pc');
+    return view('plugins.build-pc');
 })->name('build-pc');
+
+Route::get('/gaming-pcs', function () {
+    return view('gaming-pcs');
+})->name('gaming-pcs');
+

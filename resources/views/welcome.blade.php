@@ -181,84 +181,16 @@
     <div class="ambient-light-1"></div>
     <div class="ambient-light-2"></div>
 
-    <!-- Sidebar Overlay -->
-    <div id="sidebar-overlay" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[55] opacity-0 pointer-events-none transition-all duration-300"></div>
 
-    <!-- Sidebar Menu Wrapper -->
-    <aside id="sidebar-wrapper" class="fixed left-4 lg:left-8 top-1/2 -translate-y-1/2 z-[60] flex items-start pointer-events-none">
-        
-        <!-- Main Sidebar -->
-        <div id="main-sidebar" class="w-[72px] liquid-glass-heavy rounded-[2.5rem] transition-all duration-500 ease-in-out flex flex-col relative z-20 overflow-hidden pointer-events-auto py-5 shadow-2xl">
-            
-            <!-- Hamburger Button -->
-            <div id="hamburger-btn" class="flex items-center shrink-0 w-full cursor-pointer relative h-12 mb-3">
-                <div class="w-12 h-12 bg-gradient-to-br from-[#ff8c33] to-[#d65a00] rounded-[14px] flex items-center justify-center absolute left-3 shadow-[0_4px_15px_rgba(214,90,0,0.4)] transition-transform duration-300 hover:scale-105">
-                    <i class="ph ph-list text-xl text-white"></i>
-                </div>
-                <span id="sidebar-title" class="absolute left-20 font-bold tracking-wider text-sm whitespace-nowrap opacity-0 transition-opacity duration-300 text-white pointer-events-none">ALL PRODUCTS</span>
-            </div>
-
-            <!-- Divider -->
-            <div id="sidebar-divider" class="w-8 h-[1px] bg-white/10 mx-auto my-3 shrink-0 transition-all duration-300"></div>
-
-            <!-- Categories -->
-            <nav class="flex-1 flex flex-col gap-2 px-3 py-2 custom-scrollbar">
-                
-                <a href="#" class="sidebar-item flex items-center px-0 py-3 rounded-2xl transition-colors text-gray-400 hover:text-white w-[240px] relative h-12 group/item" data-category="components">
-                    <div class="w-12 h-12 flex items-center justify-center shrink-0 absolute left-0">
-                        <i class="ph ph-cpu text-2xl text-primary transition-transform duration-300 group-hover/item:scale-110 drop-shadow-[0_0_8px_rgba(255,107,0,0.4)]"></i>
-                    </div>
-                    <span class="sidebar-label text-sm font-medium whitespace-nowrap absolute left-16 opacity-0 transition-opacity duration-300 text-gray-300">Components & Storage</span>
-                    <i class="ph ph-caret-right text-xs absolute right-6 opacity-0 transition-opacity duration-300"></i>
-                </a>
-
-                <a href="#" class="sidebar-item flex items-center px-0 py-3 rounded-2xl transition-colors text-gray-400 hover:text-white w-[240px] relative h-12 group/item" data-category="systems">
-                    <div class="w-12 h-12 flex items-center justify-center shrink-0 absolute left-0">
-                        <i class="ph ph-desktop text-2xl text-primary transition-transform duration-300 group-hover/item:scale-110 drop-shadow-[0_0_8px_rgba(255,107,0,0.4)]"></i>
-                    </div>
-                    <span class="sidebar-label text-sm font-medium whitespace-nowrap absolute left-16 opacity-0 transition-opacity duration-300 text-gray-300">Computer Systems</span>
-                    <i class="ph ph-caret-right text-xs absolute right-6 opacity-0 transition-opacity duration-300"></i>
-                </a>
-
-                <a href="#" class="sidebar-item flex items-center px-0 py-3 rounded-2xl transition-colors text-gray-400 hover:text-white w-[240px] relative h-12 group/item" data-category="peripherals">
-                    <div class="w-12 h-12 flex items-center justify-center shrink-0 absolute left-0">
-                        <i class="ph ph-mouse text-2xl text-primary transition-transform duration-300 group-hover/item:scale-110 drop-shadow-[0_0_8px_rgba(255,107,0,0.4)]"></i>
-                    </div>
-                    <span class="sidebar-label text-sm font-medium whitespace-nowrap absolute left-16 opacity-0 transition-opacity duration-300 text-gray-300">Computer Peripherals</span>
-                    <i class="ph ph-caret-right text-xs absolute right-6 opacity-0 transition-opacity duration-300"></i>
-                </a>
-
-                <a href="#" class="sidebar-item flex items-center px-0 py-3 rounded-2xl transition-colors text-gray-400 hover:text-white w-[240px] relative h-12 group/item" data-category="electronics">
-                    <div class="w-12 h-12 flex items-center justify-center shrink-0 absolute left-0">
-                        <i class="ph ph-headphones text-2xl text-primary transition-transform duration-300 group-hover/item:scale-110 drop-shadow-[0_0_8px_rgba(255,107,0,0.4)]"></i>
-                    </div>
-                    <span class="sidebar-label text-sm font-medium whitespace-nowrap absolute left-16 opacity-0 transition-opacity duration-300 text-gray-300">Electronics</span>
-                    <i class="ph ph-caret-right text-xs absolute right-6 opacity-0 transition-opacity duration-300"></i>
-                </a>
-
-                <a href="#" class="sidebar-item flex items-center px-0 py-3 rounded-2xl transition-colors text-gray-400 hover:text-white w-[240px] relative h-12 group/item" data-category="gaming">
-                    <div class="w-12 h-12 flex items-center justify-center shrink-0 absolute left-0">
-                        <i class="ph ph-game-controller text-2xl text-primary transition-transform duration-300 group-hover/item:scale-110 drop-shadow-[0_0_8px_rgba(255,107,0,0.4)]"></i>
-                    </div>
-                    <span class="sidebar-label text-sm font-medium whitespace-nowrap absolute left-16 opacity-0 transition-opacity duration-300 text-gray-300">Gaming</span>
-                    <i class="ph ph-caret-right text-xs absolute right-6 opacity-0 transition-opacity duration-300"></i>
-                </a>
-
-            </nav>
-        </div>
-
-        <!-- Mega Menu -->
-        <div id="mega-menu" class="liquid-glass-heavy rounded-3xl opacity-0 pointer-events-none transition-all duration-500 -translate-x-8 absolute left-full top-1/2 -translate-y-1/2 z-10 shadow-2xl flex px-10 py-8 gap-16 ml-4 max-h-[80vh] overflow-y-auto custom-scrollbar w-auto min-w-[600px] max-w-[900px] before:absolute before:-left-4 before:top-0 before:w-4 before:h-full before:content-['']">
-            <!-- JS populated content -->
-        </div>
-
-    </aside>
 
     <!-- Search Overlay -->
-    <div id="search-overlay" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[65] opacity-0 pointer-events-none transition-all duration-300"></div>
+    <div id="search-overlay" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[75] opacity-0 pointer-events-none transition-all duration-300"></div>
+
+    <!-- Nav Overlay (for Peripherals Store dropdown) -->
+    <div id="nav-overlay" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[65] opacity-0 pointer-events-none transition-all duration-300"></div>
 
     <!-- Navigation -->
-    <nav class="fixed w-[calc(100%-2rem)] sm:w-[calc(100%-3rem)] lg:w-[calc(100%-4rem)] max-w-7xl left-1/2 -translate-x-1/2 top-4 z-[70] px-4 sm:px-6 py-3 flex items-center justify-between gap-4 sm:gap-6 transition-all duration-300">
+    <nav class="fixed w-[calc(100%-2rem)] sm:w-[calc(100%-3rem)] lg:w-[calc(100%-4rem)] max-w-7xl left-1/2 -translate-x-1/2 top-4 z-[80] px-4 sm:px-6 py-3 flex items-center justify-between gap-4 sm:gap-6 transition-all duration-300">
         <!-- Background for Nav to prevent backdrop-filter nesting bug -->
         <div class="absolute inset-0 liquid-glass rounded-2xl -z-10 pointer-events-none"></div>
 
@@ -269,6 +201,8 @@
             </div>
             <span class="hidden md:block text-xl font-bold tracking-wide text-white">TECHFORGE</span>
         </a>
+
+
 
         <!-- Search Bar (Automatically Enlarged) -->
         <div id="search-container" class="flex-1 max-w-3xl relative z-50">
@@ -368,6 +302,159 @@
             
         </div>
     </nav>
+
+    <!-- Secondary Navigation -->
+    <div id="secondary-nav" class="fixed w-[calc(100%-2rem)] sm:w-[calc(100%-3rem)] lg:w-[calc(100%-4rem)] max-w-7xl left-1/2 -translate-x-1/2 top-[96px] z-[70] hidden md:flex items-center px-6 py-2.5 liquid-glass border border-white/5 rounded-2xl shadow-xl transition-all duration-300">
+        <div class="flex items-center gap-8 lg:gap-12 text-[10px] font-bold tracking-widest uppercase">
+            <a href="#" class="text-gray-200 hover:text-primary transition-colors py-2">Deals</a>
+            
+            <div class="relative" id="gaming-pcs-container">
+                <a href="#" id="gaming-pcs-btn" class="text-gray-200 hover:text-primary transition-colors flex items-center gap-1.5 py-2 cursor-pointer">
+                    Gaming PCs <i id="gaming-pcs-icon" class="ph ph-caret-down text-[10px] text-gray-500 transition-colors"></i>
+                </a>
+
+                <!-- Dropdown Mega Menu -->
+                <div id="gaming-pcs-dropdown" class="absolute top-[calc(100%+1rem)] -left-2 w-[550px] liquid-glass-heavy border border-white/10 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] opacity-0 pointer-events-none transition-all duration-300 transform translate-y-2 overflow-hidden z-[75]">
+                    <div class="grid grid-cols-2 gap-8 pt-8 pb-6 px-8">
+                        <!-- Column 1: Shop -->
+                        <div>
+                            <h4 class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-6">Shop</h4>
+                            <div class="flex flex-col gap-4">
+                                <a href="{{ url('/gaming-pcs') }}" class="block text-gray-300 hover:text-primary transition-colors">
+                                    <span class="font-bold text-sm tracking-normal capitalize">All Gaming PCs</span>
+                                </a>
+                                <a href="#" class="block text-gray-300 hover:text-primary transition-colors">
+                                    <span class="font-bold text-sm tracking-normal capitalize">Custom PC Builder</span>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Column 2: Shop By -->
+                        <div>
+                            <h4 class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-6">Shop By</h4>
+                            <div class="flex flex-col gap-4">
+                                <a href="#" class="block text-gray-300 hover:text-blue-500 transition-colors">
+                                    <span class="font-bold text-sm tracking-normal capitalize">Intel Gaming PCs</span>
+                                </a>
+                                <a href="#" class="block text-gray-300 hover:text-red-500 transition-colors">
+                                    <span class="font-bold text-sm tracking-normal capitalize">AMD Gaming PCs</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Banner -->
+                    <div class="bg-black/60 border-t border-white/10 p-6 relative overflow-hidden group/banner">
+                        <div class="relative z-10 w-[70%]">
+                            <p class="text-[9px] text-gray-400 uppercase tracking-widest mb-1">Build from the ground up.</p>
+                            <h4 class="text-xl font-bold text-white mb-2">PC FORGE</h4>
+                            <p class="text-[11px] text-gray-400 tracking-normal leading-relaxed mb-4 normal-case">Use our exclusive PC Forge tool to build your ultimate rig entirely from scratch, part by part.</p>
+                            <a href="{{ route('build-pc') }}" class="inline-block px-5 py-2 border border-white/20 text-xs font-bold text-white rounded-full hover:bg-white hover:text-black transition-all">Launch PC Forge</a>
+                        </div>
+                        
+                        <!-- Decoration -->
+                        <div class="absolute -right-4 bottom-0 w-32 h-full flex items-center justify-center opacity-50 group-hover/banner:opacity-100 group-hover/banner:scale-110 transition-all duration-500">
+                            <i class="ph-fill ph-cpu text-[100px] text-primary/30 blur-[2px]"></i>
+                            <i class="ph-fill ph-hammer text-[70px] text-primary absolute drop-shadow-[0_0_10px_rgba(255,107,0,0.5)]"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="relative" id="gaming-laptops-container">
+                <a href="#" id="gaming-laptops-btn" class="text-gray-200 hover:text-primary transition-colors flex items-center gap-1.5 py-2 cursor-pointer">
+                    Gaming Laptops <i id="gaming-laptops-icon" class="ph ph-caret-down text-[10px] text-gray-500 transition-colors"></i>
+                </a>
+
+                <!-- Dropdown Mega Menu -->
+                <div id="gaming-laptops-dropdown" class="absolute top-[calc(100%+1rem)] -left-2 w-[700px] liquid-glass-heavy border border-white/10 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] opacity-0 pointer-events-none transition-all duration-300 transform translate-y-2 overflow-hidden z-[75]">
+                    <div class="grid grid-cols-3 gap-8 pt-8 pb-8 px-8">
+                        <!-- Column 1: Shop -->
+                        <div>
+                            <h4 class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-6">Shop</h4>
+                            <div class="flex flex-col gap-4">
+                                <a href="#" class="block text-gray-300 hover:text-primary transition-colors">
+                                    <span class="font-bold text-sm tracking-normal capitalize">All Gaming Laptops</span>
+                                </a>
+                                <a href="#" class="block text-gray-300 hover:text-primary transition-colors">
+                                    <span class="font-bold text-sm tracking-normal capitalize">Refurbished Laptops</span>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Column 2: Shop By -->
+                        <div>
+                            <h4 class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-6">Shop By</h4>
+                            <div class="flex flex-col gap-4">
+                                <a href="#" class="block text-gray-300 hover:text-primary transition-colors">
+                                    <span class="font-bold text-sm tracking-normal capitalize">ASUS Laptops</span>
+                                </a>
+                                <a href="#" class="block text-gray-300 hover:text-primary transition-colors">
+                                    <span class="font-bold text-sm tracking-normal capitalize">MSI Laptops</span>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Column 3: Shop By -->
+                        <div>
+                            <h4 class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-6">Shop By</h4>
+                            <div class="flex flex-col gap-4">
+                                <a href="#" class="block text-gray-300 hover:text-blue-500 transition-colors">
+                                    <span class="font-bold text-sm tracking-normal capitalize">Intel Laptops</span>
+                                </a>
+                                <a href="#" class="block text-gray-300 hover:text-red-500 transition-colors">
+                                    <span class="font-bold text-sm tracking-normal capitalize">AMD Laptops</span>
+                                </a>
+                                <a href="#" class="block text-gray-300 hover:text-green-500 transition-colors">
+                                    <span class="font-bold text-sm tracking-normal capitalize">NVIDIA Laptops</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <a href="#" class="text-gray-200 hover:text-primary transition-colors py-2">PC Builder</a>
+            <div class="relative" id="parts-container">
+                <a href="#" id="parts-btn" class="text-gray-200 hover:text-primary transition-colors flex items-center gap-1.5 py-2 cursor-pointer">
+                    Parts & Accessories <i id="parts-icon" class="ph ph-caret-down text-[10px] text-gray-500 transition-colors"></i>
+                </a>
+
+                <!-- Dropdown Mega Menu -->
+                <div id="parts-dropdown" class="absolute top-[calc(100%+1rem)] -left-2 w-[600px] liquid-glass-heavy border border-white/10 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] opacity-0 pointer-events-none transition-all duration-300 transform translate-y-2 overflow-hidden z-[75]">
+                    <div class="grid grid-cols-2 gap-8 pt-8 pb-8 px-8">
+                        <!-- Column 1: Gaming Accessories and Monitors -->
+                        <div>
+                            <h4 class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-6">Gaming Accessories and Monitors</h4>
+                            <div class="flex flex-col gap-4">
+                                <a href="#" class="block text-gray-300 hover:text-primary transition-colors"><span class="font-bold text-sm tracking-normal capitalize">Monitors</span></a>
+                                <a href="#" class="block text-gray-300 hover:text-primary transition-colors"><span class="font-bold text-sm tracking-normal capitalize">Keyboards</span></a>
+                                <a href="#" class="block text-gray-300 hover:text-primary transition-colors"><span class="font-bold text-sm tracking-normal capitalize">Keyboard Accessories</span></a>
+                                <a href="#" class="block text-gray-300 hover:text-primary transition-colors"><span class="font-bold text-sm tracking-normal capitalize">Headsets</span></a>
+                                <a href="#" class="block text-gray-300 hover:text-primary transition-colors"><span class="font-bold text-sm tracking-normal capitalize">Mice</span></a>
+                                <a href="#" class="block text-gray-300 hover:text-primary transition-colors"><span class="font-bold text-sm tracking-normal capitalize">Mouse Pad</span></a>
+                                <a href="#" class="block text-gray-300 hover:text-primary transition-colors"><span class="font-bold text-sm tracking-normal capitalize">Speaker Systems</span></a>
+                            </div>
+                        </div>
+
+                        <!-- Column 2: PC Parts -->
+                        <div>
+                            <h4 class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-6">PC Parts</h4>
+                            <div class="flex flex-col gap-4">
+                                <a href="#" class="block text-gray-300 hover:text-primary transition-colors"><span class="font-bold text-sm tracking-normal capitalize">Cases</span></a>
+                                <a href="#" class="block text-gray-300 hover:text-primary transition-colors"><span class="font-bold text-sm tracking-normal capitalize">Storage</span></a>
+                                <a href="#" class="block text-gray-300 hover:text-primary transition-colors"><span class="font-bold text-sm tracking-normal capitalize">Video Cards</span></a>
+                                <a href="#" class="block text-gray-300 hover:text-primary transition-colors"><span class="font-bold text-sm tracking-normal capitalize">PC Cooling</span></a>
+                                <a href="#" class="block text-gray-300 hover:text-primary transition-colors"><span class="font-bold text-sm tracking-normal capitalize">Power Supplies</span></a>
+                                <a href="#" class="block text-gray-300 hover:text-primary transition-colors"><span class="font-bold text-sm tracking-normal capitalize">Motherboards</span></a>
+                                <a href="#" class="block text-gray-300 hover:text-primary transition-colors"><span class="font-bold text-sm tracking-normal capitalize">Other Accessories</span></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <a href="#" class="text-gray-200 hover:text-primary transition-colors py-2">Brands</a>
+        </div>
+    </div>
 
     <!-- Hero Section -->
     <main class="relative pt-40 pb-20 lg:pt-48 lg:pb-28 overflow-hidden">
@@ -759,64 +846,88 @@
             <h2 class="text-3xl sm:text-4xl font-black text-white">Find Your Needs</h2>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 h-auto md:h-[600px]">
-            <!-- Pre-Built -->
-            <div class="relative rounded-3xl overflow-hidden group col-span-1 md:col-span-1 h-[400px] md:h-full cursor-pointer border border-white/10 hover:border-primary/40 transition-all duration-500 shadow-lg hover:shadow-[0_10px_40px_rgba(255,107,0,0.15)]">
-                <img src="https://images.unsplash.com/photo-1547082299-de196ea013d6?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Pre-Built" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700">
-                <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/40 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-500"></div>
-                <div class="absolute bottom-0 left-0 p-8 w-full transform group-hover:-translate-y-2 transition-transform duration-500">
-                    <div class="flex items-center gap-3 mb-2">
-                        <div class="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20">
-                            <i class="ph ph-desktop text-xl text-white"></i>
-                        </div>
-                        <h3 class="text-2xl font-black text-white tracking-wide">Pre-Built</h3>
+        <div class="flex flex-col gap-6">
+            <!-- Top Row: 2 Items -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- All Gaming PCs -->
+                <div class="relative rounded-3xl overflow-hidden group h-[350px] lg:h-[400px] cursor-pointer border border-white/10 hover:border-primary/50 transition-all duration-500 shadow-[0_10px_30px_rgba(0,0,0,0.5)] hover:shadow-[0_10px_40px_rgba(255,107,0,0.15)] bg-[#0d0d0d]">
+                    <div class="absolute right-0 top-0 bottom-0 w-full md:w-3/4">
+                        <img src="https://images.unsplash.com/photo-1547082299-de196ea013d6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="All Gaming PCs" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 opacity-60" style="mask-image: linear-gradient(to right, transparent, black 30%); -webkit-mask-image: linear-gradient(to right, transparent, black 30%);">
+                        <div class="absolute inset-0 bg-gradient-to-r from-[#0d0d0d] via-[#0d0d0d]/60 to-transparent pointer-events-none"></div>
                     </div>
-                    <p class="text-sm text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity duration-500 max-h-0 group-hover:max-h-20 overflow-hidden">Ready to go out of the box gaming rigs.</p>
+                    <div class="absolute inset-0 p-8 md:p-12 flex flex-col justify-center w-full md:w-[70%] z-10">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center border border-primary/50">
+                                <i class="ph-fill ph-desktop text-xl text-primary"></i>
+                            </div>
+                            <h3 class="text-3xl font-black text-white tracking-wide">All Gaming PCs</h3>
+                        </div>
+                        <p class="text-sm text-gray-400 mb-8 leading-relaxed max-w-sm">Browse through our full range of custom and prebuilt gaming PCs to find your perfect computer. Ready-to-ship with warranty and support.</p>
+                        <a href="#" class="inline-flex items-center justify-center gap-2 px-6 py-3 liquid-glass hover:bg-white/10 border border-white/10 text-white text-xs font-bold rounded-full transition-all w-max group/btn hover:shadow-lg">
+                            Browse All PCs <i class="ph-bold ph-arrow-right group-hover/btn:translate-x-1 transition-transform"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Custom PC Builder -->
+                <div class="relative rounded-3xl overflow-hidden group h-[350px] lg:h-[400px] cursor-pointer border border-white/10 hover:border-primary/50 transition-all duration-500 shadow-[0_10px_30px_rgba(0,0,0,0.5)] hover:shadow-[0_10px_40px_rgba(255,107,0,0.15)] bg-[#111]">
+                    <div class="absolute right-0 top-0 bottom-0 w-full md:w-3/4">
+                        <img src="https://images.unsplash.com/photo-1618339220157-daa2cd9ade56?q=80&w=1935&auto=format&fit=crop" alt="Custom PC Builder" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 opacity-50" style="mask-image: linear-gradient(to right, transparent, black 30%); -webkit-mask-image: linear-gradient(to right, transparent, black 30%);">
+                        <div class="absolute inset-0 bg-gradient-to-r from-[#111] via-[#111]/60 to-transparent pointer-events-none"></div>
+                    </div>
+                    <div class="absolute inset-0 p-8 md:p-12 flex flex-col justify-center w-full md:w-[70%] z-10">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center border border-white/20">
+                                <i class="ph-fill ph-wrench text-xl text-white"></i>
+                            </div>
+                            <h3 class="text-3xl font-black text-white tracking-wide">Custom Gaming PCs</h3>
+                        </div>
+                        <p class="text-sm text-gray-400 mb-8 leading-relaxed max-w-sm">Customize your PC with top brands like Intel, AMD, and ASUS, with no compatibility worries. What's best is that we'll build it for you!</p>
+                        <a href="#" class="inline-flex items-center justify-center gap-2 px-6 py-3 liquid-glass hover:bg-white/10 border border-white/10 text-white text-xs font-bold rounded-full transition-all w-max group/btn hover:shadow-lg">
+                            Start Building Your Own <i class="ph-bold ph-arrow-right group-hover/btn:translate-x-1 transition-transform"></i>
+                        </a>
+                    </div>
                 </div>
             </div>
 
-            <!-- Customized -->
-            <div class="relative rounded-3xl overflow-hidden group col-span-1 md:col-span-1 h-[400px] md:h-full cursor-pointer border border-white/10 hover:border-primary/40 transition-all duration-500 shadow-lg hover:shadow-[0_10px_40px_rgba(255,107,0,0.15)]">
-                <img src="https://images.unsplash.com/photo-1618339220157-daa2cd9ade56?q=80&w=1935&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Customized" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700">
-                <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/40 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-500"></div>
-                <div class="absolute bottom-0 left-0 p-8 w-full transform group-hover:-translate-y-2 transition-transform duration-500">
-                    <div class="flex items-center gap-3 mb-2">
-                        <div class="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20">
-                            <i class="ph ph-wrench text-xl text-white"></i>
-                        </div>
-                        <h3 class="text-2xl font-black text-white tracking-wide">Customized</h3>
+            <!-- Bottom Row: 3 Items -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- PC Forge -->
+                <div class="relative rounded-3xl overflow-hidden group h-[320px] cursor-pointer border border-white/10 hover:border-primary/50 transition-all duration-500 shadow-[0_10px_30px_rgba(0,0,0,0.5)] bg-[#050505]">
+                    <img src="https://images.unsplash.com/photo-1587202372775-e229f172b9d7?q=80&w=800&auto=format&fit=crop" alt="PC Forge" class="absolute bottom-0 left-0 w-full h-[70%] object-cover transform group-hover:scale-105 transition-transform duration-700 opacity-60">
+                    <div class="absolute bottom-0 left-0 w-full h-full bg-gradient-to-t from-[#050505] via-[#050505]/40 to-[#050505]"></div>
+                    <div class="absolute inset-0 pt-10 px-8 flex flex-col items-center text-center z-10">
+                        <h3 class="text-2xl font-black text-white tracking-wide mb-2">PC Forge</h3>
+                        <p class="text-[13px] text-gray-400 mb-6 max-w-[220px] h-[60px]">Customize your ideal PC from scratch, and we'll ship it out in about 5 business days.</p>
+                        <a href="#" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 liquid-glass hover:bg-white/10 border border-white/10 text-primary text-[13px] font-bold rounded-full transition-all group/link shadow-lg">
+                            Build Now <i class="ph-bold ph-arrow-right group-hover/link:translate-x-1 transition-transform"></i>
+                        </a>
                     </div>
-                    <p class="text-sm text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity duration-500 max-h-0 group-hover:max-h-20 overflow-hidden">Build your dream PC with our builder.</p>
                 </div>
-            </div>
 
-            <!-- Right Column Small Cards -->
-            <div class="grid grid-rows-2 gap-6 col-span-1 md:col-span-1 h-[400px] md:h-full">
-                <!-- Peripherals -->
-                <div class="relative rounded-3xl overflow-hidden group cursor-pointer border border-white/10 hover:border-primary/40 transition-all duration-500 shadow-lg hover:shadow-[0_10px_40px_rgba(255,107,0,0.15)]">
-                    <img src="https://images.unsplash.com/photo-1595225476474-87563907a212?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Peripherals" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700">
-                    <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/40 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-500"></div>
-                    <div class="absolute bottom-0 left-0 p-6 w-full transform group-hover:-translate-y-1 transition-transform duration-500">
-                        <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20 shrink-0">
-                                <i class="ph ph-mouse text-lg text-white"></i>
-                            </div>
-                            <h3 class="text-xl font-black text-white tracking-wide">Peripherals</h3>
-                        </div>
+                <!-- Gaming Laptops -->
+                <div class="relative rounded-3xl overflow-hidden group h-[320px] cursor-pointer border border-white/10 hover:border-primary/50 transition-all duration-500 shadow-[0_10px_30px_rgba(0,0,0,0.5)] bg-[#050505]">
+                    <img src="https://images.unsplash.com/photo-1603302576837-37561b2e2302?q=80&w=800&auto=format&fit=crop" alt="Gaming Laptops" class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[85%] h-auto object-contain transform group-hover:scale-105 group-hover:-translate-y-2 transition-transform duration-700 opacity-80 drop-shadow-[0_10px_15px_rgba(0,0,0,0.8)]">
+                    <div class="absolute bottom-0 left-0 w-full h-[50%] bg-gradient-to-t from-[#050505] to-transparent"></div>
+                    <div class="absolute inset-0 pt-10 px-8 flex flex-col items-center text-center z-10">
+                        <h3 class="text-2xl font-black text-white tracking-wide mb-2">Gaming Laptops</h3>
+                        <p class="text-[13px] text-gray-400 mb-6 max-w-[220px] h-[60px]">Immerse yourself in the ultimate gaming experience on the go.</p>
+                        <a href="#" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 liquid-glass hover:bg-white/10 border border-white/10 text-blue-500 text-[13px] font-bold rounded-full transition-all group/link shadow-lg">
+                            Browse More <i class="ph-bold ph-arrow-right group-hover/link:translate-x-1 transition-transform"></i>
+                        </a>
                     </div>
                 </div>
-                
-                <!-- Components -->
-                <div class="relative rounded-3xl overflow-hidden group cursor-pointer border border-white/10 hover:border-primary/40 transition-all duration-500 shadow-lg hover:shadow-[0_10px_40px_rgba(255,107,0,0.15)]">
-                    <img src="https://images.unsplash.com/photo-1591488320449-011701bb6704?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Components" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700 filter grayscale group-hover:grayscale-0">
-                    <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/40 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-500"></div>
-                    <div class="absolute bottom-0 left-0 p-6 w-full transform group-hover:-translate-y-1 transition-transform duration-500">
-                        <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20 shrink-0">
-                                <i class="ph ph-cpu text-lg text-white"></i>
-                            </div>
-                            <h3 class="text-xl font-black text-white tracking-wide">Components</h3>
-                        </div>
+
+                <!-- Parts & Accessories -->
+                <div class="relative rounded-3xl overflow-hidden group h-[320px] cursor-pointer border border-white/10 hover:border-primary/50 transition-all duration-500 shadow-[0_10px_30px_rgba(0,0,0,0.5)] bg-[#050505]">
+                    <img src="https://images.unsplash.com/photo-1595225476474-87563907a212?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Parts" class="absolute bottom-0 left-0 w-full h-[60%] object-cover transform group-hover:scale-105 transition-transform duration-700 opacity-50">
+                    <div class="absolute bottom-0 left-0 w-full h-[80%] bg-gradient-to-t from-[#050505] via-[#050505]/60 to-transparent"></div>
+                    <div class="absolute inset-0 pt-10 px-8 flex flex-col items-center text-center z-10">
+                        <h3 class="text-2xl font-black text-white tracking-wide mb-2">Parts & Accessories</h3>
+                        <p class="text-[13px] text-gray-400 mb-6 max-w-[220px] h-[60px]">Gear up and be game ready with your favorite gaming accessories, monitors, PC parts, and more!</p>
+                        <a href="#" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 liquid-glass hover:bg-white/10 border border-white/10 text-green-500 text-[13px] font-bold rounded-full transition-all group/link shadow-lg">
+                            Gear Up <i class="ph-bold ph-arrow-right group-hover/link:translate-x-1 transition-transform"></i>
+                        </a>
                     </div>
                 </div>
             </div>

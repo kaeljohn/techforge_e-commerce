@@ -203,12 +203,6 @@ if (searchInput && searchDropdown) {
 
     document.addEventListener('click', (e) => {
         if (!searchContainer.contains(e.target)) {
-            // Enable scroll only if sidebar isn't expanded
-            const mainSidebar = document.getElementById('main-sidebar');
-            if (!mainSidebar || !mainSidebar.classList.contains('w-[280px]')) {
-                lenis.start();
-            }
-
             // Hide search dropdown
             searchDropdown.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
             searchDropdown.classList.add('opacity-0', 'pointer-events-none', '-translate-y-2');
@@ -218,6 +212,9 @@ if (searchInput && searchDropdown) {
                 searchOverlay.classList.remove('opacity-100', 'pointer-events-auto');
                 searchOverlay.classList.add('opacity-0', 'pointer-events-none');
             }
+
+            // Enable scroll
+            lenis.start();
         }
     });
 }
@@ -265,280 +262,261 @@ if (cartContainer && cartBtn && cartDropdown) {
     });
 }
 
-// Sidebar Mega Menu Logic
-const megaMenuData = {
-    components: [
-        {
-            title: "Core Components",
-            items: ["CPUs / Processors", "Memory", "Motherboards", "GPUs & Video Graphics Devices", "Computer Cases", "Fans & PC Cooling", "Power Supplies", "Sound Cards", "Server Components"]
-        },
-        {
-            title: "Storage Devices",
-            items: ["Hard Drives", "SSDs", "CD / DVD / Blu-Ray Burners & Media", "USB Flash Drives & Memory Cards", "Hard Drive Enclosures"]
-        },
-        {
-            title: "Accessories",
-            items: ["Power Protection", "Cables", "Adapters & Gender Changers", "KVM Switches", "Hubs"]
-        },
-        {
-            title: "Shopping Tools",
-            items: ["Memory Finder"]
-        }
-    ],
-    systems: [
-        {
-            title: "Desktop Systems",
-            items: ["Desktop Computers", "Gaming Desktops", "Servers & Workstations"]
-        },
-        {
-            title: "Portable Systems",
-            items: ["Laptops / Notebooks", "Gaming Laptops", "2-in-1 Laptops", "Chromebooks"]
-        },
-        {
-            title: "Peripherals",
-            items: ["Monitors", "Keyboards & Mice", "Headsets, Speakers & Soundcards", "Power Protection", "Printers / Scanners & Supplies", "Printer Ink & Toner", "KVM Switches", "Projectors"]
-        }
-    ],
-    peripherals: [
-        {
-            title: "Monitors",
-            items: ["LCD / LED Monitors", "Gaming Monitors", "Touch Screen Monitors", "Monitor Accessories"]
-        },
-        {
-            title: "Keyboards & Mice",
-            items: ["Keyboards", "Gaming Keyboards", "Mice", "Gaming Mice", "KVM Switches", "Mouse Pads & Accessories"]
-        },
-        {
-            title: "Input Devices",
-            items: ["VR Headsets", "Headsets & Accessories", "PC Game Controllers", "Web Cams", "Graphics Tablets", "Video Capturing Devices", "Microphones"]
-        },
-        {
-            title: "Printers / Scanners & Supplies",
-            items: ["3D Printers", "Laser Printers", "Inkjet Printers", "Barcode & Label Printers", "Receipt Printer", "Flatbed Scanners", "Specialized Scanners"]
-        },
-        {
-            title: "Printer Ink & Toner",
-            items: ["Ink Cartridges (Genuine Brands)", "Toner Cartridges (Genuine Brands)", "Ink Cartridges (Aftermarket)", "Toner Cartridges (Aftermarket)", "Labels & Labelmakers", "Printer & Scanner Supplies", "Printer Ribbons"]
-        },
-        {
-            title: "Power Protection",
-            items: ["Power Distribution Unit", "Power Inverters", "Power Strips", "Surge Protectors", "UPS", "UPS Accessories"]
-        }
-    ],
-    electronics: [
-        {
-            title: "Mobile Phones",
-            items: ["Cell Phones", "Batteries, Power Banks & Chargers", "Bluetooth Headsets & Accessories", "Case & Covers", "Chargers & Cables", "Mounts & Holders"]
-        },
-        {
-            title: "Tablets",
-            items: ["Tablets", "Genuine Tablet Accessories", "iPad Accessories"]
-        },
-        {
-            title: "TV & Home Theater",
-            items: ["TV & Video", "Home Audio & Home Theater", "Home Video Accessories", "Home Theater Accessories", "Audio / Video Cables", "HDMI Cables", "TV Mounts"]
-        },
-        {
-            title: "Shopping Tools",
-            items: ["Memory Finder"]
-        },
-        {
-            title: "Portable Electronics",
-            items: ["Digital Cameras", "Portable Electronic Devices", "Headphones", "Gadgets & Wearables"]
-        },
-        {
-            title: "Home Appliances",
-            items: ["Vacuums & Floor Care", "Cooks Tools", "Coffee Makers"]
-        },
-        {
-            title: "Specialty Electronics",
-            items: ["Pro Audio & Musical Instruments", "Professional Video Devices", "Maker", "Alternative Energy"]
-        }
-    ],
-    gaming: [
-        {
-            title: "Sony",
-            items: ["PS4 Accessories", "PS4 Video Games"]
-        },
-        {
-            title: "Microsoft",
-            items: ["Xbox 360 Accessories", "Xbox One Accessories", "Xbox One Systems", "Xbox One Video Games"]
-        },
-        {
-            title: "PC & VR",
-            items: ["Gaming Laptops", "Gaming Mice", "Gaming Keyboards", "PC Game Controllers"]
-        }
-    ]
-};
+// Gaming PCs Dropdown Logic
+const gamingPcsContainer = document.getElementById('gaming-pcs-container');
+const gamingPcsBtn = document.getElementById('gaming-pcs-btn');
+const gamingPcsDropdown = document.getElementById('gaming-pcs-dropdown');
+const gamingPcsIcon = document.getElementById('gaming-pcs-icon');
+const navOverlay = document.getElementById('nav-overlay');
 
-const sidebarWrapper = document.getElementById('sidebar-wrapper');
-const mainSidebar = document.getElementById('main-sidebar');
-const megaMenu = document.getElementById('mega-menu');
-const sidebarItems = document.querySelectorAll('.sidebar-item');
-const generalOverlay = document.getElementById('sidebar-overlay');
-const hamburgerBtn = document.getElementById('hamburger-btn');
-const sidebarTitle = document.getElementById('sidebar-title');
-const sidebarDivider = document.getElementById('sidebar-divider');
-const sidebarLabels = document.querySelectorAll('.sidebar-label');
-
-if (sidebarWrapper && megaMenu && generalOverlay && hamburgerBtn) {
-    let isSidebarExpanded = false;
-
-    function openSidebar() {
-        isSidebarExpanded = true;
-        
-        // Elevate z-index so it sits above the navigation bar
-        sidebarWrapper.classList.remove('z-[60]');
-        sidebarWrapper.classList.add('z-[80]');
-        generalOverlay.classList.remove('z-[55]');
-        generalOverlay.classList.add('z-[75]');
-        
-        // Expand sidebar
-        mainSidebar.classList.remove('w-[72px]');
-        mainSidebar.classList.add('w-[280px]');
-
-        // Fade in text
-        sidebarTitle.classList.remove('opacity-0');
-        sidebarTitle.classList.add('opacity-100');
-        sidebarDivider.classList.remove('w-8');
-        sidebarDivider.classList.add('w-[240px]', 'opacity-20');
-        
-        sidebarLabels.forEach(label => {
-            label.classList.remove('opacity-0');
-            label.classList.add('opacity-100');
-        });
-        
-        // Allow pointer events on wrapper so hovering mega menu doesn't close
-        sidebarWrapper.classList.remove('pointer-events-none');
-        sidebarWrapper.classList.add('pointer-events-auto');
-
-        // Dim background and lock scroll globally when sidebar is open
-        generalOverlay.classList.remove('opacity-0', 'pointer-events-none');
-        generalOverlay.classList.add('opacity-100', 'pointer-events-auto');
-        lenis.stop();
-    }
-
-    function closeSidebar() {
-        isSidebarExpanded = false;
-
-        // Revert z-index back below the navigation bar
-        sidebarWrapper.classList.remove('z-[80]');
-        sidebarWrapper.classList.add('z-[60]');
-        generalOverlay.classList.remove('z-[75]');
-        generalOverlay.classList.add('z-[55]');
-
-        // Collapse sidebar
-        mainSidebar.classList.remove('w-[280px]');
-        mainSidebar.classList.add('w-[72px]');
-
-        // Fade out text
-        sidebarTitle.classList.remove('opacity-100');
-        sidebarTitle.classList.add('opacity-0');
-        sidebarDivider.classList.remove('w-[240px]', 'opacity-20');
-        sidebarDivider.classList.add('w-8');
-        
-        sidebarLabels.forEach(label => {
-            label.classList.remove('opacity-100');
-            label.classList.add('opacity-0');
-        });
-
-        // Hide mega menu and undim background
-        generalOverlay.classList.remove('opacity-100', 'pointer-events-auto');
-        generalOverlay.classList.add('opacity-0', 'pointer-events-none');
-        
-        // Only re-enable scrolling if search isn't active
-        const searchOverlay = document.getElementById('search-overlay');
-        if (!searchOverlay || !searchOverlay.classList.contains('opacity-100')) {
-            lenis.start();
-        }
-
-        megaMenu.classList.remove('opacity-100', 'pointer-events-auto', 'translate-x-0');
-        megaMenu.classList.add('opacity-0', 'pointer-events-none', '-translate-x-8');
-        
-        // Remove active state from items
-        sidebarItems.forEach(i => {
-            i.classList.remove('bg-white/5');
-            i.querySelector('.ph-caret-right').classList.add('opacity-0');
-            i.querySelector('.ph-caret-right').classList.remove('opacity-100');
-        });
-
-        // Restore wrapper pointer events
-        sidebarWrapper.classList.remove('pointer-events-auto');
-        sidebarWrapper.classList.add('pointer-events-none');
-    }
-
-    hamburgerBtn.addEventListener('click', (e) => {
+if (gamingPcsBtn && gamingPcsDropdown && navOverlay) {
+    gamingPcsBtn.addEventListener('click', (e) => {
+        e.preventDefault();
         e.stopPropagation();
-        if (isSidebarExpanded) {
-            closeSidebar();
+
+        const isOpen = !gamingPcsDropdown.classList.contains('opacity-0');
+
+        if (isOpen) {
+            // Close
+            gamingPcsDropdown.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
+            gamingPcsDropdown.classList.add('opacity-0', 'pointer-events-none', 'translate-y-2');
+            navOverlay.classList.remove('opacity-100', 'pointer-events-auto');
+            navOverlay.classList.add('opacity-0', 'pointer-events-none');
+            gamingPcsIcon.classList.remove('rotate-180', 'text-primary');
+            gamingPcsBtn.classList.remove('text-primary');
+            
+            if (!searchDropdown || searchDropdown.classList.contains('opacity-0')) {
+                lenis.start();
+            }
         } else {
-            openSidebar();
+            // Close search dropdown if open
+            if (searchDropdown && !searchDropdown.classList.contains('opacity-0')) {
+                searchDropdown.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
+                searchDropdown.classList.add('opacity-0', 'pointer-events-none', '-translate-y-2');
+                if (searchOverlay) {
+                    searchOverlay.classList.remove('opacity-100', 'pointer-events-auto');
+                    searchOverlay.classList.add('opacity-0', 'pointer-events-none');
+                }
+            }
+            // Close cart if open
+            if (cartDropdown && !cartDropdown.classList.contains('opacity-0')) {
+                cartDropdown.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
+                cartDropdown.classList.add('opacity-0', 'pointer-events-none', '-translate-y-2');
+            }
+            // Close gaming laptops if open
+            if (gamingLaptopsDropdown && !gamingLaptopsDropdown.classList.contains('opacity-0')) {
+                gamingLaptopsDropdown.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
+                gamingLaptopsDropdown.classList.add('opacity-0', 'pointer-events-none', 'translate-y-2');
+                if (gamingLaptopsIcon) gamingLaptopsIcon.classList.remove('rotate-180', 'text-primary');
+                if (gamingLaptopsBtn) gamingLaptopsBtn.classList.remove('text-primary');
+            }
+            // Close parts if open
+            if (typeof partsDropdown !== 'undefined' && partsDropdown && !partsDropdown.classList.contains('opacity-0')) {
+                partsDropdown.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
+                partsDropdown.classList.add('opacity-0', 'pointer-events-none', 'translate-y-2');
+                if (partsIcon) partsIcon.classList.remove('rotate-180', 'text-primary');
+                if (partsBtn) partsBtn.classList.remove('text-primary');
+            }
+
+            // Open
+            gamingPcsDropdown.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-2');
+            gamingPcsDropdown.classList.add('opacity-100', 'pointer-events-auto', 'translate-y-0');
+            navOverlay.classList.remove('opacity-0', 'pointer-events-none');
+            navOverlay.classList.add('opacity-100', 'pointer-events-auto');
+            gamingPcsIcon.classList.add('rotate-180', 'text-primary');
+            gamingPcsBtn.classList.add('text-primary');
+            lenis.stop();
         }
     });
 
     document.addEventListener('click', (e) => {
-        if (isSidebarExpanded && !sidebarWrapper.contains(e.target)) {
-            closeSidebar();
+        if (!gamingPcsContainer.contains(e.target)) {
+            // Close if clicking outside
+            if (!gamingPcsDropdown.classList.contains('opacity-0')) {
+                gamingPcsDropdown.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
+                gamingPcsDropdown.classList.add('opacity-0', 'pointer-events-none', 'translate-y-2');
+                navOverlay.classList.remove('opacity-100', 'pointer-events-auto');
+                navOverlay.classList.add('opacity-0', 'pointer-events-none');
+                gamingPcsIcon.classList.remove('rotate-180', 'text-primary');
+                gamingPcsBtn.classList.remove('text-primary');
+                
+                // Only start lenis if search is not open
+                if (!searchOverlay || searchOverlay.classList.contains('opacity-0')) {
+                    lenis.start();
+                }
+            }
+        }
+    });
+}
+
+// Gaming Laptops Dropdown Logic
+const gamingLaptopsContainer = document.getElementById('gaming-laptops-container');
+const gamingLaptopsBtn = document.getElementById('gaming-laptops-btn');
+const gamingLaptopsDropdown = document.getElementById('gaming-laptops-dropdown');
+const gamingLaptopsIcon = document.getElementById('gaming-laptops-icon');
+
+if (gamingLaptopsBtn && gamingLaptopsDropdown && navOverlay) {
+    gamingLaptopsBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const isOpen = !gamingLaptopsDropdown.classList.contains('opacity-0');
+
+        if (isOpen) {
+            // Close
+            gamingLaptopsDropdown.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
+            gamingLaptopsDropdown.classList.add('opacity-0', 'pointer-events-none', 'translate-y-2');
+            navOverlay.classList.remove('opacity-100', 'pointer-events-auto');
+            navOverlay.classList.add('opacity-0', 'pointer-events-none');
+            gamingLaptopsIcon.classList.remove('rotate-180', 'text-primary');
+            gamingLaptopsBtn.classList.remove('text-primary');
+            
+            if (!searchDropdown || searchDropdown.classList.contains('opacity-0')) {
+                lenis.start();
+            }
+        } else {
+            // Close search dropdown if open
+            if (searchDropdown && !searchDropdown.classList.contains('opacity-0')) {
+                searchDropdown.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
+                searchDropdown.classList.add('opacity-0', 'pointer-events-none', '-translate-y-2');
+                if (searchOverlay) {
+                    searchOverlay.classList.remove('opacity-100', 'pointer-events-auto');
+                    searchOverlay.classList.add('opacity-0', 'pointer-events-none');
+                }
+            }
+            // Close cart if open
+            if (cartDropdown && !cartDropdown.classList.contains('opacity-0')) {
+                cartDropdown.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
+                cartDropdown.classList.add('opacity-0', 'pointer-events-none', '-translate-y-2');
+            }
+            // Close gaming PCs if open
+            if (gamingPcsDropdown && !gamingPcsDropdown.classList.contains('opacity-0')) {
+                gamingPcsDropdown.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
+                gamingPcsDropdown.classList.add('opacity-0', 'pointer-events-none', 'translate-y-2');
+                if (gamingPcsIcon) gamingPcsIcon.classList.remove('rotate-180', 'text-primary');
+                if (gamingPcsBtn) gamingPcsBtn.classList.remove('text-primary');
+            }
+            // Close parts if open
+            if (typeof partsDropdown !== 'undefined' && partsDropdown && !partsDropdown.classList.contains('opacity-0')) {
+                partsDropdown.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
+                partsDropdown.classList.add('opacity-0', 'pointer-events-none', 'translate-y-2');
+                if (partsIcon) partsIcon.classList.remove('rotate-180', 'text-primary');
+                if (partsBtn) partsBtn.classList.remove('text-primary');
+            }
+
+            // Open
+            gamingLaptopsDropdown.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-2');
+            gamingLaptopsDropdown.classList.add('opacity-100', 'pointer-events-auto', 'translate-y-0');
+            navOverlay.classList.remove('opacity-0', 'pointer-events-none');
+            navOverlay.classList.add('opacity-100', 'pointer-events-auto');
+            gamingLaptopsIcon.classList.add('rotate-180', 'text-primary');
+            gamingLaptopsBtn.classList.add('text-primary');
+            lenis.stop();
         }
     });
 
-    // Mega menu will remain open as long as sidebar is active.
-    sidebarItems.forEach(item => {
-        item.addEventListener('click', (e) => {
-            e.preventDefault();
-            if (!isSidebarExpanded) {
-                openSidebar();
-                // Trigger mouseenter logic to show the mega menu for this item
-                const mouseEnterEvent = new Event('mouseenter');
-                item.dispatchEvent(mouseEnterEvent);
+    document.addEventListener('click', (e) => {
+        if (!gamingLaptopsContainer.contains(e.target)) {
+            // Close if clicking outside
+            if (!gamingLaptopsDropdown.classList.contains('opacity-0')) {
+                gamingLaptopsDropdown.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
+                gamingLaptopsDropdown.classList.add('opacity-0', 'pointer-events-none', 'translate-y-2');
+                navOverlay.classList.remove('opacity-100', 'pointer-events-auto');
+                navOverlay.classList.add('opacity-0', 'pointer-events-none');
+                gamingLaptopsIcon.classList.remove('rotate-180', 'text-primary');
+                gamingLaptopsBtn.classList.remove('text-primary');
+                
+                // Only start lenis if search is not open
+                if (!searchOverlay || searchOverlay.classList.contains('opacity-0')) {
+                    lenis.start();
+                }
             }
-        });
+        }
+    });
+}
 
-        item.addEventListener('mouseenter', () => {
-            if (!isSidebarExpanded) return;
-            const category = item.getAttribute('data-category');
-            const data = megaMenuData[category];
+// Parts & Accessories Dropdown Logic
+const partsContainer = document.getElementById('parts-container');
+const partsBtn = document.getElementById('parts-btn');
+const partsDropdown = document.getElementById('parts-dropdown');
+const partsIcon = document.getElementById('parts-icon');
+
+if (partsBtn && partsDropdown && navOverlay) {
+    partsBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const isOpen = !partsDropdown.classList.contains('opacity-0');
+
+        if (isOpen) {
+            // Close
+            partsDropdown.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
+            partsDropdown.classList.add('opacity-0', 'pointer-events-none', 'translate-y-2');
+            navOverlay.classList.remove('opacity-100', 'pointer-events-auto');
+            navOverlay.classList.add('opacity-0', 'pointer-events-none');
+            partsIcon.classList.remove('rotate-180', 'text-primary');
+            partsBtn.classList.remove('text-primary');
             
-            // Highlight item
-            sidebarItems.forEach(i => {
-                i.classList.remove('bg-white/5');
-                i.querySelector('.ph-caret-right').classList.add('opacity-0');
-                i.querySelector('.ph-caret-right').classList.remove('opacity-100');
-            });
-            item.classList.add('bg-white/5');
-            item.querySelector('.ph-caret-right').classList.remove('opacity-0');
-            item.querySelector('.ph-caret-right').classList.add('opacity-100');
-
-            if (data) {
-                // Populate mega menu
-                let html = '<div class="columns-2 lg:columns-3 gap-x-16 gap-y-4 w-full">';
-                data.forEach(group => {
-                    html += `
-                        <div class="flex flex-col gap-2 break-inside-avoid mb-8">
-                            <h3 class="text-white font-bold text-[13px] italic mb-2 tracking-wide">${group.title}</h3>
-                            <ul class="flex flex-col gap-2.5">
-                                ${group.items.map(link => `
-                                    <li>
-                                        <a href="#" class="text-gray-300 hover:text-white text-[12px] font-light transition-colors flex items-center justify-between group">
-                                            <span>${link}</span>
-                                            <i class="ph ph-caret-right text-[10px] opacity-0 group-hover:opacity-100 transition-opacity"></i>
-                                        </a>
-                                    </li>
-                                `).join('')}
-                            </ul>
-                        </div>
-                    `;
-                });
-                html += '</div>';
-                megaMenu.innerHTML = html;
-
-                // Show mega menu
-                megaMenu.classList.remove('opacity-0', 'pointer-events-none', '-translate-x-8');
-                megaMenu.classList.add('opacity-100', 'pointer-events-auto', 'translate-x-0');
-            } else {
-                megaMenu.classList.remove('opacity-100', 'pointer-events-auto', 'translate-x-0');
-                megaMenu.classList.add('opacity-0', 'pointer-events-none', '-translate-x-8');
+            if (!searchDropdown || searchDropdown.classList.contains('opacity-0')) {
+                lenis.start();
             }
-        });
+        } else {
+            // Close search dropdown if open
+            if (searchDropdown && !searchDropdown.classList.contains('opacity-0')) {
+                searchDropdown.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
+                searchDropdown.classList.add('opacity-0', 'pointer-events-none', '-translate-y-2');
+                if (searchOverlay) {
+                    searchOverlay.classList.remove('opacity-100', 'pointer-events-auto');
+                    searchOverlay.classList.add('opacity-0', 'pointer-events-none');
+                }
+            }
+            // Close cart if open
+            if (cartDropdown && !cartDropdown.classList.contains('opacity-0')) {
+                cartDropdown.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
+                cartDropdown.classList.add('opacity-0', 'pointer-events-none', '-translate-y-2');
+            }
+            // Close gaming PCs if open
+            if (gamingPcsDropdown && !gamingPcsDropdown.classList.contains('opacity-0')) {
+                gamingPcsDropdown.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
+                gamingPcsDropdown.classList.add('opacity-0', 'pointer-events-none', 'translate-y-2');
+                if (gamingPcsIcon) gamingPcsIcon.classList.remove('rotate-180', 'text-primary');
+                if (gamingPcsBtn) gamingPcsBtn.classList.remove('text-primary');
+            }
+            // Close gaming laptops if open
+            if (gamingLaptopsDropdown && !gamingLaptopsDropdown.classList.contains('opacity-0')) {
+                gamingLaptopsDropdown.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
+                gamingLaptopsDropdown.classList.add('opacity-0', 'pointer-events-none', 'translate-y-2');
+                if (gamingLaptopsIcon) gamingLaptopsIcon.classList.remove('rotate-180', 'text-primary');
+                if (gamingLaptopsBtn) gamingLaptopsBtn.classList.remove('text-primary');
+            }
+
+            // Open
+            partsDropdown.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-2');
+            partsDropdown.classList.add('opacity-100', 'pointer-events-auto', 'translate-y-0');
+            navOverlay.classList.remove('opacity-0', 'pointer-events-none');
+            navOverlay.classList.add('opacity-100', 'pointer-events-auto');
+            partsIcon.classList.add('rotate-180', 'text-primary');
+            partsBtn.classList.add('text-primary');
+            lenis.stop();
+        }
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!partsContainer.contains(e.target)) {
+            // Close if clicking outside
+            if (!partsDropdown.classList.contains('opacity-0')) {
+                partsDropdown.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
+                partsDropdown.classList.add('opacity-0', 'pointer-events-none', 'translate-y-2');
+                navOverlay.classList.remove('opacity-100', 'pointer-events-auto');
+                navOverlay.classList.add('opacity-0', 'pointer-events-none');
+                partsIcon.classList.remove('rotate-180', 'text-primary');
+                partsBtn.classList.remove('text-primary');
+                
+                // Only start lenis if search is not open
+                if (!searchOverlay || searchOverlay.classList.contains('opacity-0')) {
+                    lenis.start();
+                }
+            }
+        }
     });
 }
