@@ -239,6 +239,64 @@
             </div>
 
             <!-- Sign In -->
+            @auth
+            <div class="hidden lg:flex items-center gap-4 relative">
+                <div id="user-dropdown-btn" class="flex items-center gap-2 cursor-pointer group">
+                    <i class="ph ph-user text-xl text-primary transition-colors"></i>
+                    <div class="flex flex-col text-left">
+                        <span class="text-[10px] text-gray-400 leading-tight">Welcome</span>
+                        <span class="text-sm font-bold text-white leading-tight">{{ Auth::user()->name }}</span>
+                    </div>
+                </div>
+                
+                <!-- Dropdown Menu -->
+                <div id="user-dropdown" class="opacity-0 pointer-events-none scale-95 transition-all duration-300 origin-top-right absolute top-full right-0 mt-4 w-56 liquid-glass border border-white/10 rounded-xl shadow-2xl py-2 z-50" onclick="event.stopPropagation();">
+                    <div class="px-4 py-3 border-b border-white/10 mb-2 bg-white/5 mx-2 rounded-lg">
+                        <p class="text-[10px] text-gray-400 uppercase font-bold tracking-wider mb-0.5">FORGE Points</p>
+                        <div class="flex items-end gap-2">
+                            <p class="text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-primary to-[#ff8c33]">0</p>
+                            <p class="text-[10px] font-normal text-gray-500 mb-1 pb-0.5">(For now)</p>
+                        </div>
+                    </div>
+                    <a href="#" class="flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-colors">
+                        <i class="ph ph-user-circle text-lg text-gray-400"></i> My Account
+                    </a>
+                    <a href="#" class="flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-colors">
+                        <i class="ph ph-receipt text-lg text-gray-400"></i> Order History
+                    </a>
+                    
+                    <form action="{{ route('logout') }}" method="POST" class="w-full mt-2 border-t border-white/10 pt-2">
+                        @csrf
+                        <button type="submit" class="flex items-center gap-3 w-full text-left px-5 py-2.5 text-sm font-bold text-red-500 hover:text-red-400 hover:bg-red-500/10 transition-colors">
+                            <i class="ph ph-sign-out text-lg"></i> Sign Out
+                        </button>
+                    </form>
+                </div>
+                
+                <script>
+                    const btn = document.getElementById('user-dropdown-btn');
+                    const dropdown = document.getElementById('user-dropdown');
+                    if(btn && dropdown) {
+                        btn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            if(dropdown.classList.contains('opacity-0')) {
+                                dropdown.classList.remove('opacity-0', 'pointer-events-none', 'scale-95');
+                                dropdown.classList.add('opacity-100', 'pointer-events-auto', 'scale-100');
+                            } else {
+                                dropdown.classList.add('opacity-0', 'pointer-events-none', 'scale-95');
+                                dropdown.classList.remove('opacity-100', 'pointer-events-auto', 'scale-100');
+                            }
+                        });
+                        document.addEventListener('click', () => {
+                            if (!dropdown.classList.contains('opacity-0')) {
+                                dropdown.classList.add('opacity-0', 'pointer-events-none', 'scale-95');
+                                dropdown.classList.remove('opacity-100', 'pointer-events-auto', 'scale-100');
+                            }
+                        });
+                    }
+                </script>
+            </div>
+            @else
             <a href="{{ route('login') }}" class="hidden lg:flex items-center gap-2 cursor-pointer group">
                 <i class="ph ph-user text-xl text-gray-400 group-hover:text-primary transition-colors"></i>
                 <div class="flex flex-col text-left">
@@ -246,6 +304,7 @@
                     <span class="text-sm font-bold text-white group-hover:text-primary transition-colors leading-tight">Sign In / Register</span>
                 </div>
             </a>
+            @endauth
 
             <!-- Notification Container -->
             <div class="relative z-30 shrink-0 group">
@@ -458,7 +517,7 @@
 
     <!-- Category Hero -->
     <main class="relative pt-32 pb-16 lg:pt-40 lg:pb-20 overflow-hidden">
-        <div class="max-w-7xl mx-auto px-10 sm:px-12 lg:px-14 relative z-10">
+        <div class="max-w-[1500px] mx-auto px-6 lg:px-8 relative z-10">
             <div class="liquid-glass-heavy rounded-3xl p-10 md:p-16 border border-white/10 relative overflow-hidden group">
                 <div class="absolute inset-0 w-full h-full">
                     <img src="https://images.unsplash.com/photo-1547082299-de196ea013d6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="All Gaming PCs" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 opacity-40">
@@ -473,7 +532,7 @@
     </main>
 
     <!-- Category Content -->
-    <section class="max-w-7xl mx-auto px-10 sm:px-12 lg:px-14 pb-24 relative z-10 flex flex-col lg:flex-row gap-8">
+    <form id="filter-form" method="GET" action="{{ route('gaming-pcs') }}" class="max-w-[1500px] mx-auto px-6 lg:px-8 pb-24 relative z-10 flex flex-col lg:flex-row gap-8">
         
         <!-- Mobile Filter Toggle (Visible on smaller screens) -->
         <button id="mobile-filter-btn" class="lg:hidden w-full liquid-glass rounded-xl p-4 flex items-center justify-between text-white border border-white/10">
@@ -482,7 +541,7 @@
         </button>
 
         <!-- Sidebar / Filters -->
-        <aside id="filter-sidebar" class="w-full lg:w-1/4 flex-shrink-0 fixed lg:static top-0 left-0 h-full lg:h-auto z-[100] lg:z-auto liquid-glass-heavy lg:bg-transparent lg:backdrop-blur-none border-r border-white/10 lg:border-none p-6 lg:p-0 overflow-y-auto lg:overflow-visible transition-transform duration-300 transform -translate-x-full lg:translate-x-0">
+        <aside id="filter-sidebar" class="w-full lg:w-[280px] xl:w-[320px] flex-shrink-0 fixed lg:static top-0 left-0 h-full lg:h-auto z-[100] lg:z-auto bg-gradient-to-b from-[#1a0a05] to-[#0a0402] border border-[#2a110a] rounded-2xl p-6 overflow-y-auto lg:overflow-visible transition-transform duration-300 transform -translate-x-full lg:translate-x-0 shadow-2xl lg:shadow-none">
             
             <!-- Mobile Close Button -->
             <div class="flex justify-between items-center mb-8 lg:hidden">
@@ -499,91 +558,95 @@
                 </h3>
                 <div class="space-y-3">
                     <label class="flex items-center gap-3 group cursor-pointer">
-                        <input type="checkbox" class="form-checkbox h-4 w-4 rounded border-gray-600 bg-gray-800 text-primary focus:ring-primary focus:ring-offset-gray-900 transition-colors" checked>
+                        <input type="radio" name="category" value="All PCs" class="appearance-none w-4 h-4 shrink-0 border border-[#5a2810] rounded-full bg-black/40 checked:bg-primary checked:border-primary relative after:content-[''] after:absolute after:hidden checked:after:block after:left-1/2 after:top-1/2 after:-translate-x-1/2 after:-translate-y-1/2 after:w-1.5 after:h-1.5 after:bg-white after:rounded-full transition-all cursor-pointer" {{ request('category', 'All PCs') == 'All PCs' ? 'checked' : '' }}>
                         <span class="text-sm text-gray-300 group-hover:text-white transition-colors">All PCs</span>
-                        <span class="text-[10px] text-gray-500 ml-auto">124</span>
+                        <span class="text-[10px] text-gray-500 ml-auto">{{ $counts['categories']['All PCs'] }}</span>
                     </label>
                     <label class="flex items-center gap-3 group cursor-pointer">
-                        <input type="checkbox" class="form-checkbox h-4 w-4 rounded border-gray-600 bg-gray-800 text-primary focus:ring-primary focus:ring-offset-gray-900 transition-colors">
+                        <input type="radio" name="category" value="Prebuilt Desktops" class="appearance-none w-4 h-4 shrink-0 border border-[#5a2810] rounded-full bg-black/40 checked:bg-primary checked:border-primary relative after:content-[''] after:absolute after:hidden checked:after:block after:left-1/2 after:top-1/2 after:-translate-x-1/2 after:-translate-y-1/2 after:w-1.5 after:h-1.5 after:bg-white after:rounded-full transition-all cursor-pointer" {{ request('category') == 'Prebuilt Desktops' ? 'checked' : '' }}>
                         <span class="text-sm text-gray-300 group-hover:text-white transition-colors">Prebuilt Desktops</span>
-                        <span class="text-[10px] text-gray-500 ml-auto">86</span>
+                        <span class="text-[10px] text-gray-500 ml-auto">{{ $counts['categories']['Prebuilt Desktops'] }}</span>
                     </label>
                     <label class="flex items-center gap-3 group cursor-pointer">
-                        <input type="checkbox" class="form-checkbox h-4 w-4 rounded border-gray-600 bg-gray-800 text-primary focus:ring-primary focus:ring-offset-gray-900 transition-colors">
+                        <input type="radio" name="category" value="Custom Builds" class="appearance-none w-4 h-4 shrink-0 border border-[#5a2810] rounded-full bg-black/40 checked:bg-primary checked:border-primary relative after:content-[''] after:absolute after:hidden checked:after:block after:left-1/2 after:top-1/2 after:-translate-x-1/2 after:-translate-y-1/2 after:w-1.5 after:h-1.5 after:bg-white after:rounded-full transition-all cursor-pointer" {{ request('category') == 'Custom Builds' ? 'checked' : '' }}>
                         <span class="text-sm text-gray-300 group-hover:text-white transition-colors">Custom Builds</span>
-                        <span class="text-[10px] text-gray-500 ml-auto">38</span>
+                        <span class="text-[10px] text-gray-500 ml-auto">{{ $counts['categories']['Custom Builds'] }}</span>
                     </label>
                 </div>
             </div>
 
             <!-- Price Range -->
-            <div class="mb-8 border-t border-white/10 pt-8">
+            <div class="mb-8 border-t border-[#3a1810] pt-8">
                 <h3 class="text-sm font-bold text-white uppercase tracking-widest mb-4 flex items-center gap-2">
                     <i class="ph ph-currency-circle text-primary"></i> Price
                 </h3>
                 <div class="flex items-center gap-4">
                     <div class="flex-1 relative">
                         <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-xs">P</span>
-                        <input type="number" id="price-min" placeholder="Min" class="w-full bg-black/40 border border-white/10 rounded-xl py-2 pl-8 pr-3 text-sm text-white focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all">
+                        <input type="number" name="price_min" value="{{ request('price_min') }}" id="price-min" placeholder="Min" class="w-full bg-black/40 border border-[#3a1810] rounded-xl py-2 pl-8 pr-3 text-sm text-white focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all">
                     </div>
                     <span class="text-gray-500">-</span>
                     <div class="flex-1 relative">
                         <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-xs">P</span>
-                        <input type="number" id="price-max" placeholder="Max" class="w-full bg-black/40 border border-white/10 rounded-xl py-2 pl-8 pr-3 text-sm text-white focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all">
+                        <input type="number" name="price_max" value="{{ request('price_max') }}" id="price-max" placeholder="Max" class="w-full bg-black/40 border border-[#3a1810] rounded-xl py-2 pl-8 pr-3 text-sm text-white focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all">
                     </div>
                 </div>
             </div>
 
             <!-- Brands -->
-            <div class="mb-8 border-t border-white/10 pt-8">
+            <div class="mb-8 border-t border-[#3a1810] pt-8">
                 <h3 class="text-sm font-bold text-white uppercase tracking-widest mb-4 flex items-center gap-2">
                     <i class="ph ph-tag text-primary"></i> Brand
                 </h3>
                 <div class="space-y-3">
                     <label class="flex items-center gap-3 group cursor-pointer">
-                        <input type="checkbox" class="form-checkbox h-4 w-4 rounded border-gray-600 bg-gray-800 text-primary focus:ring-primary focus:ring-offset-gray-900 transition-colors">
+                        <input type="checkbox" name="brand[]" value="TechForge Forge" class="appearance-none w-4 h-4 shrink-0 border border-[#5a2810] rounded-sm bg-black/40 checked:bg-primary checked:border-primary relative after:content-[''] after:absolute after:hidden checked:after:block after:left-1/2 after:top-1/2 after:-translate-x-1/2 after:-translate-y-1/2 after:w-1.5 after:h-1.5 after:bg-white after:rounded-sm transition-all cursor-pointer" {{ in_array('TechForge Forge', request('brand', [])) ? 'checked' : '' }}>
                         <span class="text-sm text-gray-300 group-hover:text-white transition-colors">TechForge Forge</span>
-                        <span class="text-[10px] text-gray-500 ml-auto">45</span>
+                        <span class="text-[10px] text-gray-500 ml-auto">{{ $counts['brands']['TechForge Forge'] }}</span>
                     </label>
                     <label class="flex items-center gap-3 group cursor-pointer">
-                        <input type="checkbox" class="form-checkbox h-4 w-4 rounded border-gray-600 bg-gray-800 text-primary focus:ring-primary focus:ring-offset-gray-900 transition-colors">
+                        <input type="checkbox" name="brand[]" value="ASUS ROG" class="appearance-none w-4 h-4 shrink-0 border border-[#5a2810] rounded-sm bg-black/40 checked:bg-primary checked:border-primary relative after:content-[''] after:absolute after:hidden checked:after:block after:left-1/2 after:top-1/2 after:-translate-x-1/2 after:-translate-y-1/2 after:w-1.5 after:h-1.5 after:bg-white after:rounded-sm transition-all cursor-pointer" {{ in_array('ASUS ROG', request('brand', [])) ? 'checked' : '' }}>
                         <span class="text-sm text-gray-300 group-hover:text-white transition-colors">ASUS ROG</span>
-                        <span class="text-[10px] text-gray-500 ml-auto">22</span>
+                        <span class="text-[10px] text-gray-500 ml-auto">{{ $counts['brands']['ASUS ROG'] }}</span>
                     </label>
                     <label class="flex items-center gap-3 group cursor-pointer">
-                        <input type="checkbox" class="form-checkbox h-4 w-4 rounded border-gray-600 bg-gray-800 text-primary focus:ring-primary focus:ring-offset-gray-900 transition-colors">
+                        <input type="checkbox" name="brand[]" value="MSI" class="appearance-none w-4 h-4 shrink-0 border border-[#5a2810] rounded-sm bg-black/40 checked:bg-primary checked:border-primary relative after:content-[''] after:absolute after:hidden checked:after:block after:left-1/2 after:top-1/2 after:-translate-x-1/2 after:-translate-y-1/2 after:w-1.5 after:h-1.5 after:bg-white after:rounded-sm transition-all cursor-pointer" {{ in_array('MSI', request('brand', [])) ? 'checked' : '' }}>
                         <span class="text-sm text-gray-300 group-hover:text-white transition-colors">MSI</span>
-                        <span class="text-[10px] text-gray-500 ml-auto">31</span>
+                        <span class="text-[10px] text-gray-500 ml-auto">{{ $counts['brands']['MSI'] }}</span>
                     </label>
                     <label class="flex items-center gap-3 group cursor-pointer">
-                        <input type="checkbox" class="form-checkbox h-4 w-4 rounded border-gray-600 bg-gray-800 text-primary focus:ring-primary focus:ring-offset-gray-900 transition-colors">
+                        <input type="checkbox" name="brand[]" value="Lenovo Legion" class="appearance-none w-4 h-4 shrink-0 border border-[#5a2810] rounded-sm bg-black/40 checked:bg-primary checked:border-primary relative after:content-[''] after:absolute after:hidden checked:after:block after:left-1/2 after:top-1/2 after:-translate-x-1/2 after:-translate-y-1/2 after:w-1.5 after:h-1.5 after:bg-white after:rounded-sm transition-all cursor-pointer" {{ in_array('Lenovo Legion', request('brand', [])) ? 'checked' : '' }}>
                         <span class="text-sm text-gray-300 group-hover:text-white transition-colors">Lenovo Legion</span>
-                        <span class="text-[10px] text-gray-500 ml-auto">14</span>
+                        <span class="text-[10px] text-gray-500 ml-auto">{{ $counts['brands']['Lenovo Legion'] }}</span>
                     </label>
                 </div>
             </div>
 
             <!-- CPU Brand -->
-            <div class="border-t border-white/10 pt-8">
+            <div class="border-t border-[#3a1810] pt-8">
                 <h3 class="text-sm font-bold text-white uppercase tracking-widest mb-4 flex items-center gap-2">
                     <i class="ph ph-cpu text-primary"></i> Processor
                 </h3>
                 <div class="space-y-3">
                     <label class="flex items-center gap-3 group cursor-pointer">
-                        <input type="checkbox" class="form-checkbox h-4 w-4 rounded border-gray-600 bg-gray-800 text-primary focus:ring-primary focus:ring-offset-gray-900 transition-colors">
+                        <input type="checkbox" name="processor[]" value="Intel Core i9" class="appearance-none w-4 h-4 shrink-0 border border-[#5a2810] rounded-sm bg-black/40 checked:bg-primary checked:border-primary relative after:content-[''] after:absolute after:hidden checked:after:block after:left-1/2 after:top-1/2 after:-translate-x-1/2 after:-translate-y-1/2 after:w-1.5 after:h-1.5 after:bg-white after:rounded-sm transition-all cursor-pointer" {{ in_array('Intel Core i9', request('processor', [])) ? 'checked' : '' }}>
                         <span class="text-sm text-gray-300 group-hover:text-white transition-colors">Intel Core i9</span>
+                        <span class="text-[10px] text-gray-500 ml-auto">{{ $counts['processors']['Intel Core i9'] }}</span>
                     </label>
                     <label class="flex items-center gap-3 group cursor-pointer">
-                        <input type="checkbox" class="form-checkbox h-4 w-4 rounded border-gray-600 bg-gray-800 text-primary focus:ring-primary focus:ring-offset-gray-900 transition-colors">
+                        <input type="checkbox" name="processor[]" value="Intel Core i7" class="appearance-none w-4 h-4 shrink-0 border border-[#5a2810] rounded-sm bg-black/40 checked:bg-primary checked:border-primary relative after:content-[''] after:absolute after:hidden checked:after:block after:left-1/2 after:top-1/2 after:-translate-x-1/2 after:-translate-y-1/2 after:w-1.5 after:h-1.5 after:bg-white after:rounded-sm transition-all cursor-pointer" {{ in_array('Intel Core i7', request('processor', [])) ? 'checked' : '' }}>
                         <span class="text-sm text-gray-300 group-hover:text-white transition-colors">Intel Core i7</span>
+                        <span class="text-[10px] text-gray-500 ml-auto">{{ $counts['processors']['Intel Core i7'] }}</span>
                     </label>
                     <label class="flex items-center gap-3 group cursor-pointer">
-                        <input type="checkbox" class="form-checkbox h-4 w-4 rounded border-gray-600 bg-gray-800 text-primary focus:ring-primary focus:ring-offset-gray-900 transition-colors">
+                        <input type="checkbox" name="processor[]" value="AMD Ryzen 9" class="appearance-none w-4 h-4 shrink-0 border border-[#5a2810] rounded-sm bg-black/40 checked:bg-primary checked:border-primary relative after:content-[''] after:absolute after:hidden checked:after:block after:left-1/2 after:top-1/2 after:-translate-x-1/2 after:-translate-y-1/2 after:w-1.5 after:h-1.5 after:bg-white after:rounded-sm transition-all cursor-pointer" {{ in_array('AMD Ryzen 9', request('processor', [])) ? 'checked' : '' }}>
                         <span class="text-sm text-gray-300 group-hover:text-white transition-colors">AMD Ryzen 9</span>
+                        <span class="text-[10px] text-gray-500 ml-auto">{{ $counts['processors']['AMD Ryzen 9'] }}</span>
                     </label>
                     <label class="flex items-center gap-3 group cursor-pointer">
-                        <input type="checkbox" class="form-checkbox h-4 w-4 rounded border-gray-600 bg-gray-800 text-primary focus:ring-primary focus:ring-offset-gray-900 transition-colors">
+                        <input type="checkbox" name="processor[]" value="AMD Ryzen 7" class="appearance-none w-4 h-4 shrink-0 border border-[#5a2810] rounded-sm bg-black/40 checked:bg-primary checked:border-primary relative after:content-[''] after:absolute after:hidden checked:after:block after:left-1/2 after:top-1/2 after:-translate-x-1/2 after:-translate-y-1/2 after:w-1.5 after:h-1.5 after:bg-white after:rounded-sm transition-all cursor-pointer" {{ in_array('AMD Ryzen 7', request('processor', [])) ? 'checked' : '' }}>
                         <span class="text-sm text-gray-300 group-hover:text-white transition-colors">AMD Ryzen 7</span>
+                        <span class="text-[10px] text-gray-500 ml-auto">{{ $counts['processors']['AMD Ryzen 7'] }}</span>
                     </label>
                 </div>
             </div>
@@ -591,21 +654,21 @@
         </aside>
 
         <!-- Product Grid -->
-        <div class="w-full lg:w-3/4">
+        <div id="product-grid-area" class="flex-1 w-full lg:w-auto transition-opacity duration-300">
             
             <!-- Controls / Sort -->
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
-                <p class="text-sm text-gray-400">Showing <span class="text-white font-bold">1-12</span> of 124 products</p>
+                <p class="text-sm text-gray-400">Showing <span class="text-white font-bold">{{ $products->count() }}</span> products</p>
                 
                 <div class="flex items-center gap-3 w-full sm:w-auto">
                     <span class="text-xs text-gray-500 uppercase tracking-widest font-bold">Sort By</span>
                     <div class="relative w-full sm:w-48">
-                        <select class="w-full bg-black/40 border border-white/10 rounded-xl py-2 pl-4 pr-10 text-sm text-white appearance-none cursor-pointer hover:border-white/30 transition-colors focus:outline-none focus:border-primary">
-                            <option>Recommended</option>
-                            <option>Price: Low to High</option>
-                            <option>Price: High to Low</option>
-                            <option>Newest Arrivals</option>
-                            <option>Customer Reviews</option>
+                        <select name="sort" class="w-full bg-black/40 border border-[#3a1810] rounded-xl py-2 pl-4 pr-10 text-sm text-white appearance-none cursor-pointer hover:border-[#5a2810] transition-colors focus:outline-none focus:border-primary">
+                            <option {{ request('sort') == 'Recommended' ? 'selected' : '' }}>Recommended</option>
+                            <option {{ request('sort') == 'Price: Low to High' ? 'selected' : '' }}>Price: Low to High</option>
+                            <option {{ request('sort') == 'Price: High to Low' ? 'selected' : '' }}>Price: High to Low</option>
+                            <option {{ request('sort') == 'Newest Arrivals' ? 'selected' : '' }}>Newest Arrivals</option>
+                            <option {{ request('sort') == 'Customer Reviews' ? 'selected' : '' }}>Customer Reviews</option>
                         </select>
                         <i class="ph ph-caret-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"></i>
                     </div>
@@ -615,114 +678,67 @@
             <!-- Grid -->
             <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
                 
-                <!-- Product 1 -->
-                <div class="liquid-glass rounded-[2rem] p-4 relative overflow-hidden group hover:border-primary/30 transition-all duration-500 hover:shadow-[0_10px_30px_rgba(255,107,0,0.15)] cursor-pointer">
+                @forelse($products as $product)
+                <!-- Product Card -->
+                <div class="bg-gradient-to-b from-[#2a110a] to-[#140502] border border-[#3a1810] rounded-[2rem] p-4 relative overflow-hidden group hover:border-primary/50 transition-all duration-500 hover:shadow-[0_10px_30px_rgba(255,107,0,0.2)] cursor-pointer">
                     <div class="relative rounded-2xl overflow-hidden aspect-[4/3] mb-5 bg-[#0a0a0a]">
-                        <div class="absolute top-3 left-3 z-10 bg-primary/20 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold text-primary border border-primary/20">
-                            BEST SELLER
-                        </div>
-                        <img src="https://images.unsplash.com/photo-1587202372634-32705e3bf49c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="PC 1" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700 opacity-90 group-hover:opacity-100">
-                    </div>
-                    <div>
-                        <div class="flex justify-between items-start mb-2">
-                            <h3 class="text-sm font-bold text-gray-200 group-hover:text-primary transition-colors line-clamp-1">TechForge Obsidian X</h3>
-                            <div class="flex items-center gap-1 text-primary text-[10px] shrink-0 ml-2">
-                                <i class="ph-fill ph-star"></i> 4.9
+                        @if($product->badge)
+                            @php
+                                $badgeClass = 'bg-black/80 text-white border-white/10';
+                                if ($product->badge === 'BEST SELLER') {
+                                    $badgeClass = 'bg-primary/20 text-primary border-primary/20';
+                                } elseif ($product->badge === 'NEW ARRIVAL') {
+                                    $badgeClass = 'bg-[#050505]/80 text-white border-white/10';
+                                }
+                            @endphp
+                            <div class="absolute top-3 left-3 z-10 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold border {{ $badgeClass }}">
+                                {{ $product->badge }}
                             </div>
-                        </div>
-                        <p class="text-[10px] text-gray-500 uppercase tracking-widest mb-4">Ryzen 7 7800X3D | RTX 4080 Super</p>
-                        <div class="flex items-center justify-between">
-                            <div class="flex flex-col">
-                                <span class="text-lg font-black text-white">P145,000</span>
-                            </div>
-                            <button class="w-10 h-10 rounded-xl bg-white/5 hover:bg-primary text-white border border-white/10 hover:border-transparent flex items-center justify-center transition-all duration-300">
-                                <i class="ph ph-shopping-cart text-lg"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                        @endif
 
-                <!-- Product 2 -->
-                <div class="liquid-glass rounded-[2rem] p-4 relative overflow-hidden group hover:border-primary/30 transition-all duration-500 hover:shadow-[0_10px_30px_rgba(255,107,0,0.15)] cursor-pointer">
-                    <div class="relative rounded-2xl overflow-hidden aspect-[4/3] mb-5 bg-[#0a0a0a]">
-                        <img src="https://images.unsplash.com/photo-1547082299-de196ea013d6?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="PC 2" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700 opacity-90 group-hover:opacity-100">
-                    </div>
-                    <div>
-                        <div class="flex justify-between items-start mb-2">
-                            <h3 class="text-sm font-bold text-gray-200 group-hover:text-primary transition-colors line-clamp-1">TechForge Quantum</h3>
-                            <div class="flex items-center gap-1 text-primary text-[10px] shrink-0 ml-2">
-                                <i class="ph-fill ph-star"></i> 4.7
+                        @if($product->is_sold_out)
+                            <div class="absolute inset-0 bg-black/60 z-10 flex items-center justify-center">
+                                <span class="bg-red-600 text-white px-4 py-2 rounded-full font-black text-sm uppercase tracking-widest shadow-lg">Sold Out</span>
                             </div>
-                        </div>
-                        <p class="text-[10px] text-gray-500 uppercase tracking-widest mb-4">Core i5-13600K | RTX 4070 Ti</p>
-                        <div class="flex items-center justify-between">
-                            <div class="flex flex-col">
-                                <span class="text-lg font-black text-white">P112,500</span>
-                            </div>
-                            <button class="w-10 h-10 rounded-xl bg-white/5 hover:bg-primary text-white border border-white/10 hover:border-transparent flex items-center justify-center transition-all duration-300">
-                                <i class="ph ph-shopping-cart text-lg"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                        @endif
 
-                <!-- Product 3 -->
-                <div class="liquid-glass rounded-[2rem] p-4 relative overflow-hidden group hover:border-primary/30 transition-all duration-500 hover:shadow-[0_10px_30px_rgba(255,107,0,0.15)] cursor-pointer">
-                    <div class="relative rounded-2xl overflow-hidden aspect-[4/3] mb-5 bg-[#0a0a0a]">
-                        <div class="absolute top-3 left-3 z-10 bg-[#050505]/80 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold text-white border border-white/10">
-                            NEW ARRIVAL
-                        </div>
-                        <img src="https://images.unsplash.com/photo-1591488320449-011701bb6704?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="PC 3" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700 opacity-90 group-hover:opacity-100">
+                        <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700 opacity-90 group-hover:opacity-100 {{ $product->is_sold_out ? 'grayscale opacity-50' : '' }}">
                     </div>
                     <div>
                         <div class="flex justify-between items-start mb-2">
-                            <h3 class="text-sm font-bold text-gray-200 group-hover:text-primary transition-colors line-clamp-1">TechForge Zenith Pro</h3>
+                            <h3 class="text-sm font-bold text-gray-200 group-hover:text-primary transition-colors line-clamp-1">{{ $product->name }}</h3>
                             <div class="flex items-center gap-1 text-primary text-[10px] shrink-0 ml-2">
-                                <i class="ph-fill ph-star"></i> 5.0
+                                <i class="ph-fill ph-star drop-shadow-[0_0_8px_rgba(255,107,0,0.8)]"></i> {{ $product->rating }}
                             </div>
                         </div>
-                        <p class="text-[10px] text-gray-500 uppercase tracking-widest mb-4">Core i9-14900K | RTX 4090</p>
+                        <p class="text-[10px] text-gray-500 uppercase tracking-widest mb-4">{{ $product->specs }}</p>
                         <div class="flex items-center justify-between">
                             <div class="flex flex-col">
-                                <span class="text-lg font-black text-white">P235,000</span>
+                                <span class="text-lg font-black text-white">P{{ number_format($product->price) }}</span>
                             </div>
-                            <button class="w-10 h-10 rounded-xl bg-white/5 hover:bg-primary text-white border border-white/10 hover:border-transparent flex items-center justify-center transition-all duration-300">
-                                <i class="ph ph-shopping-cart text-lg"></i>
-                            </button>
+                            @if(!$product->is_sold_out)
+                                <button class="w-10 h-10 rounded-xl bg-white/5 hover:bg-primary text-white border border-white/10 hover:border-transparent flex items-center justify-center transition-all duration-300">
+                                    <i class="ph ph-shopping-cart text-lg"></i>
+                                </button>
+                            @else
+                                <button disabled class="w-10 h-10 rounded-xl bg-white/5 text-gray-500 border border-white/10 flex items-center justify-center cursor-not-allowed">
+                                    <i class="ph ph-shopping-cart text-lg"></i>
+                                </button>
+                            @endif
                         </div>
                     </div>
                 </div>
-                
-                <!-- Product 4 -->
-                <div class="liquid-glass rounded-[2rem] p-4 relative overflow-hidden group hover:border-primary/30 transition-all duration-500 hover:shadow-[0_10px_30px_rgba(255,107,0,0.15)] cursor-pointer">
-                    <div class="relative rounded-2xl overflow-hidden aspect-[4/3] mb-5 bg-[#0a0a0a]">
-                        <div class="absolute top-3 left-3 z-10 bg-[#050505]/80 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold text-white border border-white/10">
-                            SAVE 10%
-                        </div>
-                        <img src="https://images.unsplash.com/photo-1626218174358-7769486c4b79?q=80&w=1974&auto=format&fit=crop" alt="PC 4" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700 opacity-90 group-hover:opacity-100">
+                @empty
+                    <div class="col-span-1 sm:col-span-2 xl:col-span-3 py-20 flex flex-col items-center justify-center text-center bg-black/20 rounded-[2rem] border border-white/5">
+                        <i class="ph ph-magnifying-glass text-6xl text-gray-600 mb-6"></i>
+                        <h3 class="text-2xl font-bold text-white mb-2">No products found</h3>
+                        <p class="text-gray-400">Try adjusting your filters or search criteria to find what you're looking for.</p>
                     </div>
-                    <div>
-                        <div class="flex justify-between items-start mb-2">
-                            <h3 class="text-sm font-bold text-gray-200 group-hover:text-primary transition-colors line-clamp-1">ASUS ROG Strix GA15</h3>
-                            <div class="flex items-center gap-1 text-primary text-[10px] shrink-0 ml-2">
-                                <i class="ph-fill ph-star"></i> 4.5
-                            </div>
-                        </div>
-                        <p class="text-[10px] text-gray-500 uppercase tracking-widest mb-4">Ryzen 5 5600X | RTX 3060 Ti</p>
-                        <div class="flex items-center justify-between">
-                            <div class="flex flex-col">
-                                <span class="text-xs text-gray-500 line-through">P75,000</span>
-                                <span class="text-lg font-black text-white">P67,500</span>
-                            </div>
-                            <button class="w-10 h-10 rounded-xl bg-white/5 hover:bg-primary text-white border border-white/10 hover:border-transparent flex items-center justify-center transition-all duration-300">
-                                <i class="ph ph-shopping-cart text-lg"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                @endforelse
 
             </div>
             
+            @if($products->isNotEmpty())
             <!-- Pagination -->
             <div class="flex justify-center mt-12 gap-2">
                 <button class="w-10 h-10 rounded-xl liquid-glass border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:border-primary/50 transition-colors">
@@ -741,9 +757,10 @@
                     <i class="ph-bold ph-caret-right"></i>
                 </button>
             </div>
+            @endif
 
         </div>
-    </section>
+    </form>
 
     <!-- Footer -->
     <footer class="border-t border-white/10 pt-16 pb-8 mt-auto relative z-10">
@@ -838,6 +855,50 @@
                     preloader.classList.add('opacity-0');
                     setTimeout(() => preloader.style.display = 'none', 1000);
                 }
+            }
+        });
+    </script>
+
+    <!-- AJAX Filter Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('filter-form');
+            if (form) {
+                form.addEventListener('change', function(e) {
+                    const formData = new FormData(this);
+                    const params = new URLSearchParams(formData);
+                    const url = this.action + '?' + params.toString();
+                    
+                    const gridArea = document.getElementById('product-grid-area');
+                    if (gridArea) gridArea.style.opacity = '0.5';
+
+                    fetch(url)
+                        .then(response => response.text())
+                        .then(html => {
+                            const parser = new DOMParser();
+                            const doc = parser.parseFromString(html, 'text/html');
+                            
+                            const newSidebar = doc.getElementById('filter-sidebar');
+                            const newGrid = doc.getElementById('product-grid-area');
+                            
+                            if (newSidebar) document.getElementById('filter-sidebar').innerHTML = newSidebar.innerHTML;
+                            if (newGrid) {
+                                gridArea.innerHTML = newGrid.innerHTML;
+                                gridArea.style.opacity = '1';
+                            }
+                            
+                            window.history.pushState({}, '', url);
+                        })
+                        .catch(err => {
+                            console.error('Filtering failed:', err);
+                            if (gridArea) gridArea.style.opacity = '1';
+                        });
+                });
+                
+                // Prevent actual form submission on enter for text/number fields
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                });
             }
         });
     </script>

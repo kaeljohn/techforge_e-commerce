@@ -181,78 +181,7 @@
     <div class="ambient-light-1"></div>
     <div class="ambient-light-2"></div>
 
-    <!-- Sidebar Overlay -->
-    <div id="sidebar-overlay" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[55] opacity-0 pointer-events-none transition-all duration-300"></div>
 
-    <!-- Sidebar Menu Wrapper -->
-    <aside id="sidebar-wrapper" class="fixed left-4 lg:left-8 top-1/2 -translate-y-1/2 z-[60] flex items-start pointer-events-none">
-        
-        <!-- Main Sidebar -->
-        <div id="main-sidebar" class="w-[72px] liquid-glass-heavy rounded-[2.5rem] transition-all duration-500 ease-in-out flex flex-col relative z-20 overflow-hidden pointer-events-auto py-5 shadow-2xl">
-            
-            <!-- Hamburger Button -->
-            <div id="hamburger-btn" class="flex items-center shrink-0 w-full cursor-pointer relative h-12 mb-3">
-                <div class="w-12 h-12 bg-gradient-to-br from-[#ff8c33] to-[#d65a00] rounded-[14px] flex items-center justify-center absolute left-3 shadow-[0_4px_15px_rgba(214,90,0,0.4)] transition-transform duration-300 hover:scale-105">
-                    <i class="ph ph-list text-xl text-white"></i>
-                </div>
-                <span id="sidebar-title" class="absolute left-20 font-bold tracking-wider text-sm whitespace-nowrap opacity-0 transition-opacity duration-300 text-white pointer-events-none">ALL PRODUCTS</span>
-            </div>
-
-            <!-- Divider -->
-            <div id="sidebar-divider" class="w-8 h-[1px] bg-white/10 mx-auto my-3 shrink-0 transition-all duration-300"></div>
-
-            <!-- Categories -->
-            <nav class="flex-1 flex flex-col gap-2 px-3 py-2 custom-scrollbar">
-                
-                <a href="#" class="sidebar-item flex items-center px-0 py-3 rounded-2xl transition-colors text-gray-400 hover:text-white w-[240px] relative h-12 group/item" data-category="components">
-                    <div class="w-12 h-12 flex items-center justify-center shrink-0 absolute left-0">
-                        <i class="ph ph-cpu text-2xl text-primary transition-transform duration-300 group-hover/item:scale-110 drop-shadow-[0_0_8px_rgba(255,107,0,0.4)]"></i>
-                    </div>
-                    <span class="sidebar-label text-sm font-medium whitespace-nowrap absolute left-16 opacity-0 transition-opacity duration-300 text-gray-300">Components & Storage</span>
-                    <i class="ph ph-caret-right text-xs absolute right-6 opacity-0 transition-opacity duration-300"></i>
-                </a>
-
-                <a href="#" class="sidebar-item flex items-center px-0 py-3 rounded-2xl transition-colors text-gray-400 hover:text-white w-[240px] relative h-12 group/item" data-category="systems">
-                    <div class="w-12 h-12 flex items-center justify-center shrink-0 absolute left-0">
-                        <i class="ph ph-desktop text-2xl text-primary transition-transform duration-300 group-hover/item:scale-110 drop-shadow-[0_0_8px_rgba(255,107,0,0.4)]"></i>
-                    </div>
-                    <span class="sidebar-label text-sm font-medium whitespace-nowrap absolute left-16 opacity-0 transition-opacity duration-300 text-gray-300">Computer Systems</span>
-                    <i class="ph ph-caret-right text-xs absolute right-6 opacity-0 transition-opacity duration-300"></i>
-                </a>
-
-                <a href="#" class="sidebar-item flex items-center px-0 py-3 rounded-2xl transition-colors text-gray-400 hover:text-white w-[240px] relative h-12 group/item" data-category="peripherals">
-                    <div class="w-12 h-12 flex items-center justify-center shrink-0 absolute left-0">
-                        <i class="ph ph-mouse text-2xl text-primary transition-transform duration-300 group-hover/item:scale-110 drop-shadow-[0_0_8px_rgba(255,107,0,0.4)]"></i>
-                    </div>
-                    <span class="sidebar-label text-sm font-medium whitespace-nowrap absolute left-16 opacity-0 transition-opacity duration-300 text-gray-300">Computer Peripherals</span>
-                    <i class="ph ph-caret-right text-xs absolute right-6 opacity-0 transition-opacity duration-300"></i>
-                </a>
-
-                <a href="#" class="sidebar-item flex items-center px-0 py-3 rounded-2xl transition-colors text-gray-400 hover:text-white w-[240px] relative h-12 group/item" data-category="electronics">
-                    <div class="w-12 h-12 flex items-center justify-center shrink-0 absolute left-0">
-                        <i class="ph ph-headphones text-2xl text-primary transition-transform duration-300 group-hover/item:scale-110 drop-shadow-[0_0_8px_rgba(255,107,0,0.4)]"></i>
-                    </div>
-                    <span class="sidebar-label text-sm font-medium whitespace-nowrap absolute left-16 opacity-0 transition-opacity duration-300 text-gray-300">Electronics</span>
-                    <i class="ph ph-caret-right text-xs absolute right-6 opacity-0 transition-opacity duration-300"></i>
-                </a>
-
-                <a href="#" class="sidebar-item flex items-center px-0 py-3 rounded-2xl transition-colors text-gray-400 hover:text-white w-[240px] relative h-12 group/item" data-category="gaming">
-                    <div class="w-12 h-12 flex items-center justify-center shrink-0 absolute left-0">
-                        <i class="ph ph-game-controller text-2xl text-primary transition-transform duration-300 group-hover/item:scale-110 drop-shadow-[0_0_8px_rgba(255,107,0,0.4)]"></i>
-                    </div>
-                    <span class="sidebar-label text-sm font-medium whitespace-nowrap absolute left-16 opacity-0 transition-opacity duration-300 text-gray-300">Gaming</span>
-                    <i class="ph ph-caret-right text-xs absolute right-6 opacity-0 transition-opacity duration-300"></i>
-                </a>
-
-            </nav>
-        </div>
-
-        <!-- Mega Menu -->
-        <div id="mega-menu" class="liquid-glass-heavy rounded-3xl opacity-0 pointer-events-none transition-all duration-500 -translate-x-8 absolute left-full top-1/2 -translate-y-1/2 z-10 shadow-2xl flex px-10 py-8 gap-16 ml-4 max-h-[80vh] overflow-y-auto custom-scrollbar w-auto min-w-[600px] max-w-[900px] before:absolute before:-left-4 before:top-0 before:w-4 before:h-full before:content-['']">
-            <!-- JS populated content -->
-        </div>
-
-    </aside>
 
     <!-- Search Overlay -->
     <div id="search-overlay" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[65] opacity-0 pointer-events-none transition-all duration-300"></div>
@@ -305,6 +234,64 @@
             </div>
 
             <!-- Sign In -->
+            @auth
+            <div class="hidden lg:flex items-center gap-4 relative">
+                <div id="user-dropdown-btn" class="flex items-center gap-2 cursor-pointer group">
+                    <i class="ph ph-user text-xl text-primary transition-colors"></i>
+                    <div class="flex flex-col text-left">
+                        <span class="text-[10px] text-gray-400 leading-tight">Welcome</span>
+                        <span class="text-sm font-bold text-white leading-tight">{{ Auth::user()->name }}</span>
+                    </div>
+                </div>
+                
+                <!-- Dropdown Menu -->
+                <div id="user-dropdown" class="opacity-0 pointer-events-none scale-95 transition-all duration-300 origin-top-right absolute top-full right-0 mt-4 w-56 liquid-glass border border-white/10 rounded-xl shadow-2xl py-2 z-50" onclick="event.stopPropagation();">
+                    <div class="px-4 py-3 border-b border-white/10 mb-2 bg-white/5 mx-2 rounded-lg">
+                        <p class="text-[10px] text-gray-400 uppercase font-bold tracking-wider mb-0.5">FORGE Points</p>
+                        <div class="flex items-end gap-2">
+                            <p class="text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-primary to-[#ff8c33]">0</p>
+                            <p class="text-[10px] font-normal text-gray-500 mb-1 pb-0.5">(For now)</p>
+                        </div>
+                    </div>
+                    <a href="#" class="flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-colors">
+                        <i class="ph ph-user-circle text-lg text-gray-400"></i> My Account
+                    </a>
+                    <a href="#" class="flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-colors">
+                        <i class="ph ph-receipt text-lg text-gray-400"></i> Order History
+                    </a>
+                    
+                    <form action="{{ route('logout') }}" method="POST" class="w-full mt-2 border-t border-white/10 pt-2">
+                        @csrf
+                        <button type="submit" class="flex items-center gap-3 w-full text-left px-5 py-2.5 text-sm font-bold text-red-500 hover:text-red-400 hover:bg-red-500/10 transition-colors">
+                            <i class="ph ph-sign-out text-lg"></i> Sign Out
+                        </button>
+                    </form>
+                </div>
+                
+                <script>
+                    const btn = document.getElementById('user-dropdown-btn');
+                    const dropdown = document.getElementById('user-dropdown');
+                    if(btn && dropdown) {
+                        btn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            if(dropdown.classList.contains('opacity-0')) {
+                                dropdown.classList.remove('opacity-0', 'pointer-events-none', 'scale-95');
+                                dropdown.classList.add('opacity-100', 'pointer-events-auto', 'scale-100');
+                            } else {
+                                dropdown.classList.add('opacity-0', 'pointer-events-none', 'scale-95');
+                                dropdown.classList.remove('opacity-100', 'pointer-events-auto', 'scale-100');
+                            }
+                        });
+                        document.addEventListener('click', () => {
+                            if (!dropdown.classList.contains('opacity-0')) {
+                                dropdown.classList.add('opacity-0', 'pointer-events-none', 'scale-95');
+                                dropdown.classList.remove('opacity-100', 'pointer-events-auto', 'scale-100');
+                            }
+                        });
+                    }
+                </script>
+            </div>
+            @else
             <a href="{{ route('login') }}" class="hidden lg:flex items-center gap-2 cursor-pointer group">
                 <i class="ph ph-user text-xl text-gray-400 group-hover:text-primary transition-colors"></i>
                 <div class="flex flex-col text-left">
@@ -312,6 +299,7 @@
                     <span class="text-sm font-bold text-white group-hover:text-primary transition-colors leading-tight">Sign In / Register</span>
                 </div>
             </a>
+            @endauth
 
             <!-- Notification Container -->
             <div class="relative z-30 shrink-0 group">

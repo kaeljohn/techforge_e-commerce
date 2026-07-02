@@ -239,6 +239,64 @@
             </div>
 
             <!-- Sign In -->
+            @auth
+            <div class="hidden lg:flex items-center gap-4 relative">
+                <div id="user-dropdown-btn" class="flex items-center gap-2 cursor-pointer group">
+                    <i class="ph ph-user text-xl text-primary transition-colors"></i>
+                    <div class="flex flex-col text-left">
+                        <span class="text-[10px] text-gray-400 leading-tight">Welcome</span>
+                        <span class="text-sm font-bold text-white leading-tight">{{ Auth::user()->name }}</span>
+                    </div>
+                </div>
+                
+                <!-- Dropdown Menu -->
+                <div id="user-dropdown" class="opacity-0 pointer-events-none scale-95 transition-all duration-300 origin-top-right absolute top-full right-0 mt-4 w-56 liquid-glass border border-white/10 rounded-xl shadow-2xl py-2 z-50" onclick="event.stopPropagation();">
+                    <div class="px-4 py-3 border-b border-white/10 mb-2 bg-white/5 mx-2 rounded-lg">
+                        <p class="text-[10px] text-gray-400 uppercase font-bold tracking-wider mb-0.5">FORGE Points</p>
+                        <div class="flex items-end gap-2">
+                            <p class="text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-primary to-[#ff8c33]">0</p>
+                            <p class="text-[10px] font-normal text-gray-500 mb-1 pb-0.5">(For now)</p>
+                        </div>
+                    </div>
+                    <a href="#" class="flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-colors">
+                        <i class="ph ph-user-circle text-lg text-gray-400"></i> My Account
+                    </a>
+                    <a href="#" class="flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-colors">
+                        <i class="ph ph-receipt text-lg text-gray-400"></i> Order History
+                    </a>
+                    
+                    <form action="{{ route('logout') }}" method="POST" class="w-full mt-2 border-t border-white/10 pt-2">
+                        @csrf
+                        <button type="submit" class="flex items-center gap-3 w-full text-left px-5 py-2.5 text-sm font-bold text-red-500 hover:text-red-400 hover:bg-red-500/10 transition-colors">
+                            <i class="ph ph-sign-out text-lg"></i> Sign Out
+                        </button>
+                    </form>
+                </div>
+                
+                <script>
+                    const btn = document.getElementById('user-dropdown-btn');
+                    const dropdown = document.getElementById('user-dropdown');
+                    if(btn && dropdown) {
+                        btn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            if(dropdown.classList.contains('opacity-0')) {
+                                dropdown.classList.remove('opacity-0', 'pointer-events-none', 'scale-95');
+                                dropdown.classList.add('opacity-100', 'pointer-events-auto', 'scale-100');
+                            } else {
+                                dropdown.classList.add('opacity-0', 'pointer-events-none', 'scale-95');
+                                dropdown.classList.remove('opacity-100', 'pointer-events-auto', 'scale-100');
+                            }
+                        });
+                        document.addEventListener('click', () => {
+                            if (!dropdown.classList.contains('opacity-0')) {
+                                dropdown.classList.add('opacity-0', 'pointer-events-none', 'scale-95');
+                                dropdown.classList.remove('opacity-100', 'pointer-events-auto', 'scale-100');
+                            }
+                        });
+                    }
+                </script>
+            </div>
+            @else
             <a href="{{ route('login') }}" class="hidden lg:flex items-center gap-2 cursor-pointer group">
                 <i class="ph ph-user text-xl text-gray-400 group-hover:text-primary transition-colors"></i>
                 <div class="flex flex-col text-left">
@@ -246,6 +304,7 @@
                     <span class="text-sm font-bold text-white group-hover:text-primary transition-colors leading-tight">Sign In / Register</span>
                 </div>
             </a>
+            @endauth
 
             <!-- Notification Container -->
             <div class="relative z-30 shrink-0 group">
@@ -863,7 +922,7 @@
                             <h3 class="text-3xl font-black text-white tracking-wide">All Gaming PCs</h3>
                         </div>
                         <p class="text-sm text-gray-400 mb-8 leading-relaxed max-w-sm">Browse through our full range of custom and prebuilt gaming PCs to find your perfect computer. Ready-to-ship with warranty and support.</p>
-                        <a href="#" class="inline-flex items-center justify-center gap-2 px-6 py-3 liquid-glass hover:bg-white/10 border border-white/10 text-white text-xs font-bold rounded-full transition-all w-max group/btn hover:shadow-lg">
+                        <a href="{{ url('/gaming-pcs') }}" class="inline-flex items-center justify-center gap-2 px-6 py-3 liquid-glass hover:bg-white/10 border border-white/10 text-white text-xs font-bold rounded-full transition-all w-max group/btn hover:shadow-lg">
                             Browse All PCs <i class="ph-bold ph-arrow-right group-hover/btn:translate-x-1 transition-transform"></i>
                         </a>
                     </div>

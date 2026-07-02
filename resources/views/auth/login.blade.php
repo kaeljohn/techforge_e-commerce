@@ -118,10 +118,10 @@
 <body class="relative antialiased selection:bg-primary selection:text-white flex items-center justify-center">
 
     <!-- Preloader -->
-    <div id="preloader" class="fixed inset-0 bg-[#050505] z-[100] flex items-center justify-center transition-opacity duration-1000 ease-in-out">
-        <script>
-            if (!sessionStorage.getItem('techforge_visited')) {
-                document.write(`
+    <script>
+        if (!sessionStorage.getItem('techforge_visited')) {
+            document.write(`
+                <div id="preloader" class="fixed inset-0 bg-[#050505] z-[100] flex items-center justify-center transition-opacity duration-1000 ease-in-out">
                     <div class="relative flex items-center justify-center">
                         <div class="absolute inset-0 bg-primary/20 blur-xl rounded-full animate-pulse"></div>
                         <div class="flex items-center relative z-10">
@@ -129,14 +129,10 @@
                             <span class="text-4xl md:text-5xl font-black text-white tracking-widest animate-slide-text">TECHFORGE</span>
                         </div>
                     </div>
-                `);
-            } else {
-                document.write(`
-                    <div class="w-16 h-16 border-4 border-white/10 border-t-primary rounded-full animate-spin shadow-[0_0_20px_rgba(255,107,0,0.3)]"></div>
-                `);
-            }
-        </script>
-    </div>
+                </div>
+            `);
+        }
+    </script>
 
     <!-- Background Ambient Effects -->
     <div class="ambient-light-1"></div>
@@ -154,68 +150,141 @@
             <div class="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent opacity-50 pointer-events-none"></div>
 
             <div class="relative z-10">
-                <!-- Logo/Header -->
-                <div class="flex flex-col items-center mb-8">
-                    <div class="bg-gradient-to-br from-primary to-orange-400 w-12 h-12 rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(255,107,0,0.4)] mb-4">
-                        <img src="{{ Vite::asset('resources/img/Techforge_Logo.png') }}" alt="TechForge Logo" class="h-7 w-auto object-contain">
-                    </div>
-                    <h2 class="text-2xl font-bold text-white mb-1">Welcome Back</h2>
-                    <p class="text-sm text-gray-400 font-light">Sign in to continue to TechForge</p>
-                </div>
-
-                <!-- Form -->
-                <form action="#" method="POST" class="space-y-4">
-                    @csrf
-                    <div>
-                        <label for="email" class="block text-xs font-medium text-gray-300 mb-1.5 ml-1">Email Address</label>
-                        <div class="relative group">
-                            <i class="ph ph-envelope absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors text-lg"></i>
-                            <input type="email" name="email" id="email" class="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-11 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-primary/50 focus:bg-white/10 transition-all text-sm" placeholder="name@example.com" required>
+                <!-- Forms Wrapper -->
+                <div id="forms-wrapper" class="relative overflow-hidden transition-all duration-500" style="height: auto;">
+                    
+                    <!-- Login Form -->
+                    <div id="login-container" class="transition-all duration-500 w-full transform translate-x-0 opacity-100">
+                        <div class="flex flex-col items-center mb-8">
+                            <div class="bg-gradient-to-br from-primary to-orange-400 w-12 h-12 rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(255,107,0,0.4)] mb-4">
+                                <img src="{{ Vite::asset('resources/img/Techforge_Logo.png') }}" alt="TechForge Logo" class="h-7 w-auto object-contain">
+                            </div>
+                            <h2 class="text-2xl font-bold text-white mb-1">Welcome Back</h2>
+                            <p class="text-sm text-gray-400 font-light">Sign in to continue to TechForge</p>
                         </div>
-                    </div>
+                        
+                        @if (session('success'))
+                            <div class="bg-green-500/10 border border-green-500/50 text-green-500 text-xs rounded-xl p-3 mb-4">
+                                {{ session('success') }}
+                            </div>
+                        @endif
+                        
+                        @if ($errors->any())
+                            <div class="bg-red-500/10 border border-red-500/50 text-red-500 text-xs rounded-xl p-3 mb-4">
+                                {{ $errors->first() }}
+                            </div>
+                        @endif
 
-                    <div>
-                        <div class="flex items-center justify-between mb-1.5 ml-1 pr-1">
-                            <label for="password" class="block text-xs font-medium text-gray-300">Password</label>
-                            <a href="#" class="text-[10px] text-primary hover:text-primary-hover transition-colors font-medium">Forgot password?</a>
+                        <form action="{{ route('login.post') }}" method="POST" class="space-y-4">
+                            @csrf
+                            <div>
+                                <label for="email" class="block text-xs font-medium text-gray-300 mb-1.5 ml-1">Email Address</label>
+                                <div class="relative group">
+                                    <i class="ph ph-envelope absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors text-lg"></i>
+                                    <input type="email" name="email" id="email" class="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-11 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-primary/50 focus:bg-white/10 transition-all text-sm" placeholder="name@example.com" required>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="flex items-center justify-between mb-1.5 ml-1 pr-1">
+                                    <label for="password" class="block text-xs font-medium text-gray-300">Password</label>
+                                    <a href="#" class="text-[10px] text-primary hover:text-primary-hover transition-colors font-medium">Forgot password?</a>
+                                </div>
+                                <div class="relative group">
+                                    <i class="ph ph-lock-key absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors text-lg"></i>
+                                    <input type="password" name="password" id="password" class="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-11 pr-11 text-white placeholder-gray-500 focus:outline-none focus:border-primary/50 focus:bg-white/10 transition-all text-sm" placeholder="••••••••" required>
+                                    <button type="button" class="toggle-password absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors">
+                                        <i class="ph ph-eye text-lg"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center gap-2 mt-2 ml-1">
+                                <input type="checkbox" name="remember" id="remember" class="w-3.5 h-3.5 rounded bg-white/10 border-white/20 text-primary focus:ring-primary focus:ring-offset-0 focus:ring-offset-transparent cursor-pointer">
+                                <label for="remember" class="text-xs text-gray-400 cursor-pointer select-none">Remember me for 30 days</label>
+                            </div>
+
+                            <button type="submit" class="w-full bg-gradient-to-r from-primary to-[#ff8c33] hover:from-[#ff8c33] hover:to-primary text-white py-3.5 rounded-xl font-bold transition-all duration-300 shadow-[0_0_15px_rgba(255,107,0,0.3)] hover:shadow-[0_0_25px_rgba(255,107,0,0.5)] hover:-translate-y-0.5 mt-2 flex items-center justify-center gap-2">
+                                Sign In <i class="ph-bold ph-sign-in"></i>
+                            </button>
+                        </form>
+
+                        <div class="mt-8 mb-6 relative flex items-center justify-center">
+                            <div class="absolute w-full h-px bg-white/10"></div>
+                            <span class="bg-[#050505] px-4 text-xs font-medium text-gray-500 relative z-10" style="background-color: #0c0c0c;">Or continue with</span>
                         </div>
-                        <div class="relative group">
-                            <i class="ph ph-lock-key absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors text-lg"></i>
-                            <input type="password" name="password" id="password" class="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-11 pr-11 text-white placeholder-gray-500 focus:outline-none focus:border-primary/50 focus:bg-white/10 transition-all text-sm" placeholder="••••••••" required>
-                            <button type="button" id="toggle-password" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors">
-                                <i id="toggle-icon" class="ph ph-eye text-lg"></i>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <button class="flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all py-2.5 rounded-xl text-sm font-medium text-white group">
+                                <i class="ph-fill ph-google-logo text-lg text-gray-300 group-hover:text-white transition-colors"></i> Google
+                            </button>
+                            <button class="flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all py-2.5 rounded-xl text-sm font-medium text-white group">
+                                <i class="ph-fill ph-facebook-logo text-lg text-[#1877F2]"></i> Facebook
                             </button>
                         </div>
+
+                        <p class="text-center text-xs text-gray-400 mt-8">
+                            Don't have an account? <button type="button" id="show-register" class="text-primary hover:text-white font-bold transition-colors">Create one now</button>
+                        </p>
                     </div>
-                    
-                    <div class="flex items-center gap-2 mt-2 ml-1">
-                        <input type="checkbox" id="remember" class="w-3.5 h-3.5 rounded bg-white/10 border-white/20 text-primary focus:ring-primary focus:ring-offset-0 focus:ring-offset-transparent cursor-pointer">
-                        <label for="remember" class="text-xs text-gray-400 cursor-pointer select-none">Remember me for 30 days</label>
+
+                    <!-- Register Form -->
+                    <div id="register-container" class="absolute top-0 left-0 w-full transition-all duration-500 transform translate-x-full opacity-0 pointer-events-none">
+                        <div class="flex flex-col items-center mb-8">
+                            <div class="bg-gradient-to-br from-primary to-orange-400 w-12 h-12 rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(255,107,0,0.4)] mb-4">
+                                <i class="ph-fill ph-user-plus text-2xl text-white"></i>
+                            </div>
+                            <h2 class="text-2xl font-bold text-white mb-1">Create Account</h2>
+                            <p class="text-sm text-gray-400 font-light">Join TechForge today</p>
+                        </div>
+
+                        <form action="{{ route('register.post') }}" method="POST" class="space-y-4">
+                            @csrf
+                            <div>
+                                <label for="name" class="block text-xs font-medium text-gray-300 mb-1.5 ml-1">Full Name</label>
+                                <div class="relative group">
+                                    <i class="ph ph-user absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors text-lg"></i>
+                                    <input type="text" name="name" id="name" class="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-11 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-primary/50 focus:bg-white/10 transition-all text-sm" placeholder="John Doe" required>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label for="reg-email" class="block text-xs font-medium text-gray-300 mb-1.5 ml-1">Email Address</label>
+                                <div class="relative group">
+                                    <i class="ph ph-envelope absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors text-lg"></i>
+                                    <input type="email" name="email" id="reg-email" class="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-11 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-primary/50 focus:bg-white/10 transition-all text-sm" placeholder="name@example.com" required>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label for="reg-password" class="block text-xs font-medium text-gray-300 mb-1.5 ml-1">Password</label>
+                                <div class="relative group">
+                                    <i class="ph ph-lock-key absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors text-lg"></i>
+                                    <input type="password" name="password" id="reg-password" class="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-11 pr-11 text-white placeholder-gray-500 focus:outline-none focus:border-primary/50 focus:bg-white/10 transition-all text-sm" placeholder="••••••••" required>
+                                    <button type="button" class="toggle-password absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors">
+                                        <i class="ph ph-eye text-lg"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label for="password_confirmation" class="block text-xs font-medium text-gray-300 mb-1.5 ml-1">Confirm Password</label>
+                                <div class="relative group">
+                                    <i class="ph ph-lock-key absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors text-lg"></i>
+                                    <input type="password" name="password_confirmation" id="password_confirmation" class="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-11 pr-11 text-white placeholder-gray-500 focus:outline-none focus:border-primary/50 focus:bg-white/10 transition-all text-sm" placeholder="••••••••" required>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="w-full bg-gradient-to-r from-primary to-[#ff8c33] hover:from-[#ff8c33] hover:to-primary text-white py-3.5 rounded-xl font-bold transition-all duration-300 shadow-[0_0_15px_rgba(255,107,0,0.3)] hover:shadow-[0_0_25px_rgba(255,107,0,0.5)] hover:-translate-y-0.5 mt-2 flex items-center justify-center gap-2">
+                                Create Account <i class="ph-bold ph-arrow-right"></i>
+                            </button>
+                        </form>
+
+                        <p class="text-center text-xs text-gray-400 mt-8">
+                            Already have an account? <button type="button" id="show-login" class="text-primary hover:text-white font-bold transition-colors">Sign in</button>
+                        </p>
                     </div>
-
-                    <button type="submit" class="w-full bg-gradient-to-r from-primary to-[#ff8c33] hover:from-[#ff8c33] hover:to-primary text-white py-3.5 rounded-xl font-bold transition-all duration-300 shadow-[0_0_15px_rgba(255,107,0,0.3)] hover:shadow-[0_0_25px_rgba(255,107,0,0.5)] hover:-translate-y-0.5 mt-2 flex items-center justify-center gap-2">
-                        Sign In <i class="ph-bold ph-sign-in"></i>
-                    </button>
-                </form>
-
-                <div class="mt-8 mb-6 relative flex items-center justify-center">
-                    <div class="absolute w-full h-px bg-white/10"></div>
-                    <span class="bg-[#050505] px-4 text-xs font-medium text-gray-500 relative z-10" style="background-color: #0c0c0c;">Or continue with</span>
                 </div>
-
-                <!-- Social Login -->
-                <div class="grid grid-cols-2 gap-3">
-                    <button class="flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all py-2.5 rounded-xl text-sm font-medium text-white group">
-                        <i class="ph-fill ph-google-logo text-lg text-gray-300 group-hover:text-white transition-colors"></i> Google
-                    </button>
-                    <button class="flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all py-2.5 rounded-xl text-sm font-medium text-white group">
-                        <i class="ph-fill ph-facebook-logo text-lg text-[#1877F2]"></i> Facebook
-                    </button>
-                </div>
-
-                <p class="text-center text-xs text-gray-400 mt-8">
-                    Don't have an account? <a href="#" class="text-primary hover:text-white font-bold transition-colors">Create one now</a>
-                </p>
             </div>
         </div>
     </div>
@@ -225,31 +294,68 @@
         window.addEventListener('load', () => {
             const preloader = document.getElementById('preloader');
             if (preloader) {
-                if (!sessionStorage.getItem('techforge_visited')) {
-                    sessionStorage.setItem('techforge_visited', 'true');
-                    setTimeout(() => {
-                        preloader.classList.add('opacity-0');
-                        setTimeout(() => preloader.style.display = 'none', 1000); 
-                    }, 1800);
-                } else {
+                sessionStorage.setItem('techforge_visited', 'true');
+                setTimeout(() => {
                     preloader.classList.add('opacity-0');
-                    setTimeout(() => preloader.style.display = 'none', 1000);
-                }
+                    setTimeout(() => preloader.style.display = 'none', 1000); 
+                }, 1800);
             }
         });
 
-        // Password Toggle Script
-        const togglePassword = document.getElementById('toggle-password');
-        const passwordInput = document.getElementById('password');
-        const toggleIcon = document.getElementById('toggle-icon');
+        // Toggle Login/Register Forms
+        const loginContainer = document.getElementById('login-container');
+        const registerContainer = document.getElementById('register-container');
+        const showRegisterBtn = document.getElementById('show-register');
+        const showLoginBtn = document.getElementById('show-login');
+        const formsWrapper = document.getElementById('forms-wrapper');
 
-        if (togglePassword && passwordInput && toggleIcon) {
-            togglePassword.addEventListener('click', () => {
-                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-                passwordInput.setAttribute('type', type);
-                toggleIcon.className = type === 'password' ? 'ph ph-eye text-lg' : 'ph ph-eye-slash text-lg';
-            });
+        function updateWrapperHeight(targetContainer) {
+            formsWrapper.style.height = targetContainer.scrollHeight + 'px';
         }
+        
+        // Initialize height
+        setTimeout(() => updateWrapperHeight(loginContainer), 100);
+
+        showRegisterBtn.addEventListener('click', () => {
+            // Hide Login
+            loginContainer.classList.remove('translate-x-0', 'opacity-100');
+            loginContainer.classList.add('-translate-x-full', 'opacity-0', 'pointer-events-none');
+            
+            // Show Register
+            registerContainer.classList.remove('translate-x-full', 'opacity-0', 'pointer-events-none');
+            registerContainer.classList.add('translate-x-0', 'opacity-100');
+            
+            updateWrapperHeight(registerContainer);
+        });
+
+        showLoginBtn.addEventListener('click', () => {
+            // Hide Register
+            registerContainer.classList.remove('translate-x-0', 'opacity-100');
+            registerContainer.classList.add('translate-x-full', 'opacity-0', 'pointer-events-none');
+            
+            // Show Login
+            loginContainer.classList.remove('-translate-x-full', 'opacity-0', 'pointer-events-none');
+            loginContainer.classList.add('translate-x-0', 'opacity-100');
+            
+            updateWrapperHeight(loginContainer);
+        });
+
+        // Handle URL parameters to show specific form
+        if (window.location.search.includes('register=true')) {
+            showRegisterBtn.click();
+        }
+
+        // Password Toggle Script
+        const togglePasswordBtns = document.querySelectorAll('.toggle-password');
+        togglePasswordBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const input = btn.previousElementSibling;
+                const icon = btn.querySelector('i');
+                const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+                input.setAttribute('type', type);
+                icon.className = type === 'password' ? 'ph ph-eye text-lg' : 'ph ph-eye-slash text-lg';
+            });
+        });
     </script>
 
 </body>
