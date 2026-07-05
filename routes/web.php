@@ -14,88 +14,59 @@ Route::post('/login', [\App\Http\Controllers\AuthController::class, 'login'])->n
 Route::post('/register', [\App\Http\Controllers\AuthController::class, 'register'])->name('register.post');
 Route::post('/logout', [\App\Http\Controllers\AuthController::class, 'logout'])->name('logout');
 
-Route::get('/cart', function () {
-    return view('cart');
-})->name('cart');
+Route::get('/cart', [\App\Http\Controllers\CartController::class, 'index'])->name('cart');
 
 Route::get('/notifications', function () {
     return view('notifications');
 })->name('notifications');
 
+Route::get('/account/profile', function () {
+    return view('account.index');
+})->name('account.profile');
+
+Route::get('/account/purchases', function () {
+    return view('account.index');
+})->name('account.purchases');
+
+Route::post('/account/profile', [\App\Http\Controllers\AccountController::class, 'updateProfile'])->name('account.profile.update');
+
+Route::get('/build-overview/{id}', function (\Illuminate\Http\Request $request, $id) {
+    if ($request->query('type') === 'custom') {
+        $product = \App\Models\CustombuiltConfig::with(['cpu', 'gpu', 'motherboard', 'ram', 'storage', 'powerSupply', 'pcCase'])->findOrFail($id);
+    } else {
+        $product = \App\Models\PrebuiltConfig::with(['cpu', 'gpu', 'motherboard', 'ram', 'storage', 'powerSupply', 'pcCase'])->findOrFail($id);
+    }
+    
+    $cpus = \App\Models\Cpu::all()->map(function($i) { $i->type = 'Processor'; return $i; });
+    $gpus = \App\Models\Gpu::all()->map(function($i) { $i->type = 'Video Card'; return $i; });
+    $rams = \App\Models\Ram::all()->map(function($i) { $i->type = 'Memory'; return $i; });
+    $storages = \App\Models\Storage::all()->map(function($i) { $i->type = 'Storage'; return $i; });
+    $mobos = \App\Models\Motherboard::all()->map(function($i) { $i->type = 'Motherboard'; return $i; });
+    $psus = \App\Models\PowerSupply::all()->map(function($i) { $i->type = 'Power Supply'; return $i; });
+    $cases = \App\Models\PcCase::all()->map(function($i) { $i->type = 'Case'; return $i; });
+    
+    $allComponents = $cpus->concat($gpus)->concat($rams)->concat($storages)->concat($mobos)->concat($psus)->concat($cases);
+    
+    return view('build-overview', compact('product', 'allComponents'));
+})->name('build-overview');
+
 Route::get('/build-pc', function () {
-    return view('plugins.build-pc');
+    $cpus = \App\Models\Cpu::all()->map(function($i) { $i->type = 'Processor'; return $i; });
+    $gpus = \App\Models\Gpu::all()->map(function($i) { $i->type = 'Video Card'; return $i; });
+    $rams = \App\Models\Ram::all()->map(function($i) { $i->type = 'Memory'; return $i; });
+    $storages = \App\Models\Storage::all()->map(function($i) { $i->type = 'Storage'; return $i; });
+    $mobos = \App\Models\Motherboard::all()->map(function($i) { $i->type = 'Motherboard'; return $i; });
+    $psus = \App\Models\PowerSupply::all()->map(function($i) { $i->type = 'Power Supply'; return $i; });
+    $cases = \App\Models\PcCase::all()->map(function($i) { $i->type = 'Case'; return $i; });
+    
+    $allComponents = $cpus->concat($gpus)->concat($rams)->concat($storages)->concat($mobos)->concat($psus)->concat($cases);
+
+    return view('plugins.build-pc', compact('allComponents'));
 })->name('build-pc');
 
-Route::get('/gaming-pcs', function (\Illuminate\Http\Request $request) {
-    $query = \App\Models\Product::query();
+Route::get('/gaming-pcs', [\App\Http\Controllers\GamingPcController::class, 'index'])->name('gaming-pcs');
+Route::get('/custom-pcs', [\App\Http\Controllers\CustomPcController::class, 'index'])->name('custom-pcs');
+Route::get('/prebuilt-pcs', [\App\Http\Controllers\PrebuiltPcController::class, 'index'])->name('prebuilt-pcs');
 
-    // Category Filter
-    if ($request->filled('category') && $request->category !== 'All PCs') {
-        $query->where('category', $request->category);
-    }
-
-    // Price Filter
-    if ($request->filled('price_min')) {
-        $query->where('price', '>=', $request->price_min);
-    }
-    if ($request->filled('price_max')) {
-        $query->where('price', '<=', $request->price_max);
-    }
-
-    // Brand Filter
-    if ($request->filled('brand')) {
-        $query->whereIn('brand', $request->brand);
-    }
-
-    // Processor Filter
-    if ($request->filled('processor')) {
-        $query->whereIn('processor', $request->processor);
-    }
-
-    // Sorting
-    $sort = $request->input('sort', 'Recommended');
-    switch ($sort) {
-        case 'Price: Low to High':
-            $query->orderBy('price', 'asc');
-            break;
-        case 'Price: High to Low':
-            $query->orderBy('price', 'desc');
-            break;
-        case 'Newest Arrivals':
-            $query->latest();
-            break;
-        case 'Customer Reviews':
-            $query->orderBy('rating', 'desc');
-            break;
-        default:
-            // Recommended (no specific sort, or by ID)
-            $query->orderBy('id', 'asc');
-            break;
-    }
-
-    $products = $query->get();
-    
-    // Accurate filter counts
-    $counts = [
-        'categories' => [
-            'All PCs' => \App\Models\Product::count(),
-            'Prebuilt Desktops' => \App\Models\Product::where('category', 'Prebuilt Desktops')->count(),
-            'Custom Builds' => \App\Models\Product::where('category', 'Custom Builds')->count(),
-        ],
-        'brands' => [
-            'TechForge Forge' => \App\Models\Product::where('brand', 'TechForge Forge')->count(),
-            'ASUS ROG' => \App\Models\Product::where('brand', 'ASUS ROG')->count(),
-            'MSI' => \App\Models\Product::where('brand', 'MSI')->count(),
-            'Lenovo Legion' => \App\Models\Product::where('brand', 'Lenovo Legion')->count(),
-        ],
-        'processors' => [
-            'Intel Core i9' => \App\Models\Product::where('processor', 'Intel Core i9')->count(),
-            'Intel Core i7' => \App\Models\Product::where('processor', 'Intel Core i7')->count(),
-            'AMD Ryzen 9' => \App\Models\Product::where('processor', 'AMD Ryzen 9')->count(),
-            'AMD Ryzen 7' => \App\Models\Product::where('processor', 'AMD Ryzen 7')->count(),
-        ],
-    ];
-
-    return view('gaming-pcs', compact('products', 'counts'));
-})->name('gaming-pcs');
-
+Route::post('/cart/add', [\App\Http\Controllers\CartController::class, 'add'])->name('cart.add');
+Route::get('/cart/count', [\App\Http\Controllers\CartController::class, 'getCount'])->name('cart.count');

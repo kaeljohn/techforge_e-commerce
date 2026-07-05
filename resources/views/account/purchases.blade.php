@@ -7,7 +7,7 @@
     
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
-    <title>{{ config('app.name', 'TechForge') }} | Notifications</title>
+    <title>{{ config('app.name', 'TechForge') }} | Cart & Returns</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -185,38 +185,78 @@
 
     <x-navbar />
 
-    <!-- Notifications Section -->
+    <!-- Account Section -->
     <main class="relative pt-40 pb-20 lg:pt-48 lg:pb-28 overflow-hidden z-10 min-h-screen">
-        <div class="max-w-4xl mx-auto px-10 sm:px-12 lg:px-14">
+        <div class="max-w-7xl mx-auto px-6 sm:px-12 lg:px-14">
             
-            <!-- Page Header -->
-            <div class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-white/10 pb-6">
-                <div>
-                    <h1 class="text-3xl sm:text-4xl font-black text-white mb-2">Notifications</h1>
-                    <p class="text-sm text-gray-400">Stay updated with your latest alerts and offers.</p>
-                </div>
-                <button class="text-sm font-bold text-gray-400 hover:text-white transition-colors flex items-center gap-2">
-                    <i class="ph-bold ph-check-circle"></i> Mark all as read
-                </button>
-            </div>
-
-            <div class="space-y-4">
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-10">
                 
-                <!-- Notification Item -->
-                <div class="liquid-glass rounded-3xl p-6 border border-white/10 flex flex-col sm:flex-row items-start gap-6 relative group hover:border-primary/30 transition-all shadow-[0_5px_20px_rgba(0,0,0,0.5)] bg-white/5">
-                    <div class="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center shrink-0 border border-primary/20">
-                        <i class="ph-fill ph-ticket text-2xl text-primary"></i>
-                    </div>
-                    <div class="flex-1 flex flex-col justify-center py-1">
-                        <div class="flex items-center gap-3 mb-1">
-                            <h3 class="text-lg font-bold text-white group-hover:text-primary transition-colors">Special Offer!</h3>
-                            <span class="w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_rgba(255,107,0,0.8)]"></span>
+                <!-- Sidebar -->
+                <div class="lg:col-span-1 flex flex-col gap-6">
+                    <div class="flex flex-col gap-2">
+                        
+                        <!-- Account Details Category -->
+                        <div class="flex flex-col">
+                            <div class="flex items-center gap-3 text-gray-400 font-bold text-base mb-2">
+                                <i class="ph ph-user text-xl"></i>
+                                Account Details
+                            </div>
+                            <!-- Subcategories -->
+                            <div class="flex flex-col ml-8 gap-3 border-l border-white/10 pl-4 py-1">
+                                <a href="{{ route('account.profile') }}" class="text-gray-400 hover:text-white transition-colors text-sm">Profile</a>
+                                <a href="#" class="text-gray-400 hover:text-white transition-colors text-sm">Bank & Cards</a>
+                                <a href="#" class="text-gray-400 hover:text-white transition-colors text-sm">Addresses</a>
+                                <a href="#" class="text-gray-400 hover:text-white transition-colors text-sm">Change Password</a>
+                            </div>
                         </div>
-                        <p class="text-sm text-gray-300 leading-relaxed mb-3">Sign up for an account now to receive a 10% discount voucher on your first order. Don't miss out on upgrading your battle station for less.</p>
-                        <div class="flex items-center justify-between mt-auto">
-                            <span class="text-xs text-gray-500 font-medium">Just now</span>
-                            <a href="{{ route('login') }}" class="text-xs font-bold text-primary hover:text-white transition-colors flex items-center gap-1 group/link">
-                                Sign Up Now <i class="ph-bold ph-arrow-right group-hover/link:translate-x-1 transition-transform"></i>
+
+                        <!-- Other Categories -->
+                        <a href="{{ route('account.purchases') }}" class="flex items-center gap-3 text-white font-bold text-base mt-4">
+                            <i class="ph ph-receipt text-xl text-primary"></i>
+                            Purchases
+                        </a>
+                        <a href="#" class="flex items-center gap-3 text-gray-400 hover:text-white transition-colors font-bold text-base mt-2">
+                            <i class="ph ph-ticket text-xl"></i>
+                            Vouchers
+                        </a>
+                        <a href="#" class="flex items-center gap-3 text-gray-400 hover:text-white transition-colors font-bold text-base mt-2">
+                            <i class="ph ph-coins text-xl"></i>
+                            Forge Points
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Content -->
+                <div class="lg:col-span-3 liquid-glass rounded-3xl p-6 sm:p-10 border border-white/10 shadow-2xl relative overflow-hidden">
+                    <!-- Glassmorphism subtle glow -->
+                    <div class="absolute -top-20 -right-20 w-40 h-40 bg-primary/20 blur-3xl rounded-full pointer-events-none"></div>
+
+                    <div class="border-b border-white/10 pb-4 mb-6 relative z-10">
+                        <h2 class="text-2xl font-black text-white">Purchases</h2>
+                        <p class="text-sm text-gray-400 mt-1">View and track your orders</p>
+                    </div>
+
+                    <div class="relative z-10 flex flex-col gap-6">
+                        <!-- Tabs -->
+                        <div class="flex overflow-x-auto gap-2 sm:gap-6 border-b border-white/10 pb-2 scrollbar-hide">
+                            <a href="#" class="text-primary font-bold border-b-2 border-primary pb-2 px-1 sm:px-2 whitespace-nowrap text-sm transition-colors">All</a>
+                            <a href="#" class="text-gray-400 hover:text-white font-medium pb-2 px-1 sm:px-2 whitespace-nowrap text-sm transition-colors border-b-2 border-transparent hover:border-white/30">To Pay</a>
+                            <a href="#" class="text-gray-400 hover:text-white font-medium pb-2 px-1 sm:px-2 whitespace-nowrap text-sm transition-colors border-b-2 border-transparent hover:border-white/30">To Ship</a>
+                            <a href="#" class="text-gray-400 hover:text-white font-medium pb-2 px-1 sm:px-2 whitespace-nowrap text-sm transition-colors border-b-2 border-transparent hover:border-white/30">To Receive</a>
+                            <a href="#" class="text-gray-400 hover:text-white font-medium pb-2 px-1 sm:px-2 whitespace-nowrap text-sm transition-colors border-b-2 border-transparent hover:border-white/30">Completed</a>
+                            <a href="#" class="text-gray-400 hover:text-white font-medium pb-2 px-1 sm:px-2 whitespace-nowrap text-sm transition-colors border-b-2 border-transparent hover:border-white/30">Cancelled</a>
+                            <a href="#" class="text-gray-400 hover:text-white font-medium pb-2 px-1 sm:px-2 whitespace-nowrap text-sm transition-colors border-b-2 border-transparent hover:border-white/30">Return / Refund</a>
+                        </div>
+                        
+                        <!-- Empty State -->
+                        <div class="py-20 flex flex-col items-center justify-center text-center">
+                            <div class="w-24 h-24 bg-white/5 rounded-full flex items-center justify-center mb-6 shadow-inner">
+                                <i class="ph ph-receipt text-5xl text-gray-600"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-white mb-2">No orders yet</h3>
+                            <p class="text-gray-400 text-sm max-w-xs sm:max-w-sm">When you place an order, it will show up here. Browse our store to find your next PC!</p>
+                            <a href="{{ route('gaming-pcs') }}" class="mt-8 bg-gradient-to-r from-primary to-[#ff8c33] hover:from-[#ff8c33] hover:to-primary text-white px-8 py-3 rounded-xl text-sm font-bold transition-all shadow-[0_0_15px_rgba(255,107,0,0.3)] hover:shadow-[0_0_25px_rgba(255,107,0,0.5)] transform hover:-translate-y-0.5">
+                                Start Shopping
                             </a>
                         </div>
                     </div>
@@ -225,9 +265,6 @@
             </div>
         </div>
     </main>
-
-    <x-footer />
-
 
     <!-- Preloader Script -->
     <script>

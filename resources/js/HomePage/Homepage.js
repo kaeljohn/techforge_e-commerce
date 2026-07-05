@@ -54,6 +54,12 @@ if (imgEl) {
             titleEl.textContent = carouselData[index].title;
             descEl.textContent = carouselData[index].desc;
             priceEl.textContent = carouselData[index].price;
+            
+            const btnEl = document.getElementById('carousel-add-btn');
+            if(btnEl) {
+                btnEl.dataset.name = carouselData[index].title;
+                btnEl.dataset.price = carouselData[index].price;
+            }
 
             // Update dots
             dots.forEach((dot, i) => {
@@ -520,3 +526,192 @@ if (partsBtn && partsDropdown && navOverlay) {
         }
     });
 }
+
+// Cart Add Logic
+document.addEventListener('DOMContentLoaded', () => {
+    // Inject Modal HTML
+    const cartModalHtml = `
+    <div id="cart-modal" class="fixed inset-0 z-[100] flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" id="cart-modal-backdrop"></div>
+        <div class="relative bg-[#121212] border border-white/10 rounded-2xl p-6 shadow-2xl max-w-sm w-full mx-4 transform scale-95 transition-transform duration-300" id="cart-modal-content">
+            <div class="flex items-start justify-between mb-4">
+                <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                    <i class="ph-fill ph-check-circle text-green-500"></i> Added to Cart
+                </h3>
+                <button id="close-cart-modal" class="text-gray-400 hover:text-white transition-colors">
+                    <i class="ph ph-x text-xl"></i>
+                </button>
+            </div>
+            <div class="flex gap-4 mb-6">
+                <div class="w-16 h-16 bg-white/5 rounded-xl border border-white/10 flex items-center justify-center overflow-hidden shrink-0">
+                    <img id="modal-product-image" src="" alt="Product" class="w-full h-full object-cover hidden">
+                    <i id="modal-product-icon" class="ph-light ph-desktop text-2xl text-gray-500"></i>
+                </div>
+                <div class="flex-1 min-w-0 flex flex-col justify-center">
+                    <p id="modal-product-name" class="text-sm font-bold text-gray-200 mb-1 line-clamp-2"></p>
+                    <p id="modal-product-price" class="text-primary font-black"></p>
+                </div>
+            </div>
+            <div class="flex gap-3">
+                <button id="continue-shopping-btn" class="flex-1 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl py-2.5 text-sm font-bold text-white transition-colors">
+                    Continue Shopping
+                </button>
+                <a href="/cart" class="flex-1 bg-gradient-to-r from-primary to-orange-400 hover:from-primary hover:to-orange-500 rounded-xl py-2.5 text-sm font-bold text-white text-center transition-colors shadow-[0_0_15px_rgba(255,107,0,0.3)] flex items-center justify-center">
+                    View Cart
+                </a>
+            </div>
+        </div>
+    </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', cartModalHtml);
+
+    const cartModal = document.getElementById('cart-modal');
+    const cartModalContent = document.getElementById('cart-modal-content');
+    const closeCartModal = document.getElementById('close-cart-modal');
+    const continueShoppingBtn = document.getElementById('continue-shopping-btn');
+    const cartModalBackdrop = document.getElementById('cart-modal-backdrop');
+
+    function hideModal() {
+        cartModal.classList.remove('opacity-100', 'pointer-events-auto');
+        cartModal.classList.add('opacity-0', 'pointer-events-none');
+        cartModalContent.classList.remove('scale-100');
+        cartModalContent.classList.add('scale-95');
+        lenis.start();
+    }
+
+    [closeCartModal, continueShoppingBtn, cartModalBackdrop].forEach(el => {
+        if(el) el.addEventListener('click', hideModal);
+    });
+
+    // Flying Animation function
+    function animateAddToCart(sourceElement) {
+        const cartBtn = document.getElementById('cart-btn');
+        if (!cartBtn || !sourceElement) return;
+
+        const sourceRect = sourceElement.getBoundingClientRect();
+        const targetRect = cartBtn.getBoundingClientRect();
+
+        const flyingEl = document.createElement('div');
+        flyingEl.classList.add('fixed', 'bg-primary', 'rounded-full', 'z-[110]', 'pointer-events-none');
+        
+        flyingEl.style.width = '16px';
+        flyingEl.style.height = '16px';
+        flyingEl.style.left = (sourceRect.left + sourceRect.width / 2 - 8) + 'px';
+        flyingEl.style.top = (sourceRect.top + sourceRect.height / 2 - 8) + 'px';
+        flyingEl.style.transition = 'all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1)';
+        flyingEl.style.boxShadow = '0 0 15px rgba(255,107,0,1)';
+        
+        document.body.appendChild(flyingEl);
+
+        // Force reflow
+        void flyingEl.offsetWidth;
+
+        flyingEl.style.left = (targetRect.left + targetRect.width / 2 - 8) + 'px';
+        flyingEl.style.top = (targetRect.top + targetRect.height / 2 - 8) + 'px';
+        flyingEl.style.transform = 'scale(0.3)';
+        flyingEl.style.opacity = '0.2';
+
+        setTimeout(() => {
+            flyingEl.remove();
+        }, 800);
+    }
+
+    // Initial cart count fetch
+    fetch('/cart/count')
+        .then(res => res.json())
+        .then(data => {
+            updateCartCount(data.cart_count);
+        })
+        .catch(err => console.error(err));
+
+    document.addEventListener('click', (e) => {
+        const btn = e.target.closest('.add-to-cart-btn');
+        if (!btn) return;
+        
+        e.preventDefault();
+            
+            const productId = btn.dataset.productId || 'mock-' + Math.floor(Math.random() * 1000);
+            const name = btn.dataset.name || 'Mock Product';
+            let priceStr = btn.dataset.price || '0';
+            const price = parseFloat(priceStr.replace(/[^0-9.-]+/g,"")); // Remove P, commas
+            const imageUrl = btn.dataset.image || '';
+
+            const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+            btn.classList.add('opacity-50', 'cursor-wait');
+
+            fetch('/cart/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': token,
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    product_id: productId,
+                    name: name,
+                    price: price,
+                    quantity: 1,
+                    image_url: imageUrl
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                btn.classList.remove('opacity-50', 'cursor-wait');
+                if (data.success) {
+                    // Trigger flying animation first
+                    animateAddToCart(btn);
+
+                    setTimeout(() => {
+                        updateCartCount(data.cart_count);
+                        
+                        // Show modal
+                        document.getElementById('modal-product-name').textContent = name;
+                        document.getElementById('modal-product-price').textContent = 'P' + price.toLocaleString();
+                        
+                        const imgEl = document.getElementById('modal-product-image');
+                        const iconEl = document.getElementById('modal-product-icon');
+                        if (imageUrl) {
+                            imgEl.src = imageUrl;
+                            imgEl.classList.remove('hidden');
+                            iconEl.classList.add('hidden');
+                        } else {
+                            imgEl.classList.add('hidden');
+                            iconEl.classList.remove('hidden');
+                        }
+                        
+                        cartModal.classList.remove('opacity-0', 'pointer-events-none');
+                        cartModal.classList.add('opacity-100', 'pointer-events-auto');
+                        cartModalContent.classList.remove('scale-95');
+                        cartModalContent.classList.add('scale-100');
+                        lenis.stop();
+                    }, 400); // delay modal slightly to let user see animation start
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                btn.classList.remove('opacity-50', 'cursor-wait');
+            });
+    });
+
+    function updateCartCount(count) {
+        // Specifically target only the notification badge span
+        const cartBadges = document.querySelectorAll('#cart-btn > div.relative > span.bg-primary');
+        cartBadges.forEach(badge => {
+            if (count > 0) {
+                badge.textContent = count;
+                badge.classList.remove('hidden');
+                badge.classList.add('flex');
+                
+                // Add a little pop animation to the badge when updated
+                badge.classList.remove('animate-ping');
+                void badge.offsetWidth; // trigger reflow
+                badge.classList.add('animate-pulse');
+                setTimeout(() => badge.classList.remove('animate-pulse'), 1000);
+            } else {
+                badge.classList.add('hidden');
+                badge.classList.remove('flex');
+            }
+        });
+    }
+});

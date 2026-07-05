@@ -187,24 +187,24 @@
     <main class="relative pt-32 pb-16 lg:pt-40 lg:pb-20 overflow-hidden w-full">
         <div class="w-full relative z-10 group" style="mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent); -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);">
             <div class="absolute inset-0 w-full h-full">
-                <img src="https://images.unsplash.com/photo-1547082299-de196ea013d6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="All Gaming PCs" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 opacity-40">
+                <img src="https://images.unsplash.com/photo-1547082299-de196ea013d6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="Pre-Built PCs" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 opacity-40">
                 <div class="absolute inset-0 bg-gradient-to-r from-[#050505] via-transparent to-[#050505] pointer-events-none"></div>
             </div>
             
             <div class="max-w-[1500px] mx-auto px-6 lg:px-8 relative z-10 py-16 md:py-24">
                 <div class="w-full md:w-2/3">
-                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-wide mb-4">All Gaming PCs</h1>
-                    <p class="text-gray-400 text-sm md:text-base leading-relaxed max-w-lg">Browse our full range of custom and prebuilt gaming PCs. Experience uncompromised performance, ready to ship directly to your door.</p>
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-wide mb-4">Pre-Built PCs</h1>
+                    <p class="text-gray-400 text-sm md:text-base leading-relaxed max-w-lg">Browse our full range of prebuilt gaming PCs. Ready to ship directly to your door. Experience uncompromised performance, ready to ship directly to your door.</p>
                 </div>
             </div>
         </div>
     </main>
 
     <!-- Category Content -->
-    <form id="filter-form" method="GET" action="{{ route('gaming-pcs') }}" class="max-w-[1500px] mx-auto px-6 lg:px-8 pb-24 relative z-10 flex flex-col lg:flex-row gap-8">
+    <form id="filter-form" method="GET" action="{{ route('prebuilt-pcs') }}" class="max-w-[1500px] mx-auto px-6 lg:px-8 pb-24 relative z-10 flex flex-col lg:flex-row gap-8">
         
         <!-- Product Filter Component -->
-        <x-product-filter :counts="$counts" route="gaming-pcs" />
+        <x-product-filter :counts="$counts" route="prebuilt-pcs" />
 
         <!-- Product Grid -->
         <div id="product-grid-area" class="flex-1 w-full lg:w-auto transition-opacity duration-300">
@@ -264,20 +264,9 @@
                             </div>
 
                             <!-- Action Button -->
-                            @if($config instanceof \App\Models\PrebuiltConfig)
-                                <button type="button" 
-                                    class="add-to-cart-btn w-full py-2 rounded-full border border-primary text-primary hover:bg-primary hover:text-white font-bold transition-all duration-300 text-center flex items-center justify-center gap-2 text-sm"
-                                    data-product-id="{{ $config->id }}"
-                                    data-name="{{ $config->name }}"
-                                    data-price="{{ $config->price }}"
-                                    data-image="{{ $config->image_url }}">
-                                    <i class="ph-bold ph-shopping-cart"></i> Add to Cart
-                                </button>
-                            @else
-                                <a href="{{ route('build-overview', ['id' => $config->id, 'type' => 'custom']) }}" class="w-full py-2 rounded-full border border-primary text-primary hover:bg-primary hover:text-white font-bold transition-all duration-300 text-center flex items-center justify-center gap-2 text-sm">
-                                    <i class="ph-bold ph-wrench"></i> Customize This Build
-                                </a>
-                            @endif
+                            <a href="{{ route('build-overview', $config->id) }}" class="w-full py-2 rounded-full border border-primary text-primary hover:bg-primary hover:text-white font-bold transition-all duration-300 text-center flex items-center justify-center gap-2 text-sm">
+                                <i class="ph-bold ph-eye"></i> View Details
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -299,6 +288,27 @@
 
         </div>
     </form>
+
+    
+    <!-- CTA Cards -->
+    <div class="max-w-[1500px] mx-auto px-6 lg:px-8 pb-24 relative z-10 grid grid-cols-1 md:grid-cols-2 gap-8">
+        <a href="{{ url('/custom-pcs') }}" class="block liquid-glass rounded-2xl p-8 border border-white/10 hover:border-primary/50 transition-all group overflow-hidden relative">
+            <div class="absolute -right-10 -bottom-10 opacity-10 group-hover:opacity-20 group-hover:scale-110 transition-all duration-500">
+                <i class="ph-fill ph-cpu text-[200px] text-white"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-white mb-2">Can't find what you need?</h3>
+            <p class="text-gray-400 mb-6">Choose from our curated selection of customizable builds.</p>
+            <span class="inline-flex items-center gap-2 text-primary font-bold">Customize a PC <i class="ph-bold ph-arrow-right group-hover:translate-x-2 transition-transform"></i></span>
+        </a>
+        <a href="{{ url('/build-pc') }}" class="block liquid-glass rounded-2xl p-8 border border-white/10 hover:border-primary/50 transition-all group overflow-hidden relative">
+            <div class="absolute -right-10 -bottom-10 opacity-10 group-hover:opacity-20 group-hover:scale-110 transition-all duration-500">
+                <i class="ph-fill ph-hammer text-[200px] text-white"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-white mb-2">Build from Scratch</h3>
+            <p class="text-gray-400 mb-6">Use PC Forge to pick every single component yourself.</p>
+            <span class="inline-flex items-center gap-2 text-primary font-bold">Launch PC Forge <i class="ph-bold ph-arrow-right group-hover:translate-x-2 transition-transform"></i></span>
+        </a>
+    </div>
 
     <x-footer />
 

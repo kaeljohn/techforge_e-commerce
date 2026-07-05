@@ -183,177 +183,7 @@
 
 
 
-    <!-- Search Overlay -->
-    <div id="search-overlay" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[65] opacity-0 pointer-events-none transition-all duration-300"></div>
-
-    <!-- Navigation -->
-    <nav class="fixed w-[calc(100%-2rem)] sm:w-[calc(100%-3rem)] lg:w-[calc(100%-4rem)] max-w-7xl left-1/2 -translate-x-1/2 top-4 z-[70] px-4 sm:px-6 py-3 flex items-center justify-between gap-4 sm:gap-6 transition-all duration-300">
-        <!-- Background for Nav to prevent backdrop-filter nesting bug -->
-        <div class="absolute inset-0 liquid-glass rounded-2xl -z-10 pointer-events-none"></div>
-
-        <!-- Logo & Name -->
-        <a href="{{ url('/') }}" class="flex items-center gap-3 shrink-0 relative z-30">
-            <div class="bg-gradient-to-br from-primary to-orange-400 w-10 h-10 rounded-xl flex items-center justify-center shadow-[0_0_15px_rgba(255,107,0,0.4)]">
-                <img src="{{ Vite::asset('resources/img/Techforge_Logo.png') }}" alt="TechForge Logo" class="h-6 w-auto object-contain">
-            </div>
-            <span class="hidden md:block text-xl font-bold tracking-wide text-white">TECHFORGE</span>
-        </a>
-
-        <!-- Search Bar (Automatically Enlarged) -->
-        <div id="search-container" class="flex-1 max-w-3xl relative z-50">
-            <div id="search-wrapper" class="relative flex items-center w-full h-11 bg-neutral-900 border border-white/10 hover:border-white/20 hover:bg-white/5 transition-all duration-300 rounded-2xl group">
-                <input type="text" id="search-input" placeholder="What are we searching?" class="w-full h-full bg-transparent outline-none pl-5 pr-20 text-sm text-white placeholder-gray-400 font-light rounded-2xl relative z-10">
-                
-                <!-- Clear Button -->
-                <button id="search-clear" class="absolute right-12 w-7 h-7 flex items-center justify-center text-gray-400 hover:text-white transition-all opacity-0 pointer-events-none z-20">
-                    <i class="ph ph-x text-sm"></i>
-                </button>
-
-                <button class="absolute right-1 w-9 h-9 flex items-center justify-center bg-primary hover:bg-primary-hover text-white rounded-xl transition-colors shadow-[0_0_10px_rgba(255,107,0,0.3)] z-20">
-                    <i class="ph ph-magnifying-glass text-lg"></i>
-                </button>
-            </div>
-            
-            <!-- Search Dropdown -->
-            <div id="search-dropdown" class="liquid-glass-heavy absolute top-[calc(100%+0.5rem)] left-0 w-full rounded-2xl overflow-hidden shadow-2xl py-3 opacity-0 pointer-events-none transition-all duration-300 transform -translate-y-2 origin-top">
-                <ul class="text-sm text-gray-300 flex flex-col">
-                </ul>
-            </div>
-        </div>
-
-        <!-- Actions -->
-        <div class="flex items-center gap-4 shrink-0">
-            
-            <!-- Location -->
-            <div class="hidden lg:flex items-center gap-2 cursor-pointer hover:text-white group">
-                <i class="ph ph-map-pin text-xl text-gray-400 group-hover:text-primary transition-colors"></i>
-                <div class="flex flex-col text-left">
-                    <span class="text-[10px] text-gray-400 leading-tight">Deliver to</span>
-                    <span class="text-sm font-bold text-white group-hover:text-primary transition-colors leading-tight">Philippines</span>
-                </div>
-            </div>
-
-            <!-- Sign In -->
-            @auth
-            <div class="hidden lg:flex items-center gap-4 relative">
-                <div id="user-dropdown-btn" class="flex items-center gap-2 cursor-pointer group">
-                    <i class="ph ph-user text-xl text-primary transition-colors"></i>
-                    <div class="flex flex-col text-left">
-                        <span class="text-[10px] text-gray-400 leading-tight">Welcome</span>
-                        <span class="text-sm font-bold text-white leading-tight">{{ Auth::user()->name }}</span>
-                    </div>
-                </div>
-                
-                <!-- Dropdown Menu -->
-                <div id="user-dropdown" class="opacity-0 pointer-events-none scale-95 transition-all duration-300 origin-top-right absolute top-full right-0 mt-4 w-56 liquid-glass border border-white/10 rounded-xl shadow-2xl py-2 z-50" onclick="event.stopPropagation();">
-                    <div class="px-4 py-3 border-b border-white/10 mb-2 bg-white/5 mx-2 rounded-lg">
-                        <p class="text-[10px] text-gray-400 uppercase font-bold tracking-wider mb-0.5">FORGE Points</p>
-                        <div class="flex items-end gap-2">
-                            <p class="text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-primary to-[#ff8c33]">0</p>
-                            <p class="text-[10px] font-normal text-gray-500 mb-1 pb-0.5">(For now)</p>
-                        </div>
-                    </div>
-                    <a href="#" class="flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-colors">
-                        <i class="ph ph-user-circle text-lg text-gray-400"></i> My Account
-                    </a>
-                    <a href="#" class="flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-colors">
-                        <i class="ph ph-receipt text-lg text-gray-400"></i> Order History
-                    </a>
-                    
-                    <form action="{{ route('logout') }}" method="POST" class="w-full mt-2 border-t border-white/10 pt-2">
-                        @csrf
-                        <button type="submit" class="flex items-center gap-3 w-full text-left px-5 py-2.5 text-sm font-bold text-red-500 hover:text-red-400 hover:bg-red-500/10 transition-colors">
-                            <i class="ph ph-sign-out text-lg"></i> Sign Out
-                        </button>
-                    </form>
-                </div>
-                
-                <script>
-                    const btn = document.getElementById('user-dropdown-btn');
-                    const dropdown = document.getElementById('user-dropdown');
-                    if(btn && dropdown) {
-                        btn.addEventListener('click', (e) => {
-                            e.stopPropagation();
-                            if(dropdown.classList.contains('opacity-0')) {
-                                dropdown.classList.remove('opacity-0', 'pointer-events-none', 'scale-95');
-                                dropdown.classList.add('opacity-100', 'pointer-events-auto', 'scale-100');
-                            } else {
-                                dropdown.classList.add('opacity-0', 'pointer-events-none', 'scale-95');
-                                dropdown.classList.remove('opacity-100', 'pointer-events-auto', 'scale-100');
-                            }
-                        });
-                        document.addEventListener('click', () => {
-                            if (!dropdown.classList.contains('opacity-0')) {
-                                dropdown.classList.add('opacity-0', 'pointer-events-none', 'scale-95');
-                                dropdown.classList.remove('opacity-100', 'pointer-events-auto', 'scale-100');
-                            }
-                        });
-                    }
-                </script>
-            </div>
-            @else
-            <a href="{{ route('login') }}" class="hidden lg:flex items-center gap-2 cursor-pointer group">
-                <i class="ph ph-user text-xl text-gray-400 group-hover:text-primary transition-colors"></i>
-                <div class="flex flex-col text-left">
-                    <span class="text-[10px] text-gray-400 leading-tight">Welcome</span>
-                    <span class="text-sm font-bold text-white group-hover:text-primary transition-colors leading-tight">Sign In / Register</span>
-                </div>
-            </a>
-            @endauth
-
-            <!-- Notification Container -->
-            <div class="relative z-30 shrink-0 group">
-                <!-- Notification Button -->
-                <a href="{{ route('notifications') }}" class="w-11 h-11 flex items-center justify-center rounded-2xl border border-white/10 hover:border-white/20 hover:bg-white/5 transition-all text-gray-300 hover:text-white relative shrink-0">
-                    <i class="ph ph-bell text-xl"></i>
-                    <span class="absolute top-[10px] right-[10px] w-2 h-2 bg-primary rounded-full shadow-[0_0_8px_rgba(255,107,0,0.8)]"></span>
-                </a>
-
-                <!-- Notification Dropdown -->
-                <div class="liquid-glass-heavy absolute top-[calc(100%+0.5rem)] right-0 w-80 sm:w-96 rounded-2xl overflow-hidden shadow-2xl p-5 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-300 transform group-hover:translate-y-0 -translate-y-2 origin-top">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg font-bold text-white">Notifications</h3>
-                        <span class="bg-primary/20 text-primary text-[10px] font-bold px-2 py-1 rounded-md">1 New</span>
-                    </div>
-                    
-                    <div class="flex flex-col gap-3 mb-4">
-                        <!-- Notification Item -->
-                        <a href="{{ route('login') }}" class="flex items-start gap-4 p-3 rounded-xl hover:bg-white/5 transition-colors group/item border border-transparent hover:border-white/5">
-                            <div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
-                                <i class="ph-fill ph-ticket text-xl text-primary"></i>
-                            </div>
-                            <div class="flex-1 min-w-0 pt-0.5">
-                                <h4 class="text-sm font-bold text-white mb-1 group-hover/item:text-primary transition-colors">Special Offer!</h4>
-                                <p class="text-xs text-gray-400 leading-relaxed">Sign up for an account now to receive a 10% discount voucher on your first order.</p>
-                                <span class="text-[10px] text-gray-500 mt-2 block">Just now</span>
-                            </div>
-                        </a>
-                    </div>
-                    
-                    <div class="flex justify-center pt-3 border-t border-white/10 mt-2">
-                        <a href="{{ route('notifications') }}" class="text-xs font-bold text-gray-400 hover:text-primary transition-colors">
-                            View All Notifications
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Cart Container -->
-            <div id="cart-container" class="relative z-30 shrink-0">
-                <a href="{{ route('cart') }}" id="cart-btn" class="flex items-center gap-2 w-auto h-11 px-3 sm:px-4 rounded-2xl border border-white/10 hover:border-white/20 hover:bg-white/5 transition-all text-gray-300 hover:text-white relative">
-                    <div class="relative">
-                        <i class="ph ph-shopping-cart text-xl"></i>
-                        <span class="hidden absolute -top-1 -right-1 w-3.5 h-3.5 items-center justify-center text-[8px] font-bold bg-primary text-white rounded-full">0</span>
-                    </div>
-                    <div class="hidden sm:flex flex-col text-left ml-1">
-                        <span class="text-[10px] text-gray-400 leading-tight">Returns</span>
-                        <span class="text-sm font-bold text-white leading-tight">& Cart</span>
-                    </div>
-                </a>
-            </div>
-            
-        </div>
-    </nav>
+    <x-navbar />
 
     <!-- Cart & Returns Section -->
     <main class="relative pt-40 pb-20 lg:pt-48 lg:pb-28 overflow-hidden z-10 min-h-screen">
@@ -373,32 +203,54 @@
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
                 
                 <!-- Cart Items (Left) -->
-                <div class="@auth lg:col-span-8 @else lg:col-span-12 max-w-4xl mx-auto w-full @endauth space-y-6">
+                <div class="lg:col-span-8 space-y-6">
                     
                     <h3 class="text-xl font-bold text-white mb-4">Your Items</h3>
 
-                    <!-- Empty Cart State -->
-                    <div class="liquid-glass rounded-3xl p-10 border border-white/10 flex flex-col items-center justify-center text-center min-h-[300px]">
-                        <div class="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mb-4 border border-white/10">
-                            <i class="ph-light ph-shopping-cart text-4xl text-gray-400"></i>
+                    @if(count($cart) > 0)
+                        @foreach($cart as $id => $item)
+                        <div class="liquid-glass rounded-2xl p-4 border border-white/10 flex items-center gap-4">
+                            <!-- Product Image Placeholder -->
+                            <div class="w-24 h-24 bg-[#0a0a0a] rounded-xl flex-shrink-0 border border-white/5 flex items-center justify-center overflow-hidden">
+                                @if(isset($item['image_url']) && !empty($item['image_url']))
+                                    <img src="{{ $item['image_url'] }}" alt="{{ $item['name'] }}" class="w-full h-full object-cover">
+                                @else
+                                    <i class="ph-light ph-desktop text-3xl text-gray-600"></i>
+                                @endif
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h4 class="text-white font-bold truncate">{{ $item['name'] }}</h4>
+                                <p class="text-sm text-gray-400 mt-1">Quantity: {{ $item['quantity'] }}</p>
+                                <p class="text-primary font-bold mt-2">₱{{ number_format($item['price'], 2) }}</p>
+                            </div>
+                            <button class="text-gray-500 hover:text-red-500 transition-colors p-2">
+                                <i class="ph ph-trash text-xl"></i>
+                            </button>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-2">Your cart is currently empty.</h3>
-                        <p class="text-sm text-gray-400 mb-6">Looks like you haven't added anything yet. Discover our premium components and gear to elevate your setup.</p>
-                        <div class="flex items-center gap-4">
-                            @guest
-                            <a href="{{ route('login') }}" class="bg-gradient-to-r from-primary to-[#ff8c33] hover:from-[#ff8c33] hover:to-primary text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-all shadow-[0_0_15px_rgba(255,107,0,0.3)]">
-                                Sign In
-                            </a>
-                            @endguest
-                            <a href="{{ url('/') }}" class="bg-white/10 hover:bg-white/20 text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-all border border-white/10 hover:border-white/20">
-                                Browse Products
-                            </a>
+                        @endforeach
+                    @else
+                        <!-- Empty Cart State -->
+                        <div class="liquid-glass rounded-3xl p-10 border border-white/10 flex flex-col items-center justify-center text-center min-h-[300px]">
+                            <div class="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mb-4 border border-white/10">
+                                <i class="ph-light ph-shopping-cart text-4xl text-gray-400"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-white mb-2">Your cart is currently empty.</h3>
+                            <p class="text-sm text-gray-400 mb-6">Looks like you haven't added anything yet. Discover our premium components and gear to elevate your setup.</p>
+                            <div class="flex items-center gap-4">
+                                @guest
+                                <a href="{{ route('login') }}" class="bg-gradient-to-r from-primary to-[#ff8c33] hover:from-[#ff8c33] hover:to-primary text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-all shadow-[0_0_15px_rgba(255,107,0,0.3)]">
+                                    Sign In
+                                </a>
+                                @endguest
+                                <a href="{{ url('/') }}" class="bg-white/10 hover:bg-white/20 text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-all border border-white/10 hover:border-white/20">
+                                    Browse Products
+                                </a>
+                            </div>
                         </div>
-                    </div>
+                    @endif
 
                 </div>
 
-                @auth
                 <!-- Order Summary & Returns (Right) -->
                 <div class="lg:col-span-4 space-y-6">
                     
@@ -408,30 +260,36 @@
                         
                         <div class="space-y-4 text-sm mb-6">
                             <div class="flex justify-between text-gray-400">
-                                <span>Subtotal (0 items)</span>
-                                <span class="text-white font-medium">₱0</span>
+                                <span>Subtotal ({{ collect($cart)->sum('quantity') }} items)</span>
+                                <span class="text-white font-medium">₱{{ number_format($subtotal, 2) }}</span>
                             </div>
                             <div class="flex justify-between text-gray-400">
                                 <span>Shipping</span>
-                                <span class="text-white font-medium">₱0</span>
+                                <span class="text-white font-medium">₱{{ number_format($shipping, 2) }}</span>
                             </div>
                             <div class="flex justify-between text-gray-400">
                                 <span>Discount</span>
-                                <span class="text-white font-medium">₱0</span>
+                                <span class="text-white font-medium">₱{{ number_format($discount, 2) }}</span>
                             </div>
                         </div>
                         
                         <div class="border-t border-white/10 pt-4 mb-6">
                             <div class="flex justify-between items-end">
                                 <span class="text-base text-gray-300">Total</span>
-                                <span class="text-3xl font-black text-white">₱0</span>
+                                <span class="text-3xl font-black text-white">₱{{ number_format($total, 2) }}</span>
                             </div>
                             <p class="text-[10px] text-gray-500 mt-1 text-right">Including all applicable taxes</p>
                         </div>
                         
-                        <button class="w-full bg-gradient-to-r from-primary to-orange-400 hover:from-primary-hover hover:to-primary text-white py-4 rounded-xl font-bold transition-all shadow-[0_0_15px_rgba(255,107,0,0.3)] hover:shadow-[0_0_25px_rgba(255,107,0,0.5)] hover:-translate-y-1 flex items-center justify-center gap-2 text-lg group">
-                            Proceed to Checkout <i class="ph-bold ph-arrow-right group-hover:translate-x-1 transition-transform"></i>
-                        </button>
+                        @if(count($cart) > 0)
+                            <a href="{{ auth()->check() ? '#' : route('login') }}" class="w-full bg-gradient-to-r from-primary to-orange-400 hover:from-primary-hover hover:to-primary text-white py-4 rounded-xl font-bold transition-all shadow-[0_0_15px_rgba(255,107,0,0.3)] hover:shadow-[0_0_25px_rgba(255,107,0,0.5)] hover:-translate-y-1 flex items-center justify-center gap-2 text-lg group">
+                                Proceed to Checkout <i class="ph-bold ph-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                            </a>
+                        @else
+                            <button disabled class="w-full bg-white/5 text-gray-500 py-4 rounded-xl font-bold cursor-not-allowed flex items-center justify-center gap-2 text-lg">
+                                Proceed to Checkout <i class="ph-bold ph-arrow-right"></i>
+                            </button>
+                        @endif
                         
                         <div class="mt-5 flex items-center justify-center gap-2 text-[10px] text-gray-500 uppercase tracking-widest">
                             <i class="ph-fill ph-shield-check text-sm text-primary"></i> 256-bit Secure Checkout
@@ -457,88 +315,12 @@
                     </div>
 
                 </div>
-                @endauth
 
             </div>
         </div>
     </main>
 
-    <!-- Footer -->
-    <footer class="border-t border-white/10 pt-16 pb-8 mt-auto relative z-10">
-        <div class="max-w-7xl mx-auto px-10 sm:px-12 lg:px-14">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8 mb-12">
-                
-                <!-- Brand -->
-                <div class="col-span-1 lg:pr-8">
-                    <a href="#" class="flex items-center gap-3 mb-4">
-                        <div class="bg-gradient-to-br from-primary to-orange-400 w-10 h-10 rounded-xl flex items-center justify-center shadow-[0_0_15px_rgba(255,107,0,0.4)]">
-                            <img src="{{ Vite::asset('resources/img/Techforge_Logo.png') }}" alt="TechForge Logo" class="h-6 w-auto object-contain">
-                        </div>
-                        <span class="text-xl font-bold tracking-wide text-white">TECHFORGE</span>
-                    </a>
-                    <p class="text-gray-500 text-xs leading-relaxed mb-6">
-                        Performance-driven computers and accessories for every digital journey.
-                    </p>
-                    <div class="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/10 w-max">
-                        <span class="text-[10px] text-gray-500 uppercase tracking-widest font-semibold">Powered by</span>
-                        <img src="{{ Vite::asset('resources/img/Nexora_Logo.png') }}" alt="Nexora Logo" class="h-5 w-auto object-contain opacity-80">
-                    </div>
-                </div>
-
-                <!-- Links 1 -->
-                <div>
-                    <h4 class="text-primary font-semibold text-sm mb-4">Shop Categories</h4>
-                    <ul class="space-y-3 text-xs text-gray-400">
-                        <li><a href="#" class="hover:text-white transition-colors flex items-center gap-2"><i class="ph ph-caret-right text-[10px]"></i> PC Components</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors flex items-center gap-2"><i class="ph ph-caret-right text-[10px]"></i> Custom Builds</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors flex items-center gap-2"><i class="ph ph-caret-right text-[10px]"></i> Laptops & Notebooks</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors flex items-center gap-2"><i class="ph ph-caret-right text-[10px]"></i> Gaming Peripherals</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors flex items-center gap-2"><i class="ph ph-caret-right text-[10px]"></i> Monitors & Displays</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors flex items-center gap-2 text-primary"><i class="ph ph-caret-right text-[10px]"></i> Clearance & Sale</a></li>
-                    </ul>
-                </div>
-
-                <!-- Links 2 -->
-                <div>
-                    <h4 class="text-primary font-semibold text-sm mb-4">Company</h4>
-                    <ul class="space-y-3 text-xs text-gray-400">
-                        <li><a href="#" class="hover:text-white transition-colors flex items-center gap-2"><i class="ph ph-caret-right text-[10px]"></i> About Us</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors flex items-center gap-2"><i class="ph ph-caret-right text-[10px]"></i> Careers</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors flex items-center gap-2"><i class="ph ph-caret-right text-[10px]"></i> Why TechForge?</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors flex items-center gap-2"><i class="ph ph-caret-right text-[10px]"></i> Affiliate Program</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors flex items-center gap-2"><i class="ph ph-caret-right text-[10px]"></i> Privacy Policy</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors flex items-center gap-2"><i class="ph ph-caret-right text-[10px]"></i> Terms & Conditions</a></li>
-                    </ul>
-                </div>
-
-                <!-- Links 3 -->
-                <div>
-                    <h4 class="text-primary font-semibold text-sm mb-4">Customer Support</h4>
-                    <ul class="space-y-3 text-xs text-gray-400">
-                        <li><a href="#" class="hover:text-white transition-colors flex items-center gap-2"><i class="ph ph-caret-right text-[10px]"></i> Help Center / FAQ</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors flex items-center gap-2"><i class="ph ph-caret-right text-[10px]"></i> Track Order</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors flex items-center gap-2"><i class="ph ph-caret-right text-[10px]"></i> Shipping Policy</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors flex items-center gap-2"><i class="ph ph-caret-right text-[10px]"></i> Returns & Refunds</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors flex items-center gap-2"><i class="ph ph-caret-right text-[10px]"></i> Warranty Info</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors flex items-center gap-2"><i class="ph ph-caret-right text-[10px]"></i> Contact Us</a></li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- Bottom -->
-            <div class="border-t border-white/10 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
-                <p class="text-gray-600 text-xs">
-                    &copy; {{ date('Y') }} TechForge. All rights reserved.
-                </p>
-                <div class="flex items-center gap-4 text-gray-400">
-                    <a href="#" class="hover:text-primary transition-colors"><i class="ph ph-instagram-logo text-xl"></i></a>
-                    <a href="#" class="hover:text-primary transition-colors"><i class="ph ph-twitter-logo text-xl"></i></a>
-                    <a href="#" class="hover:text-primary transition-colors"><i class="ph ph-facebook-logo text-xl"></i></a>
-                    <a href="#" class="hover:text-primary transition-colors"><i class="ph ph-youtube-logo text-xl"></i></a>
-                </div>
-            </div>
-        </div>
-    </footer>
+    <x-footer />
 
 
     <!-- Preloader Script -->

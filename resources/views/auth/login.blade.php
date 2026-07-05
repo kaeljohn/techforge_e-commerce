@@ -178,10 +178,10 @@
                         <form action="{{ route('login.post') }}" method="POST" class="space-y-4">
                             @csrf
                             <div>
-                                <label for="email" class="block text-xs font-medium text-gray-300 mb-1.5 ml-1">Email Address</label>
+                                <label for="login" class="block text-xs font-medium text-gray-300 mb-1.5 ml-1">Email or Phone Number</label>
                                 <div class="relative group">
-                                    <i class="ph ph-envelope absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors text-lg"></i>
-                                    <input type="email" name="email" id="email" class="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-11 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-primary/50 focus:bg-white/10 transition-all text-sm" placeholder="name@example.com" required>
+                                    <i class="ph ph-user absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors text-lg"></i>
+                                    <input type="text" name="login" id="login" class="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-11 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-primary/50 focus:bg-white/10 transition-all text-sm" placeholder="Email or +1 (555) 000-0000" required>
                                 </div>
                             </div>
 
@@ -209,9 +209,10 @@
                             </button>
                         </form>
 
-                        <div class="mt-8 mb-6 relative flex items-center justify-center">
-                            <div class="absolute w-full h-px bg-white/10"></div>
-                            <span class="bg-[#050505] px-4 text-xs font-medium text-gray-500 relative z-10" style="background-color: #0c0c0c;">Or continue with</span>
+                        <div class="mt-8 mb-6 flex items-center justify-center gap-4">
+                            <div class="h-px bg-white/10 flex-1"></div>
+                            <span class="text-xs font-medium text-gray-500">Or continue with</span>
+                            <div class="h-px bg-white/10 flex-1"></div>
                         </div>
 
                         <div class="grid grid-cols-2 gap-3">
@@ -241,21 +242,13 @@
                         <form action="{{ route('register.post') }}" method="POST" class="space-y-4">
                             @csrf
                             <div>
-                                <label for="name" class="block text-xs font-medium text-gray-300 mb-1.5 ml-1">Full Name</label>
+                                <label for="phone" class="block text-xs font-medium text-gray-300 mb-1.5 ml-1">Phone Number</label>
                                 <div class="relative group">
-                                    <i class="ph ph-user absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors text-lg"></i>
-                                    <input type="text" name="name" id="name" class="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-11 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-primary/50 focus:bg-white/10 transition-all text-sm" placeholder="John Doe" required>
+                                    <i class="ph ph-phone absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors text-lg"></i>
+                                    <input type="tel" name="phone" id="phone" class="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-11 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-primary/50 focus:bg-white/10 transition-all text-sm" placeholder="+1 (555) 000-0000" required>
                                 </div>
                             </div>
                             
-                            <div>
-                                <label for="reg-email" class="block text-xs font-medium text-gray-300 mb-1.5 ml-1">Email Address</label>
-                                <div class="relative group">
-                                    <i class="ph ph-envelope absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors text-lg"></i>
-                                    <input type="email" name="email" id="reg-email" class="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-11 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-primary/50 focus:bg-white/10 transition-all text-sm" placeholder="name@example.com" required>
-                                </div>
-                            </div>
-
                             <div>
                                 <label for="reg-password" class="block text-xs font-medium text-gray-300 mb-1.5 ml-1">Password</label>
                                 <div class="relative group">
@@ -267,18 +260,25 @@
                                 </div>
                             </div>
                             
-                            <div>
-                                <label for="password_confirmation" class="block text-xs font-medium text-gray-300 mb-1.5 ml-1">Confirm Password</label>
-                                <div class="relative group">
-                                    <i class="ph ph-lock-key absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors text-lg"></i>
-                                    <input type="password" name="password_confirmation" id="password_confirmation" class="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-11 pr-11 text-white placeholder-gray-500 focus:outline-none focus:border-primary/50 focus:bg-white/10 transition-all text-sm" placeholder="••••••••" required>
-                                </div>
-                            </div>
-
                             <button type="submit" class="w-full bg-gradient-to-r from-primary to-[#ff8c33] hover:from-[#ff8c33] hover:to-primary text-white py-3.5 rounded-xl font-bold transition-all duration-300 shadow-[0_0_15px_rgba(255,107,0,0.3)] hover:shadow-[0_0_25px_rgba(255,107,0,0.5)] hover:-translate-y-0.5 mt-2 flex items-center justify-center gap-2">
-                                Create Account <i class="ph-bold ph-arrow-right"></i>
+                                Continue <i class="ph-bold ph-arrow-right"></i>
                             </button>
                         </form>
+
+                        <div class="mt-8 mb-6 flex items-center justify-center gap-4">
+                            <div class="h-px bg-white/10 flex-1"></div>
+                            <span class="text-xs font-medium text-gray-500">Or sign up with</span>
+                            <div class="h-px bg-white/10 flex-1"></div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <button class="flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all py-2.5 rounded-xl text-sm font-medium text-white group">
+                                <i class="ph-fill ph-google-logo text-lg text-gray-300 group-hover:text-white transition-colors"></i> Google
+                            </button>
+                            <button class="flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all py-2.5 rounded-xl text-sm font-medium text-white group">
+                                <i class="ph-fill ph-facebook-logo text-lg text-[#1877F2]"></i> Facebook
+                            </button>
+                        </div>
 
                         <p class="text-center text-xs text-gray-400 mt-8">
                             Already have an account? <button type="button" id="show-login" class="text-primary hover:text-white font-bold transition-colors">Sign in</button>

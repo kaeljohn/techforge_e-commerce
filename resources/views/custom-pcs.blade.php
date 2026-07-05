@@ -170,7 +170,9 @@
                     </div>
                 `);
             } else {
-                document.getElementById('preloader').style.display = 'none';
+                document.write(`
+                    <div class="w-16 h-16 border-4 border-white/10 border-t-primary rounded-full animate-spin shadow-[0_0_20px_rgba(255,107,0,0.3)]"></div>
+                `);
             }
         </script>
     </div>
@@ -187,118 +189,119 @@
     <main class="relative pt-32 pb-16 lg:pt-40 lg:pb-20 overflow-hidden w-full">
         <div class="w-full relative z-10 group" style="mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent); -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);">
             <div class="absolute inset-0 w-full h-full">
-                <img src="https://images.unsplash.com/photo-1547082299-de196ea013d6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="All Gaming PCs" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 opacity-40">
+                <img src="https://images.unsplash.com/photo-1547082299-de196ea013d6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="Custom PCs" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 opacity-40">
                 <div class="absolute inset-0 bg-gradient-to-r from-[#050505] via-transparent to-[#050505] pointer-events-none"></div>
             </div>
             
             <div class="max-w-[1500px] mx-auto px-6 lg:px-8 relative z-10 py-16 md:py-24">
                 <div class="w-full md:w-2/3">
-                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-wide mb-4">All Gaming PCs</h1>
-                    <p class="text-gray-400 text-sm md:text-base leading-relaxed max-w-lg">Browse our full range of custom and prebuilt gaming PCs. Experience uncompromised performance, ready to ship directly to your door.</p>
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-wide mb-4">Custom PCs</h1>
+                    <p class="text-gray-400 text-sm md:text-base leading-relaxed max-w-lg">Discover our meticulously curated tiers of custom-built performance machines, engineered specifically for your needs.</p>
                 </div>
             </div>
         </div>
     </main>
 
     <!-- Category Content -->
-    <form id="filter-form" method="GET" action="{{ route('gaming-pcs') }}" class="max-w-[1500px] mx-auto px-6 lg:px-8 pb-24 relative z-10 flex flex-col lg:flex-row gap-8">
+    <main class="max-w-[1500px] mx-auto px-4 lg:px-8 pb-32 relative z-10">
         
-        <!-- Product Filter Component -->
-        <x-product-filter :counts="$counts" route="gaming-pcs" />
-
-        <!-- Product Grid -->
-        <div id="product-grid-area" class="flex-1 w-full lg:w-auto transition-opacity duration-300">
-            
-            <!-- Controls / Sort -->
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
-                <p class="text-sm text-gray-400">Showing <span class="text-white font-bold">{{ $configs->count() }}</span> products</p>
-                
-                <div class="flex items-center gap-3 w-full sm:w-auto">
-                    <span class="text-xs text-gray-500 uppercase tracking-widest font-bold">Sort By</span>
-                    <div class="relative w-full sm:w-48">
-                        <select name="sort" class="w-full bg-black/40 border border-[#3a1810] rounded-xl py-2 pl-4 pr-10 text-sm text-white appearance-none cursor-pointer hover:border-[#5a2810] transition-colors focus:outline-none focus:border-primary">
-                            <option {{ request('sort') == 'Recommended' ? 'selected' : '' }}>Recommended</option>
-                            <option {{ request('sort') == 'Price: Low to High' ? 'selected' : '' }}>Price: Low to High</option>
-                            <option {{ request('sort') == 'Price: High to Low' ? 'selected' : '' }}>Price: High to Low</option>
-                            <option {{ request('sort') == 'Newest Arrivals' ? 'selected' : '' }}>Newest Arrivals</option>
-                            <option {{ request('sort') == 'Customer Reviews' ? 'selected' : '' }}>Customer Reviews</option>
-                        </select>
-                        <i class="ph ph-caret-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"></i>
-                    </div>
-                </div>
+        <!-- Platform Toggle Tabs -->
+        <div class="flex justify-center mb-12">
+            <div class="inline-flex bg-white/5 rounded-full p-1 border border-white/10" id="platform-tabs">
+                <button onclick="switchPlatform('All')" class="tab-btn active px-8 py-2.5 rounded-full text-sm font-bold transition-all bg-primary text-white shadow-[0_0_15px_rgba(255,107,0,0.4)]">All</button>
+                <button onclick="switchPlatform('AMD')" class="tab-btn px-8 py-2.5 rounded-full text-sm font-bold text-gray-400 hover:text-white transition-all">AMD</button>
+                <button onclick="switchPlatform('Intel')" class="tab-btn px-8 py-2.5 rounded-full text-sm font-bold text-gray-400 hover:text-white transition-all">Intel</button>
             </div>
+        </div>
 
-            <!-- Grid -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                
-                @forelse($configs as $config)
-                <!-- Product Card -->
-                <div class="bg-gradient-to-b from-[#2a110a] to-[#140502] border border-[#3a1810] rounded-[2rem] p-4 relative overflow-hidden group hover:border-primary/50 transition-all duration-500 hover:shadow-[0_10px_30px_rgba(255,107,0,0.2)] flex flex-col h-full">
-                    
-                    <!-- Image -->
-                    <div class="relative rounded-2xl overflow-hidden aspect-[4/3] mb-5 bg-[#0a0a0a]">
-                        <img src="{{ $config->image_url }}" alt="{{ $config->name }}" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700 opacity-90 group-hover:opacity-100">
-                    </div>
+        <div id="configs-container" class="grid grid-cols-1 lg:grid-cols-3 gap-6 xl:gap-10">
+            @foreach($tiers as $tier)
+            <div class="tier-group">
+                <div class="flex items-center justify-center gap-4 mb-6">
+                    <div class="h-px bg-white/10 flex-1"></div>
+                    <h2 class="text-xl font-black text-white uppercase tracking-widest flex items-center gap-2">
+                        <i class="ph {{ $tier == 'Enthusiast' ? 'ph-rocket text-primary' : ($tier == 'Mainstream' ? 'ph-lightning text-primary' : 'ph-game-controller text-primary') }} text-2xl"></i> 
+                        {{ $tier }}
+                    </h2>
+                    <div class="h-px bg-white/10 flex-1"></div>
+                </div>
 
-                    <div class="flex flex-col flex-1">
-                        <!-- Product Name -->
-                        <h3 class="text-lg font-bold text-white group-hover:text-primary transition-colors line-clamp-1 mb-3">{{ $config->name }}</h3>
-                        
-                        <!-- Product Parts/Peripherals -->
-                        <div class="space-y-1.5 mb-4 text-xs">
-                            <div class="flex items-center gap-2 text-gray-400"><i class="ph ph-cpu text-gray-500 text-sm shrink-0"></i> <span class="text-gray-300 truncate">{{ $config->cpu->name }}</span></div>
-                            <div class="flex items-center gap-2 text-gray-400"><i class="ph ph-circuitry text-gray-500 text-sm shrink-0"></i> <span class="text-gray-300 truncate">{{ $config->motherboard->name }}</span></div>
-                            <div class="flex items-center gap-2 text-gray-400"><i class="ph ph-graphics-card text-gray-500 text-sm shrink-0"></i> <span class="text-gray-300 truncate">{{ $config->gpu->name }}</span></div>
-                            <div class="flex items-center gap-2 text-gray-400"><i class="ph ph-memory text-gray-500 text-sm shrink-0"></i> <span class="text-gray-300 truncate">{{ $config->ram->name }}</span></div>
-                            <div class="flex items-center gap-2 text-gray-400"><i class="ph ph-hard-drives text-gray-500 text-sm shrink-0"></i> <span class="text-gray-300 truncate">{{ $config->storage->name }}</span></div>
-                            <div class="flex items-center gap-2 text-gray-400"><i class="ph ph-plug text-gray-500 text-sm shrink-0"></i> <span class="text-gray-300 truncate">{{ $config->powerSupply->name }}</span></div>
+                <div class="flex flex-col gap-4">
+                    @foreach($configs->where('tier', $tier) as $config)
+                    <div class="config-card w-full liquid-glass rounded-2xl p-5 border border-white/10 flex flex-col group hover:border-primary/50 transition-all duration-300" data-platform="{{ $config->platform }}">
+                        <div class="mb-4 flex justify-between items-center">
+                            <div>
+                                <span class="text-[9px] text-primary font-bold uppercase tracking-widest">{{ $config->platform }} BUILD</span>
+                                <h3 class="text-lg font-bold text-white leading-tight mt-0.5">{{ $config->name }}</h3>
+                            </div>
+                            <div class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center border border-white/10 shrink-0">
+                                <img src="{{ Vite::asset('resources/img/'.strtolower($config->platform).'_logo.png') }}" alt="{{ $config->platform }}" class="w-4 h-4 object-contain opacity-50 group-hover:opacity-100 transition-opacity" onerror="this.style.display='none'">
+                            </div>
                         </div>
                         
-                        <!-- Divider -->
-                        <hr class="border-white/10 my-4">
-                        
-                        <!-- Pricing & Action Button -->
-                        <div class="mt-auto pt-2">
-                            <div class="flex flex-col mb-4">
+                        <div class="aspect-[16/9] w-full rounded-xl bg-black/40 mb-4 flex items-center justify-center p-2 border border-white/5 overflow-hidden">
+                            <img src="{{ $config->image_url }}" alt="{{ $config->name }}" class="max-w-full max-h-full object-contain group-hover:scale-110 transition-transform duration-500">
+                        </div>
+
+                        <div class="space-y-2 mb-5">
+                            <div class="flex items-center gap-2 text-[11px]">
+                                <i class="ph ph-cpu text-gray-500 text-sm"></i>
+                                <span class="text-gray-300 truncate">{{ $config->cpu->name }}</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-[11px]">
+                                <i class="ph ph-graphics-card text-gray-500 text-sm"></i>
+                                <span class="text-gray-300 truncate">{{ $config->gpu->name }}</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-[11px]">
+                                <i class="ph ph-memory text-gray-500 text-sm"></i>
+                                <span class="text-gray-300 truncate">{{ $config->ram->name ?? 'N/A' }}</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-[11px]">
+                                <i class="ph ph-hard-drives text-gray-500 text-sm"></i>
+                                <span class="text-gray-300 truncate">{{ $config->storage->name ?? 'N/A' }}</span>
+                            </div>
+                        </div>
+
+                        <div class="mt-auto pt-4 border-t border-white/10 flex items-center justify-between">
+                            <div>
+                                <span class="text-[9px] text-gray-500 uppercase tracking-widest block mb-0.5">Starting at</span>
                                 <span class="text-xl font-black text-white">P{{ number_format($config->price) }}</span>
                             </div>
-
-                            <!-- Action Button -->
-                            @if($config instanceof \App\Models\PrebuiltConfig)
-                                <button type="button" 
-                                    class="add-to-cart-btn w-full py-2 rounded-full border border-primary text-primary hover:bg-primary hover:text-white font-bold transition-all duration-300 text-center flex items-center justify-center gap-2 text-sm"
-                                    data-product-id="{{ $config->id }}"
-                                    data-name="{{ $config->name }}"
-                                    data-price="{{ $config->price }}"
-                                    data-image="{{ $config->image_url }}">
-                                    <i class="ph-bold ph-shopping-cart"></i> Add to Cart
-                                </button>
-                            @else
-                                <a href="{{ route('build-overview', ['id' => $config->id, 'type' => 'custom']) }}" class="w-full py-2 rounded-full border border-primary text-primary hover:bg-primary hover:text-white font-bold transition-all duration-300 text-center flex items-center justify-center gap-2 text-sm">
-                                    <i class="ph-bold ph-wrench"></i> Customize This Build
-                                </a>
-                            @endif
+                            <a href="{{ route('build-overview', ['id' => $config->id, 'type' => 'custom']) }}" class="w-10 h-10 rounded-xl bg-primary text-white flex items-center justify-center hover:bg-white hover:text-black hover:scale-110 transition-all shadow-[0_0_10px_rgba(255,107,0,0.4)]">
+                                <i class="ph-bold ph-arrow-right text-lg"></i>
+                            </a>
                         </div>
                     </div>
+                    @endforeach
                 </div>
-                @empty
-                    <div class="col-span-1 sm:col-span-2 xl:col-span-3 py-20 flex flex-col items-center justify-center text-center bg-black/20 rounded-[2rem] border border-white/5">
-                        <i class="ph ph-magnifying-glass text-6xl text-gray-600 mb-6"></i>
-                        <h3 class="text-2xl font-bold text-white mb-2">No configurations found</h3>
-                    </div>
-                @endforelse
-
             </div>
-            
-            @if($configs->isNotEmpty())
-            <!-- Pagination -->
-            <div class="mt-12 w-full">
-                {{ $configs->links('pagination::tailwind') }}
-            </div>
-            @endif
-
+            @endforeach
         </div>
-    </form>
+    </main>
+
+    <script>
+        function switchPlatform(platform) {
+            // Update tabs
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                if (btn.innerText.trim() === platform) {
+                    btn.classList.add('bg-primary', 'text-white', 'shadow-[0_0_15px_rgba(255,107,0,0.4)]');
+                    btn.classList.remove('text-gray-400');
+                } else {
+                    btn.classList.remove('bg-primary', 'text-white', 'shadow-[0_0_15px_rgba(255,107,0,0.4)]');
+                    btn.classList.add('text-gray-400');
+                }
+            });
+
+            // Update cards
+            document.querySelectorAll('.config-card').forEach(card => {
+                if (platform === 'All' || card.dataset.platform === platform) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+    </script>
 
     <x-footer />
 
@@ -448,43 +451,6 @@
                 
                 form.addEventListener('submit', function(e) {
                     e.preventDefault();
-                });
-                
-                // AJAX Pagination
-                document.addEventListener('click', function(e) {
-                    const paginationLink = e.target.closest('nav[role="navigation"] a');
-                    if (paginationLink) {
-                        e.preventDefault();
-                        const url = paginationLink.href;
-                        const gridArea = document.getElementById('product-grid-area');
-                        
-                        if (gridArea) gridArea.style.opacity = '0.5';
-
-                        fetch(url)
-                            .then(response => response.text())
-                            .then(html => {
-                                const parser = new DOMParser();
-                                const doc = parser.parseFromString(html, 'text/html');
-                                const newGrid = doc.getElementById('product-grid-area');
-                                
-                                if (newGrid) {
-                                    gridArea.innerHTML = newGrid.innerHTML;
-                                    gridArea.style.opacity = '1';
-                                }
-                                
-                                window.history.pushState({}, '', url);
-                                
-                                // scroll to top of grid
-                                window.scrollTo({
-                                    top: gridArea.getBoundingClientRect().top + window.scrollY - 100,
-                                    behavior: 'smooth'
-                                });
-                            })
-                            .catch(err => {
-                                console.error('Pagination failed:', err);
-                                if (gridArea) gridArea.style.opacity = '1';
-                            });
-                    }
                 });
             }
         });

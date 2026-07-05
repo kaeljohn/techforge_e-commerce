@@ -158,182 +158,7 @@
 
 
 
-    <!-- Search Overlay -->
-    <div id="search-overlay" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[65] opacity-0 pointer-events-none transition-all duration-300"></div>
-
-    <!-- Navigation -->
-    <nav class="fixed w-[calc(100%-2rem)] sm:w-[calc(100%-3rem)] lg:w-[calc(100%-4rem)] max-w-7xl left-1/2 -translate-x-1/2 top-4 z-[70] px-4 sm:px-6 py-3 flex items-center justify-between gap-4 sm:gap-6 transition-all duration-300">
-        <!-- Background for Nav to prevent backdrop-filter nesting bug -->
-        <div class="absolute inset-0 liquid-glass rounded-2xl -z-10 pointer-events-none"></div>
-
-        <!-- Logo & Name -->
-        <a href="{{ url('/') }}" class="flex items-center gap-3 shrink-0 relative z-30">
-            <div class="bg-gradient-to-br from-primary to-orange-400 w-10 h-10 rounded-xl flex items-center justify-center shadow-[0_0_15px_rgba(255,107,0,0.4)]">
-                <img src="{{ Vite::asset('resources/img/Techforge_Logo.png') }}" alt="TechForge Logo" class="h-6 w-auto object-contain">
-            </div>
-            <div class="hidden md:flex flex-col">
-                <span class="text-xl font-bold tracking-wide text-white leading-tight">TECHFORGE</span>
-                <span class="text-[10px] text-primary font-bold tracking-widest uppercase">PC Builder</span>
-            </div>
-        </a>
-
-        <!-- Search Bar (Automatically Enlarged) -->
-        <div id="search-container" class="flex-1 max-w-3xl relative z-50">
-            <div id="search-wrapper" class="relative flex items-center w-full h-11 bg-neutral-900 border border-white/10 hover:border-white/20 hover:bg-white/5 transition-all duration-300 rounded-2xl group">
-                <input type="text" id="search-input" placeholder="What are we searching?" class="w-full h-full bg-transparent outline-none pl-5 pr-20 text-sm text-white placeholder-gray-400 font-light rounded-2xl relative z-10">
-                
-                <!-- Clear Button -->
-                <button id="search-clear" class="absolute right-12 w-7 h-7 flex items-center justify-center text-gray-400 hover:text-white transition-all opacity-0 pointer-events-none z-20">
-                    <i class="ph ph-x text-sm"></i>
-                </button>
-
-                <button class="absolute right-1 w-9 h-9 flex items-center justify-center bg-primary hover:bg-primary-hover text-white rounded-xl transition-colors shadow-[0_0_10px_rgba(255,107,0,0.3)] z-20">
-                    <i class="ph ph-magnifying-glass text-lg"></i>
-                </button>
-            </div>
-            
-            <!-- Search Dropdown -->
-            <div id="search-dropdown" class="liquid-glass-heavy absolute top-[calc(100%+0.5rem)] left-0 w-full rounded-2xl overflow-hidden shadow-2xl py-3 opacity-0 pointer-events-none transition-all duration-300 transform -translate-y-2 origin-top">
-                <ul class="text-sm text-gray-300 flex flex-col">
-                </ul>
-            </div>
-        </div>
-
-        <!-- Actions -->
-        <div class="flex items-center gap-4 shrink-0">
-            
-            <!-- Location -->
-            <div class="hidden lg:flex items-center gap-2 cursor-pointer hover:text-white group">
-                <i class="ph ph-map-pin text-xl text-gray-400 group-hover:text-primary transition-colors"></i>
-                <div class="flex flex-col text-left">
-                    <span class="text-[10px] text-gray-400 leading-tight">Deliver to</span>
-                    <span class="text-sm font-bold text-white group-hover:text-primary transition-colors leading-tight">Philippines</span>
-                </div>
-            </div>
-
-            <!-- Sign In -->
-            @auth
-            <div class="hidden lg:flex items-center gap-4 relative">
-                <div id="user-dropdown-btn" class="flex items-center gap-2 cursor-pointer group">
-                    <i class="ph ph-user text-xl text-primary transition-colors"></i>
-                    <div class="flex flex-col text-left">
-                        <span class="text-[10px] text-gray-400 leading-tight">Welcome</span>
-                        <span class="text-sm font-bold text-white leading-tight">{{ Auth::user()->name }}</span>
-                    </div>
-                </div>
-                
-                <!-- Dropdown Menu -->
-                <div id="user-dropdown" class="opacity-0 pointer-events-none scale-95 transition-all duration-300 origin-top-right absolute top-full right-0 mt-4 w-56 liquid-glass border border-white/10 rounded-xl shadow-2xl py-2 z-50" onclick="event.stopPropagation();">
-                    <div class="px-4 py-3 border-b border-white/10 mb-2 bg-white/5 mx-2 rounded-lg">
-                        <p class="text-[10px] text-gray-400 uppercase font-bold tracking-wider mb-0.5">FORGE Points</p>
-                        <div class="flex items-end gap-2">
-                            <p class="text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-primary to-[#ff8c33]">0</p>
-                            <p class="text-[10px] font-normal text-gray-500 mb-1 pb-0.5">(For now)</p>
-                        </div>
-                    </div>
-                    <a href="#" class="flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-colors">
-                        <i class="ph ph-user-circle text-lg text-gray-400"></i> My Account
-                    </a>
-                    <a href="#" class="flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-colors">
-                        <i class="ph ph-receipt text-lg text-gray-400"></i> Order History
-                    </a>
-                    
-                    <form action="{{ route('logout') }}" method="POST" class="w-full mt-2 border-t border-white/10 pt-2">
-                        @csrf
-                        <button type="submit" class="flex items-center gap-3 w-full text-left px-5 py-2.5 text-sm font-bold text-red-500 hover:text-red-400 hover:bg-red-500/10 transition-colors">
-                            <i class="ph ph-sign-out text-lg"></i> Sign Out
-                        </button>
-                    </form>
-                </div>
-                
-                <script>
-                    const btn = document.getElementById('user-dropdown-btn');
-                    const dropdown = document.getElementById('user-dropdown');
-                    if(btn && dropdown) {
-                        btn.addEventListener('click', (e) => {
-                            e.stopPropagation();
-                            if(dropdown.classList.contains('opacity-0')) {
-                                dropdown.classList.remove('opacity-0', 'pointer-events-none', 'scale-95');
-                                dropdown.classList.add('opacity-100', 'pointer-events-auto', 'scale-100');
-                            } else {
-                                dropdown.classList.add('opacity-0', 'pointer-events-none', 'scale-95');
-                                dropdown.classList.remove('opacity-100', 'pointer-events-auto', 'scale-100');
-                            }
-                        });
-                        document.addEventListener('click', () => {
-                            if (!dropdown.classList.contains('opacity-0')) {
-                                dropdown.classList.add('opacity-0', 'pointer-events-none', 'scale-95');
-                                dropdown.classList.remove('opacity-100', 'pointer-events-auto', 'scale-100');
-                            }
-                        });
-                    }
-                </script>
-            </div>
-            @else
-            <a href="{{ route('login') }}" class="hidden lg:flex items-center gap-2 cursor-pointer group">
-                <i class="ph ph-user text-xl text-gray-400 group-hover:text-primary transition-colors"></i>
-                <div class="flex flex-col text-left">
-                    <span class="text-[10px] text-gray-400 leading-tight">Welcome</span>
-                    <span class="text-sm font-bold text-white group-hover:text-primary transition-colors leading-tight">Sign In / Register</span>
-                </div>
-            </a>
-            @endauth
-
-            <!-- Notification Container -->
-            <div class="relative z-30 shrink-0 group">
-                <!-- Notification Button -->
-                <a href="{{ route('notifications') }}" class="w-11 h-11 flex items-center justify-center rounded-2xl border border-white/10 hover:border-white/20 hover:bg-white/5 transition-all text-gray-300 hover:text-white relative shrink-0">
-                    <i class="ph ph-bell text-xl"></i>
-                    <span class="absolute top-[10px] right-[10px] w-2 h-2 bg-primary rounded-full shadow-[0_0_8px_rgba(255,107,0,0.8)]"></span>
-                </a>
-
-                <!-- Notification Dropdown -->
-                <div class="liquid-glass-heavy absolute top-[calc(100%+0.5rem)] right-0 w-80 sm:w-96 rounded-2xl overflow-hidden shadow-2xl p-5 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-300 transform group-hover:translate-y-0 -translate-y-2 origin-top">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg font-bold text-white">Notifications</h3>
-                        <span class="bg-primary/20 text-primary text-[10px] font-bold px-2 py-1 rounded-md">1 New</span>
-                    </div>
-                    
-                    <div class="flex flex-col gap-3 mb-4">
-                        <!-- Notification Item -->
-                        <a href="{{ route('login') }}" class="flex items-start gap-4 p-3 rounded-xl hover:bg-white/5 transition-colors group/item border border-transparent hover:border-white/5">
-                            <div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
-                                <i class="ph-fill ph-ticket text-xl text-primary"></i>
-                            </div>
-                            <div class="flex-1 min-w-0 pt-0.5">
-                                <h4 class="text-sm font-bold text-white mb-1 group-hover/item:text-primary transition-colors">Special Offer!</h4>
-                                <p class="text-xs text-gray-400 leading-relaxed">Sign up for an account now to receive a 10% discount voucher on your first order.</p>
-                                <span class="text-[10px] text-gray-500 mt-2 block">Just now</span>
-                            </div>
-                        </a>
-                    </div>
-                    
-                    <div class="flex justify-center pt-3 border-t border-white/10 mt-2">
-                        <a href="{{ route('notifications') }}" class="text-xs font-bold text-gray-400 hover:text-primary transition-colors">
-                            View All Notifications
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Cart Container -->
-            <div id="cart-container" class="relative z-30 shrink-0">
-                <a href="{{ route('cart') }}" id="cart-btn" class="flex items-center gap-2 w-auto h-11 px-3 sm:px-4 rounded-2xl border border-white/10 hover:border-white/20 hover:bg-white/5 transition-all text-gray-300 hover:text-white relative">
-                    <div class="relative">
-                        <i class="ph ph-shopping-cart text-xl"></i>
-                        <span class="hidden absolute -top-1 -right-1 w-3.5 h-3.5 items-center justify-center text-[8px] font-bold bg-primary text-white rounded-full">0</span>
-                    </div>
-                    <div class="hidden sm:flex flex-col text-left ml-1">
-                        <span class="text-[10px] text-gray-400 leading-tight">Returns</span>
-                        <span class="text-sm font-bold text-white leading-tight">& Cart</span>
-                    </div>
-                </a>
-
-
-            </div>
-            
-        </div>
-    </nav>
+    <x-navbar />
 
 
     <!-- Main Builder Section -->
@@ -476,7 +301,7 @@
                 <div class="xl:col-span-1 space-y-4">
                     
                     <!-- Build Score -->
-                    <div class="liquid-glass rounded-3xl p-4 lg:p-5 border border-white/10 text-center relative overflow-hidden group">
+                    <div class="liquid-glass rounded-3xl p-4 lg:p-5 border border-white/10 text-center relative overflow-hidden group hidden">
                         <div class="absolute inset-0 bg-primary/5 group-hover:bg-primary/10 transition-colors"></div>
                         <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Build Score</h4>
                         <div class="flex items-end justify-center gap-1 mb-0 relative z-10">
@@ -486,7 +311,7 @@
                     </div>
 
                     <!-- Performance Balance Radar -->
-                    <div class="liquid-glass rounded-3xl p-4 lg:p-5 border border-white/10">
+                    <div class="liquid-glass rounded-3xl p-4 lg:p-5 border border-white/10 hidden">
                         <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4 text-center">Performance Balance</h4>
                         <div class="relative w-full aspect-square">
                             <canvas id="radarChart"></canvas>
@@ -648,131 +473,58 @@
     </div>
 
     <!-- PC Builder JavaScript -->
+    <script src="{{ asset('js/configurator-engine.js') }}"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             
-            // --- DATA ---
+            const allComponents = @json($allComponents ?? []);
+            const engine = new ConfiguratorEngine(allComponents);
+
             const componentGroups = [
                 {
                     id: 'core',
                     name: 'Core Components',
                     items: [
-                        { id: 'cpu', name: 'Processor', icon: 'ph-cpu', essential: true, visId: 'vis-cpu' },
-                        { id: 'motherboard', name: 'Motherboard', icon: 'ph-circuitry', essential: true, visId: 'vis-motherboard' }
+                        { id: 'Processor', name: 'Processor', icon: 'ph-cpu', essential: true, visId: 'vis-cpu', dbType: 'Processor' },
+                        { id: 'Motherboard', name: 'Motherboard', icon: 'ph-circuitry', essential: true, visId: 'vis-motherboard', dbType: 'Motherboard' }
                     ]
                 },
                 {
                     id: 'memory_storage',
                     name: 'Memory & Storage',
                     items: [
-                        { id: 'memory', name: 'Memory (RAM)', icon: 'ph-memory', essential: true, visId: 'vis-memory' },
-                        { id: 'ssd', name: 'SSD (NVMe)', icon: 'ph-hard-drives', essential: true, visId: 'vis-ssd' },
-                        { id: 'sata', name: 'SSD (SATA)', icon: 'ph-hard-drive', essential: false },
-                        { id: 'hdd', name: 'Hard Disk', icon: 'ph-database', essential: false }
+                        { id: 'Memory', name: 'Memory (RAM)', icon: 'ph-memory', essential: true, visId: 'vis-memory', dbType: 'Memory' },
+                        { id: 'Primary Storage', name: 'Primary Storage (SSD)', icon: 'ph-hard-drives', essential: true, visId: 'vis-ssd', dbType: 'Storage' }
                     ]
                 },
                 {
                     id: 'graphics_power',
                     name: 'Graphics & Power',
                     items: [
-                        { id: 'gpu', name: 'Graphics Card', icon: 'ph-graphics-card', essential: true, visId: 'vis-gpu' },
-                        { id: 'psu', name: 'Power Supply', icon: 'ph-plug', essential: true, visId: 'vis-psu' }
+                        { id: 'Video Card', name: 'Graphics Card', icon: 'ph-graphics-card', essential: true, visId: 'vis-gpu', dbType: 'Video Card' },
+                        { id: 'Power Supply', name: 'Power Supply', icon: 'ph-plug', essential: true, visId: 'vis-psu', dbType: 'Power Supply' }
                     ]
                 },
                 {
                     id: 'chassis_cooling',
                     name: 'Chassis & Cooling',
                     items: [
-                        { id: 'case', name: 'Case', icon: 'ph-desktop-tower', essential: true },
-                        { id: 'cooler', name: 'CPU Cooler', icon: 'ph-thermometer-cold', essential: false, visId: 'vis-cooler' },
-                        { id: 'fan', name: 'Case Fan', icon: 'ph-fan', essential: false, visId: 'vis-fan' }
+                        { id: 'Case', name: 'Case', icon: 'ph-desktop-tower', essential: true, dbType: 'Case' }
                     ]
                 }
             ];
 
             const totalEssential = 7;
             const maxBudget = 200000;
-
-            const productsDB = {
-                cpu: [
-                    { id: 'cpu1', name: 'AMD Ryzen 9 7950X', price: 34500, wattage: 170, score: { cpu: 95, ram: 0, gpu: 0, ssd: 0, psu: 0 }, image: 'https://images.unsplash.com/photo-1591488320449-011701bb6704?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80', desc: '16 Cores, 32 Threads, 5.7 GHz Max Boost', rating: 4.9, brand: 'AMD', platform: 'AMD', socket: 'AM5' },
-                    { id: 'cpu2', name: 'Intel Core i9-14900K', price: 35000, wattage: 253, score: { cpu: 98, ram: 0, gpu: 0, ssd: 0, psu: 0 }, image: 'https://images.unsplash.com/photo-1591488320449-011701bb6704?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80', desc: '24 Cores, 32 Threads, 6.0 GHz Max Turbo', rating: 4.8, brand: 'Intel', platform: 'Intel', socket: 'LGA1700' },
-                    { id: 'cpu3', name: 'AMD Ryzen 5 7600X', price: 13500, wattage: 105, score: { cpu: 75, ram: 0, gpu: 0, ssd: 0, psu: 0 }, image: 'https://images.unsplash.com/photo-1591488320449-011701bb6704?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80', desc: '6 Cores, 12 Threads, 5.3 GHz Max Boost', rating: 4.6, brand: 'AMD', platform: 'AMD', socket: 'AM5' }
-                ],
-                motherboard: [
-                    { id: 'mb1', name: 'ASUS ROG Crosshair X670E Hero', price: 39000, wattage: 35, score: { cpu: 10, ram: 10, gpu: 10, ssd: 10, psu: 0 }, image: 'https://dlcdnwebimgs.asus.com/files/media/0CBC145C-59B8-4B51-BF1A-DA0749FA1522/v1/img/kv/pd.png', desc: 'AM5, PCIe 5.0, Wi-Fi 6E', rating: 4.9, brand: 'ASUS', platform: 'AMD', socket: 'AM5' },
-                    { id: 'mb2', name: 'MSI MAG B650 TOMAHAWK WIFI', price: 14000, wattage: 25, score: { cpu: 5, ram: 5, gpu: 5, ssd: 5, psu: 0 }, image: 'https://dlcdnwebimgs.asus.com/files/media/0CBC145C-59B8-4B51-BF1A-DA0749FA1522/v1/img/kv/pd.png', desc: 'AM5, DDR5, Wi-Fi 6E', rating: 4.7, brand: 'MSI', platform: 'AMD', socket: 'AM5' }
-                ],
-                memory: [
-                    { id: 'ram1', name: 'G.Skill Trident Z5 32GB DDR5-6000', price: 8500, wattage: 15, score: { cpu: 0, ram: 90, gpu: 0, ssd: 0, psu: 0 }, image: 'https://images.unsplash.com/photo-1758577675588-c5bbbbbf8e97?w=200&q=80', desc: 'CL30, RGB', rating: 4.8, brand: 'G.Skill' },
-                    { id: 'ram2', name: 'Corsair Vengeance 16GB DDR5-5600', price: 4000, wattage: 10, score: { cpu: 0, ram: 60, gpu: 0, ssd: 0, psu: 0 }, image: 'https://images.unsplash.com/photo-1758577675588-c5bbbbbf8e97?w=200&q=80', desc: 'CL36', rating: 4.5, brand: 'Corsair' }
-                ],
-                gpu: [
-                    { id: 'gpu1', name: 'RTX 4090 24GB', price: 115000, wattage: 450, score: { cpu: 0, ram: 0, gpu: 100, ssd: 0, psu: 0 }, image: 'https://images.unsplash.com/photo-1591488320449-011701bb6704?w=200&q=80', desc: 'Founders Edition', rating: 5.0, brand: 'NVIDIA' },
-                    { id: 'gpu2', name: 'RTX 4060 Ti 8GB', price: 25000, wattage: 160, score: { cpu: 0, ram: 0, gpu: 65, ssd: 0, psu: 0 }, image: 'https://images.unsplash.com/photo-1591488320449-011701bb6704?w=200&q=80', desc: 'Ventus 2X Black', rating: 4.4, brand: 'MSI' }
-                ],
-                ssd: [
-                    { id: 'ssd1', name: 'Samsung 990 PRO 2TB', price: 11000, wattage: 8, score: { cpu: 0, ram: 0, gpu: 0, ssd: 95, psu: 0 }, image: 'https://images.unsplash.com/photo-1591488320449-011701bb6704?w=200&q=80', desc: 'PCIe 4.0 NVMe', rating: 4.9, brand: 'Samsung' },
-                ],
-                sata: [], hdd: [],
-                case: [
-                    { id: 'case1', name: 'Lian Li O11 Dynamic EVO', price: 9500, wattage: 0, score: { cpu: 0, ram: 0, gpu: 0, ssd: 0, psu: 0 }, image: 'https://images.unsplash.com/photo-1587202372634-32705e3bf49c?w=200&q=80', desc: 'Mid-Tower', rating: 4.8, brand: 'Lian Li' },
-                ],
-                psu: [
-                    { id: 'psu1', name: 'Corsair RM1000x 1000W', price: 11500, wattage: 0, score: { cpu: 0, ram: 0, gpu: 0, ssd: 0, psu: 95 }, image: 'https://images.unsplash.com/photo-1587202372634-32705e3bf49c?w=200&q=80', desc: '80+ Gold', rating: 4.8, brand: 'Corsair' },
-                    { id: 'psu2', name: 'Seasonic 650W', price: 4500, wattage: 0, score: { cpu: 0, ram: 0, gpu: 0, ssd: 0, psu: 60 }, image: 'https://images.unsplash.com/photo-1587202372634-32705e3bf49c?w=200&q=80', desc: '80+ Bronze', rating: 4.5, brand: 'Seasonic' }
-                ],
-                cooler: [
-                    { id: 'cool1', name: 'NZXT Kraken 360', price: 16500, wattage: 15, score: { cpu: 10, ram: 0, gpu: 0, ssd: 0, psu: 0 }, image: 'https://images.unsplash.com/photo-1587202372634-32705e3bf49c?w=200&q=80', desc: '360mm AIO', rating: 4.7, brand: 'NZXT' }
-                ],
-                fan: []
-            };
-
-            let currentBuild = {};
             let currentSelectingCategory = null;
-
-            // --- Radar Chart Init ---
-            const ctx = document.getElementById('radarChart').getContext('2d');
-            const radarChart = new Chart(ctx, {
-                type: 'radar',
-                data: {
-                    labels: ['CPU', 'RAM', 'GPU', 'SSD', 'PSU'],
-                    datasets: [{
-                        label: 'Performance',
-                        data: [0, 0, 0, 0, 0],
-                        backgroundColor: 'rgba(255, 107, 0, 0.2)',
-                        borderColor: '#ff6b00',
-                        pointBackgroundColor: '#ff6b00',
-                        pointBorderColor: '#fff',
-                        pointHoverBackgroundColor: '#fff',
-                        pointHoverBorderColor: '#ff6b00',
-                        borderWidth: 2,
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        r: {
-                            angleLines: { color: 'rgba(255, 255, 255, 0.1)' },
-                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
-                            pointLabels: { color: '#9ca3af', font: { size: 10, family: 'Inter', weight: 'bold' } },
-                            min: 0,
-                            max: 100,
-                            ticks: { display: false }
-                        }
-                    },
-                    plugins: { legend: { display: false } }
-                }
-            });
+            let currentSelectingDbType = null;
+            let availableComponents = [];
 
             // --- DOM Elements ---
             const componentsListEl = document.getElementById('components-list');
             const totalPriceEl = document.getElementById('total-price');
             const powerDrawEl = document.getElementById('power-draw');
             const compCountEl = document.getElementById('comp-count');
-            const buildScoreEl = document.getElementById('build-score');
-            const compareCurrentEl = document.getElementById('compare-current');
             const budgetCurrentEl = document.getElementById('budget-current');
             
             const budgetBar = document.getElementById('budget-bar');
@@ -793,44 +545,18 @@
             const modalPriceMaxEl = document.getElementById('modal-price-max');
             const modalResetFiltersEl = document.getElementById('modal-reset-filters');
 
-            // --- Custom Notification System ---
-            const notifModal = document.getElementById('notification-modal');
-            const notifTitle = document.getElementById('notification-title');
-            const notifMessage = document.getElementById('notification-message');
-            const notifBtnConfirm = document.getElementById('notification-btn-confirm');
-            const notifBtnCancel = document.getElementById('notification-btn-cancel');
-            let confirmCallback = null;
-
-            const showNotification = (title, message, isConfirm = false, onConfirm = null) => {
-                notifTitle.innerText = title;
-                notifMessage.innerText = message;
-                if (isConfirm) {
-                    notifBtnCancel.classList.remove('hidden');
-                    confirmCallback = onConfirm;
-                } else {
-                    notifBtnCancel.classList.add('hidden');
-                    confirmCallback = null;
-                }
-                notifModal.classList.remove('opacity-0', 'pointer-events-none');
-                notifModal.querySelector('.liquid-glass-heavy').classList.remove('scale-95');
-            };
-
-            const closeNotification = () => {
-                notifModal.classList.add('opacity-0', 'pointer-events-none');
-                notifModal.querySelector('.liquid-glass-heavy').classList.add('scale-95');
-            };
-
-            notifBtnConfirm.addEventListener('click', () => {
-                closeNotification();
-                if (confirmCallback) confirmCallback();
-            });
-
-            notifBtnCancel.addEventListener('click', closeNotification);
-
             // --- Format Currency ---
             const formatPHP = (amount) => {
                 return new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(amount);
             };
+
+            // --- Update UI from Engine ---
+            engine.subscribe((build) => {
+                renderComponents();
+                updateSummary();
+                updateVisualizer();
+                updateSteps();
+            });
 
             // --- Render Components List ---
             const renderComponents = () => {
@@ -843,13 +569,13 @@
                                 <div class="space-y-1.5">`;
                     
                     group.items.forEach(cat => {
-                        const selectedProduct = currentBuild[cat.id];
+                        const selectedProduct = engine.getComponent(cat.id);
                         html += `
                             <div class="liquid-glass rounded-xl p-2.5 flex items-center justify-between gap-3 component-slot border ${selectedProduct ? 'border-primary/30 bg-primary/5' : 'border-white/5'}">
                                 <div class="flex items-center gap-3 flex-1 min-w-0">
                                     <div class="w-8 h-8 rounded-lg ${selectedProduct ? 'bg-transparent' : 'bg-white/5'} flex items-center justify-center shrink-0 border border-white/10 overflow-hidden">
                                         ${selectedProduct 
-                                            ? `<img src="${selectedProduct.image}" alt="${selectedProduct.name}" class="w-full h-full object-cover">`
+                                            ? `<img src="${selectedProduct.image_url || 'https://via.placeholder.com/300'}" alt="${selectedProduct.name}" class="w-full h-full object-cover">`
                                             : `<i class="ph ${cat.icon} text-lg text-gray-500"></i>`
                                         }
                                     </div>
@@ -863,20 +589,12 @@
                                 </div>
                                 <div class="flex flex-col items-end shrink-0 gap-1">
                                     ${selectedProduct 
-                                        ? `<span class="text-sm font-black text-white">${formatPHP(selectedProduct.price * (selectedProduct.qty || 1))}</span>
-                                           ${cat.id === 'memory' ? `
-                                           <div class="flex items-center gap-2 mt-1 mb-1 bg-white/5 rounded px-2 py-1 border border-white/10">
-                                                <button onclick="updateQty('${cat.id}', -1)" class="w-4 h-4 flex items-center justify-center text-gray-400 hover:text-white">-</button>
-                                                <span class="text-xs font-bold w-4 text-center text-white">${selectedProduct.qty || 1}</span>
-                                                <button onclick="updateQty('${cat.id}', 1)" class="w-4 h-4 flex items-center justify-center text-gray-400 hover:text-white">+</button>
-                                                <span class="text-[10px] text-gray-500 ml-1 whitespace-nowrap">${selectedProduct.qty || 1} of ${currentBuild['motherboard'] ? (currentBuild['motherboard'].slots || 4) : 4} DIMM slots</span>
-                                           </div>
-                                           ` : ''}
-                                           <div class="flex gap-1">
-                                               <button onclick="openModal('${cat.id}')" class="text-[10px] px-2 py-1 rounded bg-white/10 hover:bg-white/20 text-white font-semibold transition-colors">Change</button>
-                                               <button onclick="removeProduct('${cat.id}')" class="text-[10px] px-2 py-1 rounded bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white transition-colors"><i class="ph ph-x"></i></button>
+                                        ? `<span class="text-sm font-black text-white">${formatPHP(selectedProduct.price)}</span>
+                                           <div class="flex gap-1 mt-1">
+                                               <button onclick="openModal('${cat.id}', '${cat.dbType}')" class="text-[10px] px-2 py-1 rounded bg-white/10 hover:bg-white/20 text-white font-semibold transition-colors">Change</button>
+                                               <button onclick="engine.removeComponent('${cat.id}')" class="text-[10px] px-2 py-1 rounded bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white transition-colors"><i class="ph ph-x"></i></button>
                                            </div>`
-                                        : `<button onclick="openModal('${cat.id}')" class="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-primary text-gray-300 hover:text-white text-xs font-bold transition-all border border-white/10 hover:border-transparent">
+                                        : `<button onclick="openModal('${cat.id}', '${cat.dbType}')" class="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-primary text-gray-300 hover:text-white text-xs font-bold transition-all border border-white/10 hover:border-transparent">
                                                 Choose
                                            </button>`
                                     }
@@ -888,93 +606,55 @@
                 });
 
                 componentsListEl.innerHTML = html;
-                updateSummary();
             };
 
-            // --- Visualizer Logic ---
             const updateVisualizer = () => {
-                // Reset all slots
                 document.querySelectorAll('.visualizer-slot').forEach(el => el.classList.remove('active'));
                 
                 componentGroups.forEach(group => {
                     group.items.forEach(cat => {
-                        if(currentBuild[cat.id] && cat.visId) {
+                        if(engine.getComponent(cat.id) && cat.visId) {
                             const visEl = document.getElementById(cat.visId);
                             if(visEl) visEl.classList.add('active');
                             
-                            // Special case for RAM (two slots)
-                            if(cat.id === 'memory') {
+                            if(cat.id === 'Memory') {
                                 document.getElementById('vis-memory-2')?.classList.add('active');
-                            }
-                            if(cat.id === 'fan') {
-                                document.getElementById('vis-fan-2')?.classList.add('active');
-                                document.getElementById('vis-fan-3')?.classList.add('active');
                             }
                         }
                     });
                 });
             };
 
-            // --- Update Summary & Charts ---
             const updateSummary = () => {
-                let total = 0;
-                let wattage = 0;
+                const total = engine.calculateTotal();
+                const wattage = engine.getRequiredWattage();
+                
                 let count = 0;
-                let radarData = [0, 0, 0, 0, 0]; // CPU, RAM, GPU, SSD, PSU
-
                 let partsHtml = '';
 
                 let catNames = {};
                 componentGroups.forEach(g => g.items.forEach(i => catNames[i.id] = i.name));
 
-                Object.entries(currentBuild).forEach(([catId, prod]) => {
-                    const qty = prod.qty || 1;
-                    total += prod.price * qty;
-                    wattage += prod.wattage * qty;
-                    count++;
-                    
-                    const catName = catNames[catId] || 'Component';
-                    
-                    partsHtml += `<div class="flex justify-between items-center text-xs py-1 border-b border-white/5 last:border-0"><span class="text-gray-400 truncate pr-2 flex-1">${qty > 1 ? qty + 'x ' : ''}${catName}</span><span class="text-white font-bold">${formatPHP(prod.price * qty)}</span></div>`;
-
-                    if(prod.score) {
-                        radarData[0] += prod.score.cpu || 0;
-                        radarData[1] += prod.score.ram || 0;
-                        radarData[2] += prod.score.gpu || 0;
-                        radarData[3] += prod.score.ssd || 0;
-                        radarData[4] += prod.score.psu || 0;
+                Object.entries(engine.currentBuild).forEach(([catId, prod]) => {
+                    if (prod) {
+                        count++;
+                        const catName = catNames[catId] || catId;
+                        partsHtml += `<div class="flex justify-between items-center text-xs py-1 border-b border-white/5 last:border-0"><span class="text-gray-400 truncate pr-2 flex-1">${catName}</span><span class="text-white font-bold">${formatPHP(prod.price)}</span></div>`;
                     }
                 });
                 document.getElementById('summary-parts-list').innerHTML = partsHtml;
 
-                // Cap radar data to 100
-                radarData = radarData.map(v => Math.min(v, 100));
-                
-                // Calculate total score (average of radar, roughly)
-                const totalScore = Math.round(radarData.reduce((a, b) => a + b, 0) / 5);
-
-                // Update DOM
                 totalPriceEl.textContent = formatPHP(total);
-                powerDrawEl.textContent = wattage;
+                powerDrawEl.textContent = Math.ceil(wattage);
                 compCountEl.textContent = count;
-                buildScoreEl.textContent = totalScore;
-                compareCurrentEl.textContent = totalScore;
                 budgetCurrentEl.textContent = formatPHP(total);
 
-                // Update Bars
                 budgetBar.style.width = Math.min((total / maxBudget) * 100, 100) + '%';
                 if(total > maxBudget) budgetBar.classList.add('bg-red-500');
                 else budgetBar.classList.remove('bg-red-500');
 
-                compBar.style.width = Math.min((count / 11) * 100, 100) + '%';
+                compBar.style.width = Math.min((count / 7) * 100, 100) + '%';
                 powerBar.style.width = Math.min((wattage / 1200) * 100, 100) + '%';
-
-                // Update Chart
-                radarChart.data.datasets[0].data = radarData;
-                radarChart.update();
-
-                updateVisualizer();
-                updateSteps();
             };
 
             const updateSteps = () => {
@@ -983,7 +663,7 @@
                     if (!stepEl) return;
                     const dot = stepEl.querySelector('.step-dot');
                     const text = stepEl.querySelector('.step-text');
-                    const isActive = conditions.some(c => !!currentBuild[c]);
+                    const isActive = conditions.some(c => !!engine.getComponent(c));
                     if (isActive) {
                         dot.className = 'w-8 h-8 rounded-full border-2 border-primary bg-primary text-white flex items-center justify-center text-xs font-bold step-dot active';
                         text.className = 'text-[10px] text-white font-bold uppercase tracking-wider step-text';
@@ -993,19 +673,20 @@
                     }
                 };
 
-                checkStep('step-1', ['cpu', 'motherboard']);
-                checkStep('step-2', ['memory']);
-                checkStep('step-3', ['ssd', 'sata', 'hdd']);
-                checkStep('step-4', ['gpu']);
-                checkStep('step-5', ['psu']);
-                checkStep('step-6', ['case']);
-                checkStep('step-7', ['cooler', 'fan']);
+                checkStep('step-1', ['Processor', 'Motherboard']);
+                checkStep('step-2', ['Memory']);
+                checkStep('step-3', ['Primary Storage']);
+                checkStep('step-4', ['Video Card']);
+                checkStep('step-5', ['Power Supply']);
+                checkStep('step-6', ['Case']);
             };
 
             // --- Modal Functions ---
-            window.openModal = (categoryId) => {
+            window.openModal = (categoryId, dbType) => {
                 currentSelectingCategory = categoryId;
-                let catName = '';
+                currentSelectingDbType = dbType;
+                
+                let catName = categoryId;
                 let catIcon = '';
                 
                 componentGroups.forEach(g => g.items.forEach(i => {
@@ -1014,60 +695,32 @@
                 
                 modalTitleEl.innerHTML = `<i class="ph ${catIcon} text-primary"></i> Select ${catName}`;
                 
-                // Reset Filters
                 if(modalSearchEl) modalSearchEl.value = '';
-                if(modalSortEl) modalSortEl.value = 'rating_desc';
+                if(modalSortEl) modalSortEl.value = 'name_asc';
                 if(modalPriceMinEl) modalPriceMinEl.value = '';
                 if(modalPriceMaxEl) modalPriceMaxEl.value = '';
 
-                // Dynamically populate filter dropdowns
-                const allProds = productsDB[categoryId] || [];
-                const populateFilter = (el, key, label) => {
-                    if(!el) return;
-                    const uniqueVals = [...new Set(allProds.map(p => p[key]).filter(Boolean))].sort();
-                    if(uniqueVals.length > 0) {
-                        el.parentElement.style.display = 'flex';
-                        el.innerHTML = `<option value="">All ${label}</option>` + uniqueVals.map(v => `<option value="${v}">${v}</option>`).join('');
-                        el.value = '';
-                    } else {
-                        el.parentElement.style.display = 'none';
-                        el.innerHTML = `<option value="">All ${label}</option>`;
-                        el.value = '';
-                    }
-                };
+                availableComponents = allComponents.filter(c => c.type === dbType);
 
-                populateFilter(modalFilterBrandEl, 'brand', 'Brands');
-                populateFilter(modalFilterSocketEl, 'socket', 'Sockets');
-                populateFilter(modalFilterPlatformEl, 'platform', 'Platforms');
-
-                renderModalProducts(categoryId);
+                renderModalProducts();
                 
                 modalEl.classList.remove('opacity-0', 'pointer-events-none');
                 modalEl.querySelector('.liquid-glass-heavy').classList.remove('scale-95');
             };
 
-            const closeModal = () => {
+            window.closeModal = () => {
                 modalEl.classList.add('opacity-0', 'pointer-events-none');
                 modalEl.querySelector('.liquid-glass-heavy').classList.add('scale-95');
             };
 
-            const renderModalProducts = (categoryId) => {
+            const renderModalProducts = () => {
                 modalProductsEl.innerHTML = '';
-                let products = productsDB[categoryId] || [];
+                
+                let products = availableComponents;
 
-                // Filter logic
                 if(modalSearchEl && modalSearchEl.value) {
                     const q = modalSearchEl.value.toLowerCase();
-                    products = products.filter(p => p.name.toLowerCase().includes(q) || (p.desc && p.desc.toLowerCase().includes(q)));
-                }
-                if(modalFilterBrandEl && modalFilterBrandEl.value) {
-                    products = products.filter(p => p.brand === modalFilterBrandEl.value);
-                }
-                if(modalFilterSocketEl && modalFilterSocketEl.value) {
-                    products = products.filter(p => p.socket === modalFilterSocketEl.value);
-                }
-                if(modalFilterPlatformEl && modalFilterPlatformEl.value) {
-                    products = products.filter(p => p.platform === modalFilterPlatformEl.value);
+                    products = products.filter(p => p.name.toLowerCase().includes(q));
                 }
                 if(modalPriceMinEl && modalPriceMinEl.value) {
                     products = products.filter(p => p.price >= parseFloat(modalPriceMinEl.value));
@@ -1076,160 +729,146 @@
                     products = products.filter(p => p.price <= parseFloat(modalPriceMaxEl.value));
                 }
 
-                // Sort logic
                 if(modalSortEl && modalSortEl.value) {
                     const sort = modalSortEl.value;
                     products = [...products].sort((a, b) => {
                         if(sort === 'price_asc') return a.price - b.price;
                         if(sort === 'price_desc') return b.price - a.price;
                         if(sort === 'name_asc') return a.name.localeCompare(b.name);
-                        if(sort === 'rating_desc') return (b.rating || 0) - (a.rating || 0);
                         return 0;
                     });
                 }
 
-                if (products.length === 0) {
-                    modalProductsEl.innerHTML = '<div class="col-span-full text-center py-10 text-gray-500">No products found matching your filters.</div>';
+                const processed = products.map(c => {
+                    const compatibility = engine.checkCompatibility(c, currentSelectingCategory);
+                    return { ...c, compatible: compatibility.compatible, reason: compatibility.reason };
+                });
+
+                if(processed.length === 0) {
+                    modalProductsEl.innerHTML = '<div class="col-span-full text-center py-12"><p class="text-gray-500">No components found.</p></div>';
                     return;
                 }
 
-                products.forEach(prod => {
-                    const ratingHtml = prod.rating 
-                        ? `<div class="flex items-center gap-1 text-[10px] font-bold text-yellow-500 mb-1"><i class="ph-fill ph-star"></i> ${prod.rating}</div>` 
-                        : '';
-                        
-                    const html = `
-                        <div class="bg-black/40 border border-white/10 hover:border-primary/50 rounded-2xl p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(255,107,0,0.1)] flex flex-col cursor-pointer group" onclick="selectProduct('${categoryId}', '${prod.id}')">
-                            <div class="h-32 w-full bg-white/5 rounded-xl mb-4 p-2 flex items-center justify-center overflow-hidden">
-                                <img src="${prod.image}" alt="${prod.name}" class="h-full object-contain mix-blend-lighten group-hover:scale-110 transition-transform duration-500">
+                let html = '';
+                processed.forEach(p => {
+                    const currentComp = engine.getComponent(currentSelectingCategory);
+                    const isSelected = currentComp && currentComp.id === p.id;
+                    const onClick = isSelected ? '' : `onclick="selectComponent(${p.id})"`;
+                    
+                    const imgUrl = p.image_url || 'https://via.placeholder.com/300x200/111/333?text=' + currentSelectingCategory;
+                    const opacityClass = !p.compatible ? 'opacity-50 grayscale pointer-events-none' : '';
+                    const borderClass = isSelected ? 'border-primary shadow-[0_0_15px_rgba(255,107,0,0.3)]' : 'border-white/5 hover:border-white/20 cursor-pointer';
+
+                    html += `
+                        <div class="liquid-glass p-4 rounded-2xl border ${borderClass} flex flex-col transition-all group relative ${opacityClass}" ${p.compatible ? onClick : ''}>
+                            <div class="w-full h-32 mb-4 bg-white/5 rounded-xl flex items-center justify-center p-2">
+                                <img src="${imgUrl}" alt="${p.name}" class="max-h-full max-w-full object-contain group-hover:scale-110 transition-transform duration-300">
                             </div>
-                            ${ratingHtml}
-                            <h4 class="text-white font-bold mb-1 leading-tight line-clamp-2">${prod.name}</h4>
-                            <p class="text-[10px] text-gray-400 mb-4 line-clamp-2">${prod.desc}</p>
-                            
-                            <div class="mt-auto pt-3 border-t border-white/10 flex items-center justify-between">
-                                <span class="text-base font-black text-white">${formatPHP(prod.price)}</span>
-                                <button class="w-7 h-7 rounded-full bg-primary/20 text-primary flex items-center justify-center border border-primary/30 group-hover:bg-primary group-hover:text-white transition-colors">
-                                    <i class="ph ph-plus"></i>
-                                </button>
+                            <h4 class="font-bold text-white text-sm mb-2 leading-tight">${p.name}</h4>
+                            <div class="mt-auto flex justify-between items-end">
+                                <p class="text-primary font-black">${formatPHP(p.price)}</p>
+                                ${isSelected ? '<div class="bg-primary text-white text-[10px] font-bold px-2 py-1 rounded uppercase tracking-widest">Selected</div>' : ''}
                             </div>
+                            ${!p.compatible ? `<div class="absolute top-2 right-2 bg-red-500/90 text-white text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded shadow-lg backdrop-blur-sm z-10">${p.reason}</div>` : ''}
                         </div>
                     `;
-                    modalProductsEl.insertAdjacentHTML('beforeend', html);
                 });
+                modalProductsEl.innerHTML = html;
             };
 
-            // --- Product Actions ---
-            window.selectProduct = (categoryId, productId) => {
-                const product = productsDB[categoryId].find(p => p.id === productId);
-                if (product) {
-                    currentBuild[categoryId] = product;
-                    renderComponents();
-                    closeModal();
+            window.selectComponent = (id) => {
+                const component = availableComponents.find(c => c.id === id);
+                
+                const conflicts = engine.getConflictsIfSelected(currentSelectingCategory, component);
+                
+                if (conflicts.length > 0) {
+                    let msg = "Changing this component will require changing your " + conflicts.join(', ') + ". Proceed?";
+                    if(!confirm(msg)) return;
+                    conflicts.forEach(cat => engine.removeComponent(cat));
                 }
+                
+                engine.setComponent(currentSelectingCategory, component);
+                closeModal();
             };
 
-            window.removeProduct = (categoryId) => {
-                delete currentBuild[categoryId];
-                renderComponents();
-            };
-
-            window.updateQty = (categoryId, change) => {
-                const product = currentBuild[categoryId];
-                if (product) {
-                    let newQty = (product.qty || 1) + change;
-                    if (categoryId === 'memory') {
-                        const mb = currentBuild['motherboard'];
-                        const maxSlots = mb ? (mb.slots || 4) : 4;
-                        if (newQty < 1) newQty = 1;
-                        if (newQty > maxSlots) newQty = maxSlots;
-                    } else {
-                        if (newQty < 1) newQty = 1;
-                    }
-                    product.qty = newQty;
-                    renderComponents();
-                }
-            };
-
-            // --- Event Listeners ---
-            document.getElementById('close-modal').addEventListener('click', closeModal);
-            modalEl.addEventListener('click', (e) => {
-                if (e.target === modalEl) closeModal();
-            });
-
-            // Filter Event Listeners
-            [modalSearchEl, modalSortEl, modalFilterBrandEl, modalFilterSocketEl, modalFilterPlatformEl, modalPriceMinEl, modalPriceMaxEl].forEach(el => {
-                if(el) {
-                    el.addEventListener('input', () => {
-                        if(currentSelectingCategory) renderModalProducts(currentSelectingCategory);
-                    });
-                }
-            });
-
+            // Event Listeners for modal filters
+            if(modalSearchEl) modalSearchEl.addEventListener('input', renderModalProducts);
+            if(modalSortEl) modalSortEl.addEventListener('change', renderModalProducts);
+            if(modalPriceMinEl) modalPriceMinEl.addEventListener('input', renderModalProducts);
+            if(modalPriceMaxEl) modalPriceMaxEl.addEventListener('input', renderModalProducts);
             if(modalResetFiltersEl) {
                 modalResetFiltersEl.addEventListener('click', () => {
                     modalSearchEl.value = '';
-                    modalSortEl.value = 'rating_desc';
-                    modalFilterBrandEl.value = '';
-                    modalFilterSocketEl.value = '';
-                    modalFilterPlatformEl.value = '';
+                    modalSortEl.value = 'name_asc';
                     modalPriceMinEl.value = '';
                     modalPriceMaxEl.value = '';
-                    if(currentSelectingCategory) renderModalProducts(currentSelectingCategory);
+                    renderModalProducts();
+                });
+            }
+            const closeModalBtn = document.getElementById('close-modal');
+            if(closeModalBtn) closeModalBtn.addEventListener('click', closeModal);
+
+            // Add to Cart Logic
+            const checkoutBtn = document.getElementById('add-to-cart-btn');
+            if(checkoutBtn) {
+                checkoutBtn.addEventListener('click', () => {
+                    const currentBuild = engine.currentBuild;
+                    const missing = Object.entries(currentBuild).filter(([k,v]) => v === null);
+                    if (missing.length > 0) {
+                        alert("Please select components for: " + missing.map(m => m[0]).join(', '));
+                        return;
+                    }
+
+                    const originalText = checkoutBtn.innerHTML;
+                    checkoutBtn.innerHTML = '<i class="ph ph-spinner animate-spin"></i> Processing...';
+                    checkoutBtn.disabled = true;
+
+                    const formData = new FormData();
+                    formData.append('product_id', 'custom_' + Date.now());
+                    formData.append('name', 'Custom PC Build');
+                    formData.append('price', engine.calculateTotal());
+                    formData.append('image_url', 'https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=500&q=80');
+                    formData.append('quantity', 1);
+                    formData.append('configuration', engine.getCartPayload());
+
+                    fetch('{{ route("cart.add") }}', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        },
+                        body: formData
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if(data.success) {
+                            checkoutBtn.innerHTML = '<i class="ph-bold ph-check-circle"></i> Added to Cart';
+                            setTimeout(() => {
+                                checkoutBtn.innerHTML = originalText;
+                                checkoutBtn.disabled = false;
+                                const badge = document.querySelector('#cart-btn span');
+                                if (badge) {
+                                    badge.classList.remove('hidden');
+                                    badge.classList.add('flex');
+                                    badge.innerText = data.cart_count;
+                                }
+                            }, 2000);
+                        }
+                    });
                 });
             }
 
-            document.getElementById('reset-build').addEventListener('click', () => {
-                showNotification('Clear Build', 'Are you sure you want to clear your current build?', true, () => {
-                    currentBuild = {};
-                    renderComponents();
-                });
-            });
-            
-            document.getElementById('add-missing-btn').addEventListener('click', () => {
-                const essentialMissing = componentGroups.flatMap(g => g.items).find(i => i.essential && !currentBuild[i.id]);
-                if(essentialMissing) {
-                    openModal(essentialMissing.id);
-                } else {
-                    showNotification('All Good!', 'No essential components missing!', false);
-                }
-            });
-
-            document.getElementById('save-build-btn').addEventListener('click', () => {
-                if(Object.keys(currentBuild).length === 0) return showNotification('Error', 'Your build is empty!', false);
-                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(currentBuild));
-                const downloadAnchorNode = document.createElement('a');
-                downloadAnchorNode.setAttribute("href", dataStr);
-                downloadAnchorNode.setAttribute("download", "techforge_build.json");
-                document.body.appendChild(downloadAnchorNode); 
-                downloadAnchorNode.click();
-                downloadAnchorNode.remove();
-            });
-
-            document.getElementById('load-build-btn').addEventListener('click', () => {
-                document.getElementById('load-build-input').click();
-            });
-
-            document.getElementById('load-build-input').addEventListener('change', (e) => {
-                const file = e.target.files[0];
-                if (!file) return;
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    try {
-                        const loadedBuild = JSON.parse(e.target.result);
-                        currentBuild = loadedBuild;
-                        renderComponents();
-                        showNotification('Success', 'Build loaded successfully!', false);
-                    } catch (err) {
-                        showNotification('Error', 'Failed to parse build file!', false);
-                    }
-                };
-                reader.readAsText(file);
-                e.target.value = '';
-            });
-
-            // Initialize
+            // Init call
             renderComponents();
+            updateSummary();
+            
+            // Preloader
+            const preloader = document.getElementById('preloader');
+            if (preloader) {
+                setTimeout(() => {
+                    preloader.style.opacity = '0';
+                    setTimeout(() => preloader.style.display = 'none', 1000);
+                }, 500);
+            }
         });
     </script>
 
