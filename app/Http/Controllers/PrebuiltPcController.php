@@ -120,6 +120,16 @@ class PrebuiltPcController extends Controller
 
         $configs = $query->paginate(6)->withQueryString();
 
-        return view('prebuilt-pcs', compact('configs', 'counts'));
+        $minPrices = array_filter([
+            PrebuiltConfig::min('price'),
+        ]);
+        $globalMinPrice = !empty($minPrices) ? floor(min($minPrices)) : 0;
+
+        $maxPrices = array_filter([
+            PrebuiltConfig::max('price'),
+        ]);
+        $globalMaxPrice = !empty($maxPrices) ? ceil(max($maxPrices)) : 250000;
+
+        return view('prebuilt-pcs', compact('configs', 'counts', 'globalMinPrice', 'globalMaxPrice'));
     }
 }

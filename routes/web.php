@@ -67,6 +67,7 @@ Route::get('/build-pc', function () {
 Route::get('/gaming-pcs', [\App\Http\Controllers\GamingPcController::class, 'index'])->name('gaming-pcs');
 Route::get('/custom-pcs', [\App\Http\Controllers\CustomPcController::class, 'index'])->name('custom-pcs');
 Route::get('/prebuilt-pcs', [\App\Http\Controllers\PrebuiltPcController::class, 'index'])->name('prebuilt-pcs');
+Route::get('/search', [\App\Http\Controllers\SearchController::class, 'index'])->name('search');
 
 Route::post('/cart/add', [\App\Http\Controllers\CartController::class, 'add'])->name('cart.add');
 Route::get('/cart/count', [\App\Http\Controllers\CartController::class, 'getCount'])->name('cart.count');

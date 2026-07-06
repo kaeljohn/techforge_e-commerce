@@ -71,7 +71,19 @@ class GamingPcController extends Controller
             ['path' => request()->url(), 'query' => request()->query()]
         );
 
-        return view('gaming-pcs', compact('configs', 'counts'));
+        $minPrices = array_filter([
+            PrebuiltConfig::min('price'),
+            CustombuiltConfig::min('price'),
+        ]);
+        $globalMinPrice = !empty($minPrices) ? floor(min($minPrices)) : 0;
+
+        $maxPrices = array_filter([
+            PrebuiltConfig::max('price'),
+            CustombuiltConfig::max('price'),
+        ]);
+        $globalMaxPrice = !empty($maxPrices) ? ceil(max($maxPrices)) : 250000;
+
+        return view('gaming-pcs', compact('configs', 'counts', 'globalMinPrice', 'globalMaxPrice'));
     }
 
     private function applyFilters($query, Request $request)

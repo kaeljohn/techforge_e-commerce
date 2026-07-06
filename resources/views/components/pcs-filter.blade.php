@@ -17,12 +17,17 @@
 
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-xl font-bold text-white">Filter</h2>
-                <a href="{{ route($route) }}" class="text-xs text-primary hover:text-orange-400 font-bold uppercase tracking-widest transition-colors">Reset All</a>
+                @php
+                    $resetParams = [];
+                    if(request()->has('q')) $resetParams['q'] = request('q');
+                    if(request()->has('tab')) $resetParams['tab'] = request('tab');
+                @endphp
+                <a href="{{ route($route, $resetParams) }}" class="text-xs text-primary hover:text-orange-400 font-bold uppercase tracking-widest transition-colors">Reset All</a>
             </div>
 
             <!-- Price Accordion -->
             <div class="mb-6 border-t border-[#3a1810] pt-6">
-                <input type="checkbox" id="price-accordion" class="peer hidden" {{ request()->filled('price_min') || request()->filled('price_max') ? 'checked' : '' }}>
+                <input type="checkbox" id="price-accordion" class="peer hidden" checked>
                 <label for="price-accordion" class="flex items-center justify-between cursor-pointer group">
                     <h3 class="text-sm font-bold text-white uppercase tracking-widest flex items-center gap-2">
                         <i class="ph ph-currency-circle text-primary"></i> Price
@@ -52,9 +57,16 @@
                         
                         <!-- Dual Range Slider -->
                         <div class="relative h-2 bg-[#3a1810] rounded-full mt-6 mb-2">
-                            <div id="slider-track" class="absolute top-0 bottom-0 bg-primary rounded-full" style="left: 0%; right: 0%;"></div>
-                            <input type="range" id="range-min" min="0" max="250000" step="1000" value="{{ request('price_min', 0) }}" class="absolute w-full -top-1 h-4 appearance-none bg-transparent pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-primary [&::-webkit-slider-thumb]:rounded-full cursor-pointer">
-                            <input type="range" id="range-max" min="0" max="250000" step="1000" value="{{ request('price_max', 250000) }}" class="absolute w-full -top-1 h-4 appearance-none bg-transparent pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-primary [&::-webkit-slider-thumb]:rounded-full cursor-pointer">
+                            @php
+                                $reqMin = max(request('price_min', $globalMinPrice), $globalMinPrice);
+                                $reqMax = min(request('price_max', $globalMaxPrice), $globalMaxPrice);
+                                $range = max($globalMaxPrice - $globalMinPrice, 1); // prevent division by zero
+                                $leftPercent = (($reqMin - $globalMinPrice) / $range) * 100;
+                                $rightPercent = 100 - ((($reqMax - $globalMinPrice) / $range) * 100);
+                            @endphp
+                            <div id="slider-track" class="absolute top-0 bottom-0 bg-primary rounded-full" style="left: {{ $leftPercent }}%; right: {{ $rightPercent }}%;"></div>
+                            <input type="range" id="range-min" min="{{ $globalMinPrice }}" max="{{ $globalMaxPrice }}" step="1000" value="{{ $reqMin }}" class="absolute w-full -top-1 h-4 appearance-none bg-transparent pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-primary [&::-webkit-slider-thumb]:rounded-full cursor-pointer">
+                            <input type="range" id="range-max" min="{{ $globalMinPrice }}" max="{{ $globalMaxPrice }}" step="1000" value="{{ $reqMax }}" class="absolute w-full -top-1 h-4 appearance-none bg-transparent pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-primary [&::-webkit-slider-thumb]:rounded-full cursor-pointer">
                         </div>
                     </div>
                 </div>
@@ -74,17 +86,28 @@
                     <div class="min-h-0">
                         @php
                             $reqProcs = request('processor', []);
-                            $reqBrands = request('processor_brand', []);
-                            $amdOpen = collect($reqProcs)->contains(fn($p) => str_starts_with($p, 'AMD'));
-                            $intelOpen = collect($reqProcs)->contains(fn($p) => str_starts_with($p, 'Intel'));
+                            
+                            $amdOpts = collect($counts['processors'] ?? [])->filter(fn($c, $p) => str_starts_with($p, 'AMD'));
+                            $amdTotal = $amdOpts->count();
+                            $amdChecked = $amdOpts->keys()->intersect($reqProcs)->count();
+                            $isAmdChecked = $amdTotal > 0 && $amdChecked === $amdTotal;
+                            $isAmdIndeterminate = $amdChecked > 0 && $amdChecked < $amdTotal;
+                            $amdOpen = $amdChecked > 0;
+                            
+                            $intelOpts = collect($counts['processors'] ?? [])->filter(fn($c, $p) => str_starts_with($p, 'Intel'));
+                            $intelTotal = $intelOpts->count();
+                            $intelChecked = $intelOpts->keys()->intersect($reqProcs)->count();
+                            $isIntelChecked = $intelTotal > 0 && $intelChecked === $intelTotal;
+                            $isIntelIndeterminate = $intelChecked > 0 && $intelChecked < $intelTotal;
+                            $intelOpen = $intelChecked > 0;
                         @endphp
 
                         <div class="space-y-4">
                             <!-- AMD Dropdown -->
                             <div>
-                                <input type="checkbox" id="amd-accordion" class="peer hidden" {{ in_array('AMD', $reqBrands) || $amdOpen ? 'checked' : '' }}>
+                                <input type="checkbox" id="amd-accordion" class="peer hidden" {{ $amdOpen ? 'checked' : '' }}>
                                 <div class="flex items-center gap-3 peer-checked:[&_.ph-caret-down]:rotate-180">
-                                    <input type="checkbox" name="processor_brand[]" value="AMD" id="brand-filter-amd" class="appearance-none w-4 h-4 shrink-0 border border-[#5a2810] rounded-sm bg-black/40 checked:bg-primary checked:border-primary relative after:content-[''] after:absolute after:hidden checked:after:block after:left-1/2 after:top-1/2 after:-translate-x-1/2 after:-translate-y-1/2 after:w-2 after:h-2 after:bg-white after:rounded-full transition-all cursor-pointer" {{ in_array('AMD', $reqBrands) ? 'checked' : '' }}>
+                                    <input type="checkbox" data-parent="proc-amd" id="brand-filter-amd" class="brand-checkbox appearance-none w-4 h-4 shrink-0 border border-[#5a2810] rounded-sm bg-black/40 checked:bg-primary checked:border-primary relative after:content-[''] after:absolute after:hidden checked:after:block after:left-1/2 after:top-1/2 after:-translate-x-1/2 after:-translate-y-1/2 after:w-2 after:h-2 after:bg-white after:rounded-full [&.is-indeterminate]:bg-primary [&.is-indeterminate]:border-primary [&.is-indeterminate]:after:block [&.is-indeterminate]:after:h-0.5 [&.is-indeterminate]:after:rounded-sm transition-all cursor-pointer {{ $isAmdIndeterminate ? 'is-indeterminate' : '' }}" {{ $isAmdChecked ? 'checked' : '' }}>
                                     <label for="amd-accordion" class="flex-1 flex items-center cursor-pointer text-sm font-bold text-gray-300 hover:text-white transition-colors select-none">
                                         AMD
                                         <i class="ph ph-caret-down ml-auto text-gray-500 transition-transform"></i>
@@ -92,9 +115,9 @@
                                 </div>
                                 <div class="grid grid-rows-[0fr] peer-checked:grid-rows-[1fr] transition-all duration-300 opacity-0 peer-checked:opacity-100 overflow-hidden">
                                     <div class="min-h-0 pl-5 mt-3 space-y-3 border-l border-[#3a1810] ml-2">
-                                        @foreach(collect($counts['processors'])->filter(fn($c, $p) => str_starts_with($p, 'AMD')) as $proc => $count)
+                                        @foreach($amdOpts as $proc => $count)
                                         <label class="flex items-center gap-3 group cursor-pointer">
-                                            <input type="checkbox" name="processor[]" value="{{ $proc }}" class="appearance-none w-4 h-4 shrink-0 border border-[#5a2810] rounded-sm bg-black/40 checked:bg-primary checked:border-primary relative after:content-[''] after:absolute after:hidden checked:after:block after:left-1/2 after:top-1/2 after:-translate-x-1/2 after:-translate-y-1/2 after:w-2 after:h-2 after:bg-white after:rounded-full transition-all cursor-pointer" {{ in_array($proc, $reqProcs) ? 'checked' : '' }}>
+                                            <input type="checkbox" name="processor[]" value="{{ $proc }}" data-child-of="proc-amd" class="appearance-none w-4 h-4 shrink-0 border border-[#5a2810] rounded-sm bg-black/40 checked:bg-primary checked:border-primary relative after:content-[''] after:absolute after:hidden checked:after:block after:left-1/2 after:top-1/2 after:-translate-x-1/2 after:-translate-y-1/2 after:w-2 after:h-2 after:bg-white after:rounded-full transition-all cursor-pointer" {{ in_array($proc, $reqProcs) ? 'checked' : '' }}>
                                             <span class="text-sm text-gray-400 group-hover:text-white transition-colors">{{ str_replace('AMD ', '', $proc) }}</span>
                                             <span class="text-[10px] text-gray-500 ml-auto">{{ $count }}</span>
                                         </label>
@@ -105,9 +128,9 @@
 
                             <!-- Intel Dropdown -->
                             <div>
-                                <input type="checkbox" id="intel-accordion" class="peer hidden" {{ in_array('Intel', $reqBrands) || $intelOpen ? 'checked' : '' }}>
+                                <input type="checkbox" id="intel-accordion" class="peer hidden" {{ $intelOpen ? 'checked' : '' }}>
                                 <div class="flex items-center gap-3 peer-checked:[&_.ph-caret-down]:rotate-180">
-                                    <input type="checkbox" name="processor_brand[]" value="Intel" id="brand-filter-intel" class="appearance-none w-4 h-4 shrink-0 border border-[#5a2810] rounded-sm bg-black/40 checked:bg-primary checked:border-primary relative after:content-[''] after:absolute after:hidden checked:after:block after:left-1/2 after:top-1/2 after:-translate-x-1/2 after:-translate-y-1/2 after:w-2 after:h-2 after:bg-white after:rounded-full transition-all cursor-pointer" {{ in_array('Intel', $reqBrands) ? 'checked' : '' }}>
+                                    <input type="checkbox" data-parent="proc-intel" id="brand-filter-intel" class="brand-checkbox appearance-none w-4 h-4 shrink-0 border border-[#5a2810] rounded-sm bg-black/40 checked:bg-primary checked:border-primary relative after:content-[''] after:absolute after:hidden checked:after:block after:left-1/2 after:top-1/2 after:-translate-x-1/2 after:-translate-y-1/2 after:w-2 after:h-2 after:bg-white after:rounded-full [&.is-indeterminate]:bg-primary [&.is-indeterminate]:border-primary [&.is-indeterminate]:after:block [&.is-indeterminate]:after:h-0.5 [&.is-indeterminate]:after:rounded-sm transition-all cursor-pointer {{ $isIntelIndeterminate ? 'is-indeterminate' : '' }}" {{ $isIntelChecked ? 'checked' : '' }}>
                                     <label for="intel-accordion" class="flex-1 flex items-center cursor-pointer text-sm font-bold text-gray-300 hover:text-white transition-colors select-none">
                                         Intel
                                         <i class="ph ph-caret-down ml-auto text-gray-500 transition-transform"></i>
@@ -115,9 +138,9 @@
                                 </div>
                                 <div class="grid grid-rows-[0fr] peer-checked:grid-rows-[1fr] transition-all duration-300 opacity-0 peer-checked:opacity-100 overflow-hidden">
                                     <div class="min-h-0 pl-5 mt-3 space-y-3 border-l border-[#3a1810] ml-2">
-                                        @foreach(collect($counts['processors'])->filter(fn($c, $p) => str_starts_with($p, 'Intel')) as $proc => $count)
+                                        @foreach($intelOpts as $proc => $count)
                                         <label class="flex items-center gap-3 group cursor-pointer">
-                                            <input type="checkbox" name="processor[]" value="{{ $proc }}" class="appearance-none w-4 h-4 shrink-0 border border-[#5a2810] rounded-sm bg-black/40 checked:bg-primary checked:border-primary relative after:content-[''] after:absolute after:hidden checked:after:block after:left-1/2 after:top-1/2 after:-translate-x-1/2 after:-translate-y-1/2 after:w-2 after:h-2 after:bg-white after:rounded-full transition-all cursor-pointer" {{ in_array($proc, $reqProcs) ? 'checked' : '' }}>
+                                            <input type="checkbox" name="processor[]" value="{{ $proc }}" data-child-of="proc-intel" class="appearance-none w-4 h-4 shrink-0 border border-[#5a2810] rounded-sm bg-black/40 checked:bg-primary checked:border-primary relative after:content-[''] after:absolute after:hidden checked:after:block after:left-1/2 after:top-1/2 after:-translate-x-1/2 after:-translate-y-1/2 after:w-2 after:h-2 after:bg-white after:rounded-full transition-all cursor-pointer" {{ in_array($proc, $reqProcs) ? 'checked' : '' }}>
                                             <span class="text-sm text-gray-400 group-hover:text-white transition-colors">{{ str_replace('Intel ', '', $proc) }}</span>
                                             <span class="text-[10px] text-gray-500 ml-auto">{{ $count }}</span>
                                         </label>
@@ -144,17 +167,28 @@
                     <div class="min-h-0">
                         @php
                             $reqGpus = request('gpu', []);
-                            $reqGpuBrands = request('gpu_brand', []);
-                            $nvidiaOpen = collect($reqGpus)->contains(fn($p) => str_starts_with($p, 'NVIDIA'));
-                            $amdGpuOpen = collect($reqGpus)->contains(fn($p) => str_starts_with($p, 'AMD'));
+                            
+                            $nvidiaOpts = collect($counts['gpus'] ?? [])->filter(fn($c, $g) => str_starts_with($g, 'NVIDIA'));
+                            $nvidiaTotal = $nvidiaOpts->count();
+                            $nvidiaChecked = $nvidiaOpts->keys()->intersect($reqGpus)->count();
+                            $isNvidiaChecked = $nvidiaTotal > 0 && $nvidiaChecked === $nvidiaTotal;
+                            $isNvidiaIndeterminate = $nvidiaChecked > 0 && $nvidiaChecked < $nvidiaTotal;
+                            $nvidiaOpen = $nvidiaChecked > 0;
+                            
+                            $amdGpuOpts = collect($counts['gpus'] ?? [])->filter(fn($c, $g) => str_starts_with($g, 'AMD'));
+                            $amdGpuTotal = $amdGpuOpts->count();
+                            $amdGpuChecked = $amdGpuOpts->keys()->intersect($reqGpus)->count();
+                            $isAmdGpuChecked = $amdGpuTotal > 0 && $amdGpuChecked === $amdGpuTotal;
+                            $isAmdGpuIndeterminate = $amdGpuChecked > 0 && $amdGpuChecked < $amdGpuTotal;
+                            $amdGpuOpen = $amdGpuChecked > 0;
                         @endphp
                         
                         <div class="space-y-4">
                             <!-- NVIDIA Dropdown -->
                             <div>
-                                <input type="checkbox" id="nvidia-accordion" class="peer hidden" {{ in_array('NVIDIA', $reqGpuBrands) || $nvidiaOpen ? 'checked' : '' }}>
+                                <input type="checkbox" id="nvidia-accordion" class="peer hidden" {{ $nvidiaOpen ? 'checked' : '' }}>
                                 <div class="flex items-center gap-3 peer-checked:[&_.ph-caret-down]:rotate-180">
-                                    <input type="checkbox" name="gpu_brand[]" value="NVIDIA" id="brand-filter-nvidia" class="appearance-none w-4 h-4 shrink-0 border border-[#5a2810] rounded-sm bg-black/40 checked:bg-primary checked:border-primary relative after:content-[''] after:absolute after:hidden checked:after:block after:left-1/2 after:top-1/2 after:-translate-x-1/2 after:-translate-y-1/2 after:w-2 after:h-2 after:bg-white after:rounded-full transition-all cursor-pointer" {{ in_array('NVIDIA', $reqGpuBrands) ? 'checked' : '' }}>
+                                    <input type="checkbox" data-parent="gpu-nvidia" id="brand-filter-nvidia" class="brand-checkbox appearance-none w-4 h-4 shrink-0 border border-[#5a2810] rounded-sm bg-black/40 checked:bg-primary checked:border-primary relative after:content-[''] after:absolute after:hidden checked:after:block after:left-1/2 after:top-1/2 after:-translate-x-1/2 after:-translate-y-1/2 after:w-2 after:h-2 after:bg-white after:rounded-full [&.is-indeterminate]:bg-primary [&.is-indeterminate]:border-primary [&.is-indeterminate]:after:block [&.is-indeterminate]:after:h-0.5 [&.is-indeterminate]:after:rounded-sm transition-all cursor-pointer {{ $isNvidiaIndeterminate ? 'is-indeterminate' : '' }}" {{ $isNvidiaChecked ? 'checked' : '' }}>
                                     <label for="nvidia-accordion" class="flex-1 flex items-center cursor-pointer text-sm font-bold text-gray-300 hover:text-white transition-colors select-none">
                                         NVIDIA
                                         <i class="ph ph-caret-down ml-auto text-gray-500 transition-transform"></i>
@@ -162,9 +196,9 @@
                                 </div>
                                 <div class="grid grid-rows-[0fr] peer-checked:grid-rows-[1fr] transition-all duration-300 opacity-0 peer-checked:opacity-100 overflow-hidden">
                                     <div class="min-h-0 pl-5 mt-3 space-y-3 border-l border-[#3a1810] ml-2">
-                                        @foreach(collect($counts['gpus'])->filter(fn($c, $g) => str_starts_with($g, 'NVIDIA')) as $gpu => $count)
+                                        @foreach($nvidiaOpts as $gpu => $count)
                                         <label class="flex items-center gap-3 group cursor-pointer">
-                                            <input type="checkbox" name="gpu[]" value="{{ $gpu }}" class="appearance-none w-4 h-4 shrink-0 border border-[#5a2810] rounded-sm bg-black/40 checked:bg-primary checked:border-primary relative after:content-[''] after:absolute after:hidden checked:after:block after:left-1/2 after:top-1/2 after:-translate-x-1/2 after:-translate-y-1/2 after:w-2 after:h-2 after:bg-white after:rounded-full transition-all cursor-pointer" {{ in_array($gpu, $reqGpus) ? 'checked' : '' }}>
+                                            <input type="checkbox" name="gpu[]" value="{{ $gpu }}" data-child-of="gpu-nvidia" class="appearance-none w-4 h-4 shrink-0 border border-[#5a2810] rounded-sm bg-black/40 checked:bg-primary checked:border-primary relative after:content-[''] after:absolute after:hidden checked:after:block after:left-1/2 after:top-1/2 after:-translate-x-1/2 after:-translate-y-1/2 after:w-2 after:h-2 after:bg-white after:rounded-full transition-all cursor-pointer" {{ in_array($gpu, $reqGpus) ? 'checked' : '' }}>
                                             <span class="text-sm text-gray-400 group-hover:text-white transition-colors truncate" title="{{ $gpu }}">{{ str_replace('NVIDIA ', '', $gpu) }}</span>
                                             <span class="text-[10px] text-gray-500 ml-auto shrink-0">{{ $count }}</span>
                                         </label>
@@ -173,11 +207,10 @@
                                 </div>
                             </div>
                             
-                            <!-- AMD GPU Dropdown -->
                             <div>
-                                <input type="checkbox" id="amd-gpu-accordion" class="peer hidden" {{ in_array('AMD', $reqGpuBrands) || $amdGpuOpen ? 'checked' : '' }}>
+                                <input type="checkbox" id="amd-gpu-accordion" class="peer hidden" {{ $amdGpuOpen ? 'checked' : '' }}>
                                 <div class="flex items-center gap-3 peer-checked:[&_.ph-caret-down]:rotate-180">
-                                    <input type="checkbox" name="gpu_brand[]" value="AMD" id="brand-filter-amd-gpu" class="appearance-none w-4 h-4 shrink-0 border border-[#5a2810] rounded-sm bg-black/40 checked:bg-primary checked:border-primary relative after:content-[''] after:absolute after:hidden checked:after:block after:left-1/2 after:top-1/2 after:-translate-x-1/2 after:-translate-y-1/2 after:w-2 after:h-2 after:bg-white after:rounded-full transition-all cursor-pointer" {{ in_array('AMD', $reqGpuBrands) ? 'checked' : '' }}>
+                                    <input type="checkbox" data-parent="gpu-amd" id="brand-filter-amd-gpu" class="brand-checkbox appearance-none w-4 h-4 shrink-0 border border-[#5a2810] rounded-sm bg-black/40 checked:bg-primary checked:border-primary relative after:content-[''] after:absolute after:hidden checked:after:block after:left-1/2 after:top-1/2 after:-translate-x-1/2 after:-translate-y-1/2 after:w-2 after:h-2 after:bg-white after:rounded-full [&.is-indeterminate]:bg-primary [&.is-indeterminate]:border-primary [&.is-indeterminate]:after:block [&.is-indeterminate]:after:h-0.5 [&.is-indeterminate]:after:rounded-sm transition-all cursor-pointer {{ $isAmdGpuIndeterminate ? 'is-indeterminate' : '' }}" {{ $isAmdGpuChecked ? 'checked' : '' }}>
                                     <label for="amd-gpu-accordion" class="flex-1 flex items-center cursor-pointer text-sm font-bold text-gray-300 hover:text-white transition-colors select-none">
                                         AMD
                                         <i class="ph ph-caret-down ml-auto text-gray-500 transition-transform"></i>
@@ -185,9 +218,9 @@
                                 </div>
                                 <div class="grid grid-rows-[0fr] peer-checked:grid-rows-[1fr] transition-all duration-300 opacity-0 peer-checked:opacity-100 overflow-hidden">
                                     <div class="min-h-0 pl-5 mt-3 space-y-3 border-l border-[#3a1810] ml-2">
-                                        @foreach(collect($counts['gpus'])->filter(fn($c, $g) => str_starts_with($g, 'AMD')) as $gpu => $count)
+                                        @foreach($amdGpuOpts as $gpu => $count)
                                         <label class="flex items-center gap-3 group cursor-pointer">
-                                            <input type="checkbox" name="gpu[]" value="{{ $gpu }}" class="appearance-none w-4 h-4 shrink-0 border border-[#5a2810] rounded-sm bg-black/40 checked:bg-primary checked:border-primary relative after:content-[''] after:absolute after:hidden checked:after:block after:left-1/2 after:top-1/2 after:-translate-x-1/2 after:-translate-y-1/2 after:w-2 after:h-2 after:bg-white after:rounded-full transition-all cursor-pointer" {{ in_array($gpu, $reqGpus) ? 'checked' : '' }}>
+                                            <input type="checkbox" name="gpu[]" value="{{ $gpu }}" data-child-of="gpu-amd" class="appearance-none w-4 h-4 shrink-0 border border-[#5a2810] rounded-sm bg-black/40 checked:bg-primary checked:border-primary relative after:content-[''] after:absolute after:hidden checked:after:block after:left-1/2 after:top-1/2 after:-translate-x-1/2 after:-translate-y-1/2 after:w-2 after:h-2 after:bg-white after:rounded-full transition-all cursor-pointer" {{ in_array($gpu, $reqGpus) ? 'checked' : '' }}>
                                             <span class="text-sm text-gray-400 group-hover:text-white transition-colors truncate" title="{{ $gpu }}">{{ str_replace('AMD ', '', $gpu) }}</span>
                                             <span class="text-[10px] text-gray-500 ml-auto shrink-0">{{ $count }}</span>
                                         </label>
@@ -220,15 +253,19 @@
                         <div class="space-y-4">
                             @foreach(['16GB', '32GB', '64GB'] as $cap)
                                 @php
-                                    $capOpen = collect($reqRams)->contains(fn($p) => str_starts_with($p, $cap));
-                                    $ramOpts = collect($counts['rams'])->filter(fn($c, $r) => str_starts_with($r, $cap));
+                                    $ramOpts = collect($counts['rams'] ?? [])->filter(fn($c, $r) => str_starts_with($r, $cap));
+                                    $ramTotal = $ramOpts->count();
+                                    $ramChecked = $ramOpts->keys()->intersect($reqRams)->count();
+                                    $isCapChecked = $ramTotal > 0 && $ramChecked === $ramTotal;
+                                    $isCapIndeterminate = $ramChecked > 0 && $ramChecked < $ramTotal;
+                                    $capOpen = $ramChecked > 0;
                                 @endphp
                                 
                                 @if($ramOpts->count() > 0)
                                 <div>
-                                    <input type="checkbox" id="ram-{{ $cap }}-accordion" class="peer hidden" {{ in_array($cap, $reqRamCaps) || $capOpen ? 'checked' : '' }}>
+                                    <input type="checkbox" id="ram-{{ $cap }}-accordion" class="peer hidden" {{ $capOpen ? 'checked' : '' }}>
                                     <div class="flex items-center gap-3 peer-checked:[&_.ph-caret-down]:rotate-180">
-                                        <input type="checkbox" name="ram_capacity[]" value="{{ $cap }}" class="appearance-none w-4 h-4 shrink-0 border border-[#5a2810] rounded-sm bg-black/40 checked:bg-primary checked:border-primary relative after:content-[''] after:absolute after:hidden checked:after:block after:left-1/2 after:top-1/2 after:-translate-x-1/2 after:-translate-y-1/2 after:w-2 after:h-2 after:bg-white after:rounded-full transition-all cursor-pointer" {{ in_array($cap, $reqRamCaps) ? 'checked' : '' }}>
+                                        <input type="checkbox" data-parent="ram-{{ str_replace(' ', '', $cap) }}" class="brand-checkbox appearance-none w-4 h-4 shrink-0 border border-[#5a2810] rounded-sm bg-black/40 checked:bg-primary checked:border-primary relative after:content-[''] after:absolute after:hidden checked:after:block after:left-1/2 after:top-1/2 after:-translate-x-1/2 after:-translate-y-1/2 after:w-2 after:h-2 after:bg-white after:rounded-full [&.is-indeterminate]:bg-primary [&.is-indeterminate]:border-primary [&.is-indeterminate]:after:block [&.is-indeterminate]:after:h-0.5 [&.is-indeterminate]:after:rounded-sm transition-all cursor-pointer {{ $isCapIndeterminate ? 'is-indeterminate' : '' }}" {{ $isCapChecked ? 'checked' : '' }}>
                                         <label for="ram-{{ $cap }}-accordion" class="flex-1 flex items-center cursor-pointer text-sm font-bold text-gray-300 hover:text-white transition-colors select-none">
                                             {{ $cap }}
                                             <i class="ph ph-caret-down ml-auto text-gray-500 transition-transform"></i>
@@ -238,7 +275,7 @@
                                         <div class="min-h-0 pl-5 mt-3 space-y-3 border-l border-[#3a1810] ml-2">
                                             @foreach($ramOpts as $ram => $count)
                                             <label class="flex items-center gap-3 group cursor-pointer">
-                                                <input type="checkbox" name="ram[]" value="{{ $ram }}" class="appearance-none w-4 h-4 shrink-0 border border-[#5a2810] rounded-sm bg-black/40 checked:bg-primary checked:border-primary relative after:content-[''] after:absolute after:hidden checked:after:block after:left-1/2 after:top-1/2 after:-translate-x-1/2 after:-translate-y-1/2 after:w-2 after:h-2 after:bg-white after:rounded-full transition-all cursor-pointer" {{ in_array($ram, $reqRams) ? 'checked' : '' }}>
+                                                <input type="checkbox" name="ram[]" value="{{ $ram }}" data-child-of="ram-{{ str_replace(' ', '', $cap) }}" class="appearance-none w-4 h-4 shrink-0 border border-[#5a2810] rounded-sm bg-black/40 checked:bg-primary checked:border-primary relative after:content-[''] after:absolute after:hidden checked:after:block after:left-1/2 after:top-1/2 after:-translate-x-1/2 after:-translate-y-1/2 after:w-2 after:h-2 after:bg-white after:rounded-full transition-all cursor-pointer" {{ in_array($ram, $reqRams) ? 'checked' : '' }}>
                                                 <span class="text-sm text-gray-400 group-hover:text-white transition-colors truncate" title="{{ $ram }}">{{ trim(str_replace($cap, '', $ram)) }}</span>
                                                 <span class="text-[10px] text-gray-500 ml-auto shrink-0">{{ $count }}</span>
                                             </label>

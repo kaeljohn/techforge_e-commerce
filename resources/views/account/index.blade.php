@@ -364,13 +364,13 @@
                             <button class="bg-white/5 border border-white/10 hover:border-white/30 hover:bg-white/10 text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-all w-full text-center">
                                 Select Image
                             </button>
-                            
+
                             <p class="text-[11px] text-gray-500 mt-4 text-center leading-relaxed">
                                 File size: max. 1 MB<br>
                                 File extension: .JPEG, .PNG
                             </p>
                         </div>
-                    </div>
+                    </form>
                     </div> <!-- END PANE: PROFILE -->
 
                     <!-- PANE: PURCHASES -->
@@ -806,7 +806,7 @@
                                 <div class="absolute inset-0 bg-primary/20 rounded-full blur-xl"></div>
                                 <div class="absolute inset-0 rounded-full border-[6px] border-white/5"></div>
                                 <!-- Progress arc (fake with clip/rotate) -->
-                                <svg class="absolute inset-0 w-full h-full -rotate-90 transform" viewBox="0 0 100 100">
+                                <svg class="absolute inset-0 w-full h-full -rotate-90 transform overflow-visible" viewBox="0 0 100 100">
                                     <circle cx="50" cy="50" r="46" fill="none" stroke="url(#forge-gradient)" stroke-width="8" stroke-dasharray="289" stroke-dashoffset="144" class="transition-all duration-1000 ease-out drop-shadow-[0_0_8px_rgba(255,107,0,0.6)]"></circle>
                                     <defs>
                                         <linearGradient id="forge-gradient" x1="0%" y1="0%" x2="100%" y2="0%">

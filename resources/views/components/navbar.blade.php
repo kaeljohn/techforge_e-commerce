@@ -20,26 +20,33 @@
 
 
         <!-- Search Bar (Automatically Enlarged) -->
-        <div id="search-container" class="flex-1 max-w-3xl relative z-50">
+        <form id="search-container" action="{{ route('search') }}" method="GET" class="flex-1 max-w-3xl relative z-50">
             <div id="search-wrapper" class="relative flex items-center w-full h-11 bg-neutral-900 border border-white/10 hover:border-white/20 hover:bg-white/5 transition-all duration-300 rounded-2xl group">
-                <input type="text" id="search-input" placeholder="What are we searching?" class="w-full h-full bg-transparent outline-none pl-5 pr-20 text-sm text-white placeholder-gray-400 font-light rounded-2xl relative z-10">
+                <input type="text" name="q" id="search-input" placeholder="What are we searching?" class="w-full h-full bg-transparent outline-none pl-5 pr-20 text-sm text-white placeholder-gray-400 font-light rounded-2xl relative z-10" autocomplete="off" value="{{ request('q') }}">
                 
                 <!-- Clear Button -->
-                <button id="search-clear" class="absolute right-12 w-7 h-7 flex items-center justify-center text-gray-400 hover:text-white transition-all opacity-0 pointer-events-none z-20">
+                <button type="button" id="search-clear" class="absolute right-12 w-7 h-7 flex items-center justify-center text-gray-400 hover:text-white transition-all opacity-0 pointer-events-none z-20">
                     <i class="ph ph-x text-sm"></i>
                 </button>
 
-                <button class="absolute right-1 w-9 h-9 flex items-center justify-center bg-primary hover:bg-primary-hover text-white rounded-xl transition-colors shadow-[0_0_10px_rgba(255,107,0,0.3)] z-20">
+                <button type="submit" class="absolute right-1 w-9 h-9 flex items-center justify-center bg-primary hover:bg-primary-hover text-white rounded-xl transition-colors shadow-[0_0_10px_rgba(255,107,0,0.3)] z-20">
                     <i class="ph ph-magnifying-glass text-lg"></i>
                 </button>
             </div>
             
             <!-- Search Dropdown -->
-            <div id="search-dropdown" class="liquid-glass-heavy absolute top-[calc(100%+0.5rem)] left-0 w-full rounded-2xl overflow-hidden shadow-2xl py-3 opacity-0 pointer-events-none transition-all duration-300 transform -translate-y-2 origin-top">
+            <div id="search-dropdown" class="liquid-glass-heavy absolute top-[calc(100%+0.5rem)] left-0 w-full rounded-2xl overflow-hidden shadow-2xl py-4 opacity-0 pointer-events-none transition-all duration-300 transform -translate-y-2 origin-top">
+                <div class="px-5 mb-2">
+                    <span class="text-xs font-bold text-gray-500 uppercase tracking-widest">Popular Searches</span>
+                </div>
                 <ul class="text-sm text-gray-300 flex flex-col">
+                    <li><a href="{{ route('search', ['q' => 'RTX 4090']) }}" class="flex items-center gap-3 px-5 py-2.5 hover:bg-white/5 hover:text-primary transition-colors"><i class="ph ph-magnifying-glass text-gray-500"></i> RTX 4090</a></li>
+                    <li><a href="{{ route('search', ['q' => 'Ryzen 7 7800X3D']) }}" class="flex items-center gap-3 px-5 py-2.5 hover:bg-white/5 hover:text-primary transition-colors"><i class="ph ph-magnifying-glass text-gray-500"></i> Ryzen 7 7800X3D</a></li>
+                    <li><a href="{{ route('search', ['q' => 'Prebuilt Gaming PC']) }}" class="flex items-center gap-3 px-5 py-2.5 hover:bg-white/5 hover:text-primary transition-colors"><i class="ph ph-magnifying-glass text-gray-500"></i> Prebuilt Gaming PC</a></li>
+                    <li><a href="{{ route('search', ['q' => '32GB DDR5 RAM']) }}" class="flex items-center gap-3 px-5 py-2.5 hover:bg-white/5 hover:text-primary transition-colors"><i class="ph ph-magnifying-glass text-gray-500"></i> 32GB DDR5 RAM</a></li>
                 </ul>
             </div>
-        </div>
+        </form>
 
         <!-- Actions -->
         <div class="flex items-center gap-4 shrink-0">

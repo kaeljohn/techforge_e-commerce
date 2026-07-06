@@ -200,11 +200,14 @@
         </div>
     </main>
 
+    <!-- Wrapper for AJAX Tab/Pagination Loading -->
+    <div id="search-results-container" class="transition-opacity duration-300">
+
     <!-- Category Content -->
     <form id="filter-form" method="GET" action="{{ route('prebuilt-pcs') }}" class="max-w-[1500px] mx-auto px-6 lg:px-8 pb-24 relative z-10 flex flex-col lg:flex-row gap-8">
         
         <!-- Product Filter Component -->
-        <x-product-filter :counts="$counts" route="prebuilt-pcs" />
+        <x-pcs-filter :counts="$counts" route="prebuilt-pcs" :globalMinPrice="$globalMinPrice" :globalMaxPrice="$globalMaxPrice" />
 
         <!-- Product Grid -->
         <div id="product-grid-area" class="flex-1 w-full lg:w-auto transition-opacity duration-300">
@@ -288,6 +291,7 @@
 
         </div>
     </form>
+    </div>
 
     
     <!-- CTA Cards -->
@@ -332,171 +336,119 @@
         });
     </script>
 
-    <!-- Custom Slider JS -->
+    <!-- Custom Slider JS & AJAX Filtering -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            function initSliders() {
-                const minInput = document.getElementById('price-min');
-                const maxInput = document.getElementById('price-max');
-                const rangeMin = document.getElementById('range-min');
-                const rangeMax = document.getElementById('range-max');
-                const track = document.getElementById('slider-track');
-
-                if(!minInput || !maxInput || !rangeMin || !rangeMax || !track) return;
-
-                function updateTrack() {
-                    const min = parseInt(rangeMin.value);
-                    const max = parseInt(rangeMax.value);
-                    const maxAllowed = parseInt(rangeMin.max);
-                    
-                    const leftPercent = (min / maxAllowed) * 100;
-                    const rightPercent = 100 - ((max / maxAllowed) * 100);
-                    
-                    track.style.left = leftPercent + '%';
-                    track.style.right = rightPercent + '%';
+            function bindMobileFilter() {
+                const mobileFilterBtn = document.getElementById('mobile-filter-btn');
+                const filterSidebar = document.getElementById('filter-sidebar');
+                const closeFilterBtn = document.getElementById('close-filter-btn');
+                if (mobileFilterBtn && filterSidebar && closeFilterBtn) {
+                    mobileFilterBtn.addEventListener('click', () => {
+                        filterSidebar.classList.remove('translate-x-full');
+                        filterSidebar.classList.add('translate-x-0');
+                    });
+                    closeFilterBtn.addEventListener('click', () => {
+                        filterSidebar.classList.remove('translate-x-0');
+                        filterSidebar.classList.add('translate-x-full');
+                    });
                 }
-
-                // Initial setup
-                updateTrack();
-
-                rangeMin.addEventListener('input', function() {
-                    const val = parseInt(this.value);
-                    const maxVal = parseInt(rangeMax.value);
-                    if (val >= maxVal) {
-                        this.value = maxVal - 1000;
-                    }
-                    minInput.value = this.value;
-                    updateTrack();
-                });
-
-                rangeMax.addEventListener('input', function() {
-                    const val = parseInt(this.value);
-                    const minVal = parseInt(rangeMin.value);
-                    if (val <= minVal) {
-                        this.value = minVal + 1000;
-                    }
-                    maxInput.value = this.value;
-                    updateTrack();
-                });
-
-                minInput.addEventListener('change', function() {
-                    let val = parseInt(this.value);
-                    if(isNaN(val)) val = 0;
-                    const maxVal = parseInt(rangeMax.value);
-                    if(val > maxVal) val = maxVal - 1000;
-                    rangeMin.value = val;
-                    this.value = val;
-                    updateTrack();
-                });
-
-                maxInput.addEventListener('change', function() {
-                    let val = parseInt(this.value);
-                    if(isNaN(val)) val = parseInt(rangeMax.max);
-                    const minVal = parseInt(rangeMin.value);
-                    if(val < minVal) val = minVal + 1000;
-                    rangeMax.value = val;
-                    this.value = val;
-                    updateTrack();
-                });
-
-                // Dispatch event when sliding finishes so AJAX reloads
-                rangeMin.addEventListener('change', () => minInput.dispatchEvent(new Event('change', { bubbles: true })));
-                rangeMax.addEventListener('change', () => maxInput.dispatchEvent(new Event('change', { bubbles: true })));
             }
+            bindMobileFilter();
 
-            initSliders();
+            // Intercept form submissions for AJAX Filtering
+            function bindAjaxForm() {
+                const filterForm = document.getElementById('filter-form');
+                if (filterForm && !filterForm.isAjaxBound) {
+                    filterForm.isAjaxBound = true;
+                    // Override the native submit method so inline onchange="this.form.submit()" triggers our event listener
+                    const originalSubmit = HTMLFormElement.prototype.submit;
+                    filterForm.submit = function() {
+                        const event = new Event('submit', { bubbles: true, cancelable: true });
+                        filterForm.dispatchEvent(event);
+                    };
 
-            const form = document.getElementById('filter-form');
-            if (form) {
-                form.addEventListener('change', function(e) {
-                    if (e.target.id && (e.target.id.endsWith('-accordion') || e.target.id.endsWith('-toggle'))) {
-                        return;
-                    }
+                    filterForm.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        
+                        const url = new URL(filterForm.action);
+                        const formData = new FormData(filterForm);
+                        
+                        const searchParams = new URLSearchParams();
+                        for (const pair of formData) {
+                            if (pair[1] !== '') {
+                                searchParams.append(pair[0], pair[1]);
+                            }
+                        }
+                        url.search = searchParams.toString();
+                        
+                        const contentArea = document.getElementById('search-results-container');
+                        if (contentArea) contentArea.style.opacity = '0.5';
 
-                    // Save state of open accordions
-                    const openAccordions = Array.from(document.querySelectorAll('input[type="checkbox"][id$="-accordion"]:checked')).map(el => el.id);
+                        fetch(url.toString())
+                            .then(response => response.text())
+                            .then(html => {
+                                const parser = new DOMParser();
+                                const doc = parser.parseFromString(html, 'text/html');
+                                const newContentArea = doc.getElementById('search-results-container');
+                                
+                                if (newContentArea) {
+                                    contentArea.innerHTML = newContentArea.innerHTML;
+                                    contentArea.style.opacity = '1';
+                                }
+                                
+                                window.history.pushState({}, '', url.toString());
+                                bindMobileFilter();
+                                bindAjaxForm();
+                            })
+                            .catch(err => {
+                                console.error('AJAX load failed:', err);
+                                if (contentArea) contentArea.style.opacity = '1';
+                            });
+                    });
+                }
+            }
+            bindAjaxForm();
 
-                    const formData = new FormData(this);
-                    const params = new URLSearchParams(formData);
-                    const url = this.action + '?' + params.toString();
+            // AJAX Navigation for Pagination and Tabs
+            document.addEventListener('click', function(e) {
+                const link = e.target.closest('nav[role="navigation"] a, .tab-link');
+                if (link) {
+                    e.preventDefault();
+                    const url = link.href;
+                    const contentArea = document.getElementById('search-results-container');
                     
-                    const gridArea = document.getElementById('product-grid-area');
-                    if (gridArea) gridArea.style.opacity = '0.5';
+                    if (contentArea) contentArea.style.opacity = '0.5';
 
                     fetch(url)
                         .then(response => response.text())
                         .then(html => {
                             const parser = new DOMParser();
                             const doc = parser.parseFromString(html, 'text/html');
+                            const newContentArea = doc.getElementById('search-results-container');
                             
-                            const newSidebar = doc.getElementById('filter-sidebar');
-                            const newGrid = doc.getElementById('product-grid-area');
-                            
-                            if (newSidebar) {
-                                document.getElementById('filter-sidebar').innerHTML = newSidebar.innerHTML;
-                                
-                                // Restore accordion states
-                                openAccordions.forEach(id => {
-                                    const el = document.getElementById(id);
-                                    if (el) el.checked = true;
-                                });
-                                
-                                initSliders();
-                            }
-                            if (newGrid) {
-                                gridArea.innerHTML = newGrid.innerHTML;
-                                gridArea.style.opacity = '1';
+                            if (newContentArea) {
+                                contentArea.innerHTML = newContentArea.innerHTML;
+                                contentArea.style.opacity = '1';
                             }
                             
                             window.history.pushState({}, '', url);
+                            
+                            // scroll to top of grid
+                            window.scrollTo({
+                                top: contentArea.getBoundingClientRect().top + window.scrollY - 100,
+                                behavior: 'smooth'
+                            });
+
+                            bindMobileFilter();
+                            bindAjaxForm();
                         })
                         .catch(err => {
-                            console.error('Filtering failed:', err);
-                            if (gridArea) gridArea.style.opacity = '1';
+                            console.error('AJAX load failed:', err);
+                            if (contentArea) contentArea.style.opacity = '1';
                         });
-                });
-                
-                form.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                });
-                
-                // AJAX Pagination
-                document.addEventListener('click', function(e) {
-                    const paginationLink = e.target.closest('nav[role="navigation"] a');
-                    if (paginationLink) {
-                        e.preventDefault();
-                        const url = paginationLink.href;
-                        const gridArea = document.getElementById('product-grid-area');
-                        
-                        if (gridArea) gridArea.style.opacity = '0.5';
-
-                        fetch(url)
-                            .then(response => response.text())
-                            .then(html => {
-                                const parser = new DOMParser();
-                                const doc = parser.parseFromString(html, 'text/html');
-                                const newGrid = doc.getElementById('product-grid-area');
-                                
-                                if (newGrid) {
-                                    gridArea.innerHTML = newGrid.innerHTML;
-                                    gridArea.style.opacity = '1';
-                                }
-                                
-                                window.history.pushState({}, '', url);
-                                
-                                // scroll to top of grid
-                                window.scrollTo({
-                                    top: gridArea.getBoundingClientRect().top + window.scrollY - 100,
-                                    behavior: 'smooth'
-                                });
-                            })
-                            .catch(err => {
-                                console.error('Pagination failed:', err);
-                                if (gridArea) gridArea.style.opacity = '1';
-                            });
-                    }
-                });
-            }
+                }
+            });
         });
     </script>
 
