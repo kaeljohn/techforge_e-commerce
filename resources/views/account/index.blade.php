@@ -375,11 +375,7 @@
 
                     <!-- PANE: PURCHASES -->
                     <div id="pane-purchases" class="content-pane hidden">
-                        @if (session('success'))
-                        <div class="bg-green-500/10 border border-green-500/50 text-green-500 text-sm rounded-xl p-4 mb-6 relative z-10">
-                            {{ session('success') }}
-                        </div>
-                    @endif
+
                     <div class="border-b border-white/10 pb-4 mb-6 relative z-10">
                             <h2 class="text-2xl font-black text-white">Purchases</h2>
                             <p class="text-sm text-gray-400 mt-1">View and track your orders</p>
@@ -684,11 +680,7 @@
 
                     <!-- PANE: VOUCHERS -->
                     <div id="pane-vouchers" class="content-pane hidden">
-                        @if (session('success'))
-                        <div class="bg-green-500/10 border border-green-500/50 text-green-500 text-sm rounded-xl p-4 mb-6 relative z-10">
-                            {{ session('success') }}
-                        </div>
-                    @endif
+
                     <div class="border-b border-white/10 pb-4 mb-6 relative z-10">
                             <h2 class="text-2xl font-black text-white">My Vouchers</h2>
                             <p class="text-sm text-gray-400 mt-1">Manage and use your discount codes</p>
@@ -1003,6 +995,23 @@
                         </form>
                     </div>
                 </div>
+
+                <!-- Success Notification Modal -->
+                @if (session('success'))
+                <div id="success-modal" class="fixed inset-0 z-[100] flex items-center justify-center">
+                    <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeModal('success-modal')"></div>
+                    <div class="relative bg-[#13131a] border border-primary/30 rounded-2xl p-8 w-full max-w-sm shadow-[0_0_50px_rgba(255,107,0,0.3)] transform scale-100 opacity-100 transition-all duration-300 text-center flex flex-col items-center">
+                        <div class="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center mb-4 shadow-[0_0_20px_rgba(255,107,0,0.4)]">
+                            <i class="ph-bold ph-check text-3xl text-primary"></i>
+                        </div>
+                        <h3 class="text-xl font-black text-white mb-2">Success!</h3>
+                        <p class="text-sm text-gray-400 mb-6">{{ session('success') }}</p>
+                        <button onclick="closeModal('success-modal')" class="bg-primary hover:bg-[#ff8c33] text-white px-8 py-2.5 rounded-xl text-sm font-bold transition-all shadow-[0_0_15px_rgba(255,107,0,0.3)] hover:shadow-[0_0_25px_rgba(255,107,0,0.5)] w-full">
+                            Close
+                        </button>
+                    </div>
+                </div>
+                @endif
 
                 <!-- Add Address Modal -->
                 <div id="add-address-modal" class="fixed inset-0 z-[100] hidden items-center justify-center">
