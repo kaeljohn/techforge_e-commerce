@@ -23,8 +23,10 @@ class DatabaseSeeder extends Seeder
         // ]);
 
         $this->call([
-            ProductSeeder::class,
             ComponentSeeder::class,
+            PrebuiltConfigsSeeder::class,
+            ConfiguratorSeeder::class,
+            CustombuiltConfigsSeeder::class,
         ]);
     }
 }

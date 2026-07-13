@@ -11,111 +11,7 @@
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-        <!-- Product Selection Modal -->
-    <div id="product-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[100] opacity-0 pointer-events-none transition-all duration-300 flex items-center justify-center p-4">
-        <div class="liquid-glass-heavy w-full max-w-5xl max-h-[90vh] h-[800px] rounded-[2rem] border border-white/10 shadow-2xl flex flex-col transform scale-95 transition-transform duration-300 relative overflow-hidden bg-[#050505]">
-            
-            <!-- Modal Header -->
-            <div class="px-8 py-6 border-b border-white/10 flex justify-between items-center bg-[#050505]/50 shrink-0">
-                <div>
-                    <h3 class="text-2xl font-black text-white" id="modal-title">Select Component</h3>
-                </div>
-                <button onclick="closeModal()" class="w-10 h-10 rounded-full bg-white/10 hover:bg-primary flex items-center justify-center text-white transition-all shadow-lg hover:shadow-[0_0_15px_rgba(255,107,0,0.5)]">
-                    <i class="ph ph-x text-lg"></i>
-                </button>
-            </div>
-
-            <!-- Modal Filters -->
-            <div class="px-8 py-4 border-b border-white/10 bg-[#050505]/40 shrink-0 flex flex-col gap-4">
-                <div class="flex flex-col sm:flex-row gap-4 items-center">
-                    <div class="relative flex-1 w-full">
-                        <i class="ph ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"></i>
-                        <input type="text" id="modal-search" placeholder="Search components..." class="w-full bg-white/5 border border-white/10 rounded-xl py-2 pl-10 pr-4 text-white text-sm focus:outline-none focus:border-primary transition-colors">
-                    </div>
-                    <div class="flex gap-2 w-full sm:w-auto">
-                        <select id="modal-sort" class="bg-[#050505] border border-white/10 rounded-xl py-2 px-3 text-white text-sm focus:outline-none focus:border-primary">
-                            <option value="name_asc">Name: A-Z</option>
-                            <option value="price_asc">Price: Low to High</option>
-                            <option value="price_desc">Price: High to Low</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="flex flex-wrap gap-4 items-end" id="modal-dynamic-filters">
-                    <div class="flex flex-col gap-1">
-                        <label class="text-[10px] text-gray-500 uppercase font-bold tracking-wider">Price Range</label>
-                        <div class="flex items-center gap-2">
-                            <input type="number" id="modal-price-min" placeholder="Min" class="w-20 bg-white/5 border border-white/10 rounded-lg py-1.5 px-2 text-white text-xs focus:outline-none focus:border-primary">
-                            <span class="text-gray-500">-</span>
-                            <input type="number" id="modal-price-max" placeholder="Max" class="w-20 bg-white/5 border border-white/10 rounded-lg py-1.5 px-2 text-white text-xs focus:outline-none focus:border-primary">
-                        </div>
-                    </div>
-                    <div class="ml-auto flex items-center gap-4">
-                        <label class="flex items-center gap-2 cursor-pointer group">
-                            <div class="relative">
-                                <input type="checkbox" id="show-incompatible" class="sr-only">
-                                <div class="block bg-white/10 border border-white/20 w-10 h-6 rounded-full group-hover:bg-white/20 transition-colors"></div>
-                                <div class="dot absolute left-1 top-1 bg-gray-400 w-4 h-4 rounded-full transition-transform"></div>
-                            </div>
-                            <span class="text-xs font-bold text-gray-400 group-hover:text-white transition-colors">Show Incompatible</span>
-                            <style>
-                                #show-incompatible:checked ~ .dot { transform: translateX(100%); background-color: #ff6b00; }
-                                    .visualizer-slot {
-            transition: all 0.5s ease;
-            opacity: 0.2;
-            fill: #333;
-            stroke: #555;
-            cursor: pointer;
-        }
-        .visualizer-slot:hover {
-            stroke: #ff6b00;
-            fill: rgba(255, 107, 0, 0.2);
-            opacity: 0.8;
-        }
-        .visualizer-slot.active {
-            opacity: 1;
-            fill: rgba(255, 107, 0, 0.2);
-            stroke: #ff6b00;
-            filter: drop-shadow(0 0 8px rgba(255, 107, 0, 0.6));
-        }
-    </style>
-                        </label>
-                        <button id="modal-reset-filters" class="text-xs text-gray-400 hover:text-white transition-colors flex items-center gap-1 py-1.5 px-2">
-                            <i class="ph ph-arrow-counter-clockwise"></i> Reset
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Modal Content (Products List) -->
-            <div class="p-8 overflow-y-auto custom-scrollbar flex-1 bg-[#050505]/30">
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="modal-products">
-                    <!-- JavaScript will populate this -->
-                </div>
-            </div>
-        </div>
-    </div>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: {
-                            DEFAULT: '#ff6b00',
-                            hover: '#e56000',
-                            glow: 'rgba(255, 107, 0, 0.5)'
-                        },
-                        dark: {
-                            bg: '#050505',
-                            surface: '#121212'
-                        }
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
+        @vite('resources/js/Common/TailwindConfig.js')
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
@@ -257,34 +153,101 @@
 </head>
 <body class="relative antialiased selection:bg-primary selection:text-white">
 
-    <!-- Preloader -->
-    <div id="preloader" class="fixed inset-0 bg-[#050505] z-[100] flex items-center justify-center transition-opacity duration-1000 ease-in-out">
-        <script>
-            if (!sessionStorage.getItem('techforge_visited')) {
-                document.write(`
-                    <div class="relative flex items-center justify-center">
-                        <div class="absolute inset-0 bg-primary/20 blur-xl rounded-full animate-pulse"></div>
-                        <div class="flex items-center relative z-10">
-                            <img src="{{ Vite::asset('resources/img/Techforge_Logo.png') }}" alt="TechForge Logo" class="h-20 w-auto object-contain animate-spin-fast drop-shadow-[0_0_25px_rgba(255,107,0,0.6)]">
-                            <span class="text-4xl md:text-5xl font-black text-white tracking-widest animate-slide-text">TECHFORGE</span>
-                        </div>
-                    </div>
-                `);
-            } else {
-                document.write(`
-                    <div class="w-16 h-16 border-4 border-white/10 border-t-primary rounded-full animate-spin shadow-[0_0_20px_rgba(255,107,0,0.3)]"></div>
-                `);
-            }
-        </script>
-    </div>
+    @vite('resources/js/Common/Preloader.js')
+
 
     <!-- Background Ambient Effects -->
     <div class="ambient-light-1"></div>
     <div class="ambient-light-2"></div>
+    @vite('resources/js/Common/AmbientEffects.js')
 
 
 
     <x-navbar />
+    <!-- Product Selection Modal -->
+    <div id="product-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[100] opacity-0 pointer-events-none transition-all duration-300 flex items-center justify-center p-4">
+        <div class="liquid-glass-heavy w-full max-w-5xl max-h-[90vh] h-[800px] rounded-[2rem] border border-white/10 shadow-2xl flex flex-col transform scale-95 transition-transform duration-300 relative overflow-hidden bg-[#050505]">
+            
+            <!-- Modal Header -->
+            <div class="px-8 py-6 border-b border-white/10 flex justify-between items-center bg-[#050505]/50 shrink-0">
+                <div>
+                    <h3 class="text-2xl font-black text-white" id="modal-title">Select Component</h3>
+                </div>
+                <button onclick="closeModal()" class="w-10 h-10 rounded-full bg-white/10 hover:bg-primary flex items-center justify-center text-white transition-all shadow-lg hover:shadow-[0_0_15px_rgba(255,107,0,0.5)]">
+                    <i class="ph ph-x text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Modal Filters -->
+            <div class="px-8 py-4 border-b border-white/10 bg-[#050505]/40 shrink-0 flex flex-col gap-4">
+                <div class="flex flex-col sm:flex-row gap-4 items-center">
+                    <div class="relative flex-1 w-full">
+                        <i class="ph ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"></i>
+                        <input type="text" id="modal-search" placeholder="Search components..." class="w-full bg-white/5 border border-white/10 rounded-xl py-2 pl-10 pr-4 text-white text-sm focus:outline-none focus:border-primary transition-colors">
+                    </div>
+                    <div class="flex gap-2 w-full sm:w-auto">
+                        <select id="modal-sort" class="bg-[#050505] border border-white/10 rounded-xl py-2 px-3 text-white text-sm focus:outline-none focus:border-primary">
+                            <option value="name_asc">Name: A-Z</option>
+                            <option value="price_asc">Price: Low to High</option>
+                            <option value="price_desc">Price: High to Low</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex flex-wrap gap-4 items-end" id="modal-dynamic-filters">
+                    <div class="flex flex-col gap-1">
+                        <label class="text-[10px] text-gray-500 uppercase font-bold tracking-wider">Price Range</label>
+                        <div class="flex items-center gap-2">
+                            <input type="number" id="modal-price-min" placeholder="Min" class="w-20 bg-white/5 border border-white/10 rounded-lg py-1.5 px-2 text-white text-xs focus:outline-none focus:border-primary">
+                            <span class="text-gray-500">-</span>
+                            <input type="number" id="modal-price-max" placeholder="Max" class="w-20 bg-white/5 border border-white/10 rounded-lg py-1.5 px-2 text-white text-xs focus:outline-none focus:border-primary">
+                        </div>
+                    </div>
+                    <div class="ml-auto flex items-center gap-4">
+                        <label class="flex items-center gap-2 cursor-pointer group">
+                            <div class="relative">
+                                <input type="checkbox" id="show-incompatible" class="sr-only">
+                                <div class="block bg-white/10 border border-white/20 w-10 h-6 rounded-full group-hover:bg-white/20 transition-colors"></div>
+                                <div class="dot absolute left-1 top-1 bg-gray-400 w-4 h-4 rounded-full transition-transform"></div>
+                            </div>
+                            <span class="text-xs font-bold text-gray-400 group-hover:text-white transition-colors">Show Incompatible</span>
+                            <style>
+                                #show-incompatible:checked ~ .dot { transform: translateX(100%); background-color: #ff6b00; }
+                                    .visualizer-slot {
+            transition: all 0.5s ease;
+            opacity: 0.2;
+            fill: #333;
+            stroke: #555;
+            cursor: pointer;
+        }
+        .visualizer-slot:hover {
+            stroke: #ff6b00;
+            fill: rgba(255, 107, 0, 0.2);
+            opacity: 0.8;
+        }
+        .visualizer-slot.active {
+            opacity: 1;
+            fill: rgba(255, 107, 0, 0.2);
+            stroke: #ff6b00;
+            filter: drop-shadow(0 0 8px rgba(255, 107, 0, 0.6));
+        }
+    </style>
+                        </label>
+                        <button id="modal-reset-filters" class="text-xs text-gray-400 hover:text-white transition-colors flex items-center gap-1 py-1.5 px-2">
+                            <i class="ph ph-arrow-counter-clockwise"></i> Reset
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Content (Products List) -->
+            <div class="p-8 overflow-y-auto custom-scrollbar flex-1 bg-[#050505]/30">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="modal-products">
+                    <!-- JavaScript will populate this -->
+                </div>
+            </div>
+        </div>
+    </div>
+
 
 
     <main class="flex-grow container mx-auto px-4 pt-32 pb-16 lg:pt-40 lg:pb-20 relative z-10">

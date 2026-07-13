@@ -6,5 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Storage extends Model
 {
+    protected $table = 'component_storages';
     protected $guarded = [];
 }

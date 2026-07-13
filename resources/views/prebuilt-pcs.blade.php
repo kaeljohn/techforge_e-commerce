@@ -11,28 +11,7 @@
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: {
-                            DEFAULT: '#ff6b00',
-                            hover: '#e56000',
-                            glow: 'rgba(255, 107, 0, 0.5)'
-                        },
-                        dark: {
-                            bg: '#050505',
-                            surface: '#121212'
-                        }
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
+    @vite('resources/js/Common/TailwindConfig.js')
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
@@ -296,7 +275,7 @@
     
     <!-- CTA Cards -->
     <div class="max-w-[1500px] mx-auto px-6 lg:px-8 pb-24 relative z-10 grid grid-cols-1 md:grid-cols-2 gap-8">
-        <a href="{{ url('/custom-pcs') }}" class="block liquid-glass rounded-2xl p-8 border border-white/10 hover:border-primary/50 transition-all group overflow-hidden relative">
+        <a href="{{ url('/pc-configurator') }}" class="block liquid-glass rounded-2xl p-8 border border-white/10 hover:border-primary/50 transition-all group overflow-hidden relative">
             <div class="absolute -right-10 -bottom-10 opacity-10 group-hover:opacity-20 group-hover:scale-110 transition-all duration-500">
                 <i class="ph-fill ph-cpu text-[200px] text-white"></i>
             </div>
@@ -317,24 +296,7 @@
     <x-footer />
 
 
-    <!-- Preloader Script -->
-    <script>
-        window.addEventListener('load', () => {
-            const preloader = document.getElementById('preloader');
-            if (preloader) {
-                if (!sessionStorage.getItem('techforge_visited')) {
-                    sessionStorage.setItem('techforge_visited', 'true');
-                    setTimeout(() => {
-                        preloader.classList.add('opacity-0');
-                        setTimeout(() => preloader.style.display = 'none', 1000); 
-                    }, 1800);
-                } else {
-                    preloader.classList.add('opacity-0');
-                    setTimeout(() => preloader.style.display = 'none', 1000);
-                }
-            }
-        });
-    </script>
+    
 
     <!-- Custom Slider JS & AJAX Filtering -->
     <script>
@@ -452,21 +414,7 @@
         });
     </script>
 
-    <!-- Script for subtle interactive effects -->
-    <script>
-        document.addEventListener('mousemove', (e) => {
-            const x = e.clientX / window.innerWidth;
-            const y = e.clientY / window.innerHeight;
-            
-            const light1 = document.querySelector('.ambient-light-1');
-            const light2 = document.querySelector('.ambient-light-2');
-            
-            if (light1 && light2) {
-                light1.style.transform = `translate(${x * 20}px, ${y * 20}px)`;
-                light2.style.transform = `translate(${x * -30}px, ${y * -30}px)`;
-            }
-        });
-    </script>
+    @vite(['resources/js/Common/Preloader.js', 'resources/js/Common/AmbientEffects.js'])
 
     <!-- Load our compiled JavaScript (You can remove LiquidGlass initialization from inside this file) -->
     @vite(['resources/js/HomePage/Homepage.js', 'resources/js/Category/Category.js'])

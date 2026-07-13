@@ -6,5 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class PcCase extends Model
 {
+    protected $table = 'component_pc_cases';
     //
 }

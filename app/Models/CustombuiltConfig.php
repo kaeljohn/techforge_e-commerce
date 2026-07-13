@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class CustombuiltConfig extends Model
 {
     use HasFactory;
+
+    protected $table = 'configurator_configs';
     
     protected $guarded = [];
 

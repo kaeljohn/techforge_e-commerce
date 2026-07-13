@@ -11,28 +11,7 @@
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: {
-                            DEFAULT: '#ff6b00',
-                            hover: '#e56000',
-                            glow: 'rgba(255, 107, 0, 0.5)'
-                        },
-                        dark: {
-                            bg: '#050505',
-                            surface: '#121212'
-                        }
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
+    @vite('resources/js/Common/TailwindConfig.js')
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
@@ -578,10 +557,10 @@
         <div class="flex flex-col gap-6">
             <!-- Top Row: 2 Items -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <!-- All Gaming PCs -->
+                <!-- Prebuilt Gaming PCs -->
                 <div class="relative rounded-3xl overflow-hidden group h-[350px] lg:h-[400px] cursor-pointer border border-white/10 hover:border-primary/50 transition-all duration-500 shadow-[0_10px_30px_rgba(0,0,0,0.5)] hover:shadow-[0_10px_40px_rgba(255,107,0,0.15)] bg-[#0d0d0d]">
                     <div class="absolute right-0 top-0 bottom-0 w-full md:w-3/4">
-                        <img src="https://images.unsplash.com/photo-1547082299-de196ea013d6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="All Gaming PCs" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 opacity-60" style="mask-image: linear-gradient(to right, transparent, black 30%); -webkit-mask-image: linear-gradient(to right, transparent, black 30%);">
+                        <img src="https://images.unsplash.com/photo-1547082299-de196ea013d6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="Prebuilt Gaming PCs" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 opacity-60" style="mask-image: linear-gradient(to right, transparent, black 30%); -webkit-mask-image: linear-gradient(to right, transparent, black 30%);">
                         <div class="absolute inset-0 bg-gradient-to-r from-[#0d0d0d] via-[#0d0d0d]/60 to-transparent pointer-events-none"></div>
                     </div>
                     <div class="absolute inset-0 p-8 md:p-12 flex flex-col justify-center w-full md:w-[70%] z-10">
@@ -589,11 +568,11 @@
                             <div class="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center border border-primary/50">
                                 <i class="ph-fill ph-desktop text-xl text-primary"></i>
                             </div>
-                            <h3 class="text-3xl font-black text-white tracking-wide">All Gaming PCs</h3>
+                            <h3 class="text-3xl font-black text-white tracking-wide">Prebuilt PCs</h3>
                         </div>
-                        <p class="text-sm text-gray-400 mb-8 leading-relaxed max-w-sm">Browse through our full range of custom and prebuilt gaming PCs to find your perfect computer. Ready-to-ship with warranty and support.</p>
-                        <a href="{{ url('/gaming-pcs') }}" class="inline-flex items-center justify-center gap-2 px-6 py-3 liquid-glass hover:bg-white/10 border border-white/10 text-white text-xs font-bold rounded-full transition-all w-max group/btn hover:shadow-lg">
-                            Browse All PCs <i class="ph-bold ph-arrow-right group-hover/btn:translate-x-1 transition-transform"></i>
+                        <p class="text-sm text-gray-400 mb-8 leading-relaxed max-w-sm">Browse through our full range of ready-to-ship prebuilt gaming PCs to find your perfect computer. Backed by warranty and support.</p>
+                        <a href="{{ url('/prebuilt-pcs') }}" class="inline-flex items-center justify-center gap-2 px-6 py-3 liquid-glass hover:bg-white/10 border border-white/10 text-white text-xs font-bold rounded-full transition-all w-max group/btn hover:shadow-lg">
+                            Browse Prebuilt PCs <i class="ph-bold ph-arrow-right group-hover/btn:translate-x-1 transition-transform"></i>
                         </a>
                     </div>
                 </div>
@@ -666,40 +645,9 @@
     <x-footer />
 
 
-    <!-- Preloader Script -->
-    <script>
-        window.addEventListener('load', () => {
-            const preloader = document.getElementById('preloader');
-            if (preloader) {
-                if (!sessionStorage.getItem('techforge_visited')) {
-                    sessionStorage.setItem('techforge_visited', 'true');
-                    setTimeout(() => {
-                        preloader.classList.add('opacity-0');
-                        setTimeout(() => preloader.style.display = 'none', 1000); 
-                    }, 1800);
-                } else {
-                    preloader.classList.add('opacity-0');
-                    setTimeout(() => preloader.style.display = 'none', 1000);
-                }
-            }
-        });
-    </script>
+    
 
-    <!-- Script for subtle interactive effects -->
-    <script>
-        document.addEventListener('mousemove', (e) => {
-            const x = e.clientX / window.innerWidth;
-            const y = e.clientY / window.innerHeight;
-            
-            const light1 = document.querySelector('.ambient-light-1');
-            const light2 = document.querySelector('.ambient-light-2');
-            
-            if (light1 && light2) {
-                light1.style.transform = `translate(${x * 20}px, ${y * 20}px)`;
-                light2.style.transform = `translate(${x * -30}px, ${y * -30}px)`;
-            }
-        });
-    </script>
+    @vite(['resources/js/Common/Preloader.js', 'resources/js/Common/AmbientEffects.js'])
 
     <!-- Load our compiled JavaScript (You can remove LiquidGlass initialization from inside this file) -->
     @vite('resources/js/HomePage/Homepage.js')

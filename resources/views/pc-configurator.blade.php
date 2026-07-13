@@ -11,28 +11,7 @@
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: {
-                            DEFAULT: '#ff6b00',
-                            hover: '#e56000',
-                            glow: 'rgba(255, 107, 0, 0.5)'
-                        },
-                        dark: {
-                            bg: '#050505',
-                            surface: '#121212'
-                        }
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
+    @vite('resources/js/Common/TailwindConfig.js')
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
@@ -195,7 +174,7 @@
             
             <div class="max-w-[1500px] mx-auto px-6 lg:px-8 relative z-10 py-16 md:py-24">
                 <div class="w-full md:w-2/3">
-                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-wide mb-4">Custom PCs</h1>
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-wide mb-4">PC Configurator</h1>
                     <p class="text-gray-400 text-sm md:text-base leading-relaxed max-w-lg">Discover our meticulously curated tiers of custom-built performance machines, engineered specifically for your needs.</p>
                 </div>
             </div>
@@ -214,13 +193,13 @@
             </div>
         </div>
 
-        <div id="configs-container" class="grid grid-cols-1 lg:grid-cols-3 gap-6 xl:gap-10">
+        <div id="configs-container" class="grid grid-cols-1 lg:grid-cols-4 gap-6 xl:gap-8">
             @foreach($tiers as $tier)
             <div class="tier-group">
                 <div class="flex items-center justify-center gap-4 mb-6">
                     <div class="h-px bg-white/10 flex-1"></div>
                     <h2 class="text-xl font-black text-white uppercase tracking-widest flex items-center gap-2">
-                        <i class="ph {{ $tier == 'Enthusiast' ? 'ph-rocket text-primary' : ($tier == 'Mainstream' ? 'ph-lightning text-primary' : 'ph-game-controller text-primary') }} text-2xl"></i> 
+                        <i class="ph {{ $tier == 'Ultimate' ? 'ph-rocket text-primary' : ($tier == 'Elite' ? 'ph-star text-primary' : ($tier == 'Pro' ? 'ph-lightning text-primary' : 'ph-game-controller text-primary')) }} text-2xl"></i> 
                         {{ $tier }}
                     </h2>
                     <div class="h-px bg-white/10 flex-1"></div>
@@ -229,21 +208,45 @@
                 <div class="flex flex-col gap-4">
                     @foreach($configs->where('tier', $tier) as $config)
                     <div class="config-card w-full liquid-glass rounded-2xl p-5 border border-white/10 flex flex-col group hover:border-primary/50 transition-all duration-300" data-platform="{{ $config->platform }}">
-                        <div class="mb-4 flex justify-between items-center">
-                            <div>
+                        <div class="mb-4">
+                            <div class="flex justify-between items-start">
                                 <span class="text-[9px] text-primary font-bold uppercase tracking-widest">{{ $config->platform }} BUILD</span>
-                                <h3 class="text-lg font-bold text-white leading-tight mt-0.5">{{ $config->name }}</h3>
+                                <div class="flex flex-col items-end gap-0.5 mt-1">
+                                    @if($config->review_count > 0)
+                                        <div class="flex gap-0.5">
+                                            @for($i = 1; $i <= 5; $i++)
+                                                @if($config->rating >= $i)
+                                                    <i class="ph-fill ph-star text-primary text-[10px]"></i>
+                                                @elseif($config->rating >= $i - 0.5)
+                                                    <i class="ph-fill ph-star-half text-primary text-[10px]"></i>
+                                                @else
+                                                    <i class="ph-fill ph-star text-gray-600 text-[10px]"></i>
+                                                @endif
+                                            @endfor
+                                        </div>
+                                        <span class="text-[8px] text-gray-400 font-medium leading-none">{{ $config->review_count }} Reviews</span>
+                                    @else
+                                        <div class="flex gap-0.5">
+                                            @for($i = 1; $i <= 5; $i++)
+                                                <i class="ph-fill ph-star text-gray-600 text-[10px]"></i>
+                                            @endfor
+                                        </div>
+                                        <span class="text-[8px] text-gray-500 font-medium leading-none">No reviews</span>
+                                    @endif
+                                </div>
                             </div>
-                            <div class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center border border-white/10 shrink-0">
-                                <img src="{{ Vite::asset('resources/img/'.strtolower($config->platform).'_logo.png') }}" alt="{{ $config->platform }}" class="w-4 h-4 object-contain opacity-50 group-hover:opacity-100 transition-opacity" onerror="this.style.display='none'">
-                            </div>
+                            <h3 class="text-lg font-bold text-white leading-tight mt-0.5">{{ $config->name }}</h3>
                         </div>
                         
                         <div class="aspect-[16/9] w-full rounded-xl bg-black/40 mb-4 flex items-center justify-center p-2 border border-white/5 overflow-hidden">
                             <img src="{{ $config->image_url }}" alt="{{ $config->name }}" class="max-w-full max-h-full object-contain group-hover:scale-110 transition-transform duration-500">
                         </div>
 
-                        <div class="space-y-2 mb-5">
+                        <div class="space-y-2 mb-4">
+                            <div class="flex items-center gap-2 text-[11px]">
+                                <i class="ph ph-windows-logo text-gray-500 text-sm"></i>
+                                <span class="text-gray-300 truncate">Windows 11 Home</span>
+                            </div>
                             <div class="flex items-center gap-2 text-[11px]">
                                 <i class="ph ph-cpu text-gray-500 text-sm"></i>
                                 <span class="text-gray-300 truncate">{{ $config->cpu->name }}</span>
@@ -262,12 +265,45 @@
                             </div>
                         </div>
 
-                        <div class="mt-auto pt-4 border-t border-white/10 flex items-center justify-between">
-                            <div>
-                                <span class="text-[9px] text-gray-500 uppercase tracking-widest block mb-0.5">Starting at</span>
-                                <span class="text-xl font-black text-white">P{{ number_format($config->price) }}</span>
+                        <div class="pt-3 border-t border-white/10 mb-4 space-y-1">
+                            <div class="flex items-center justify-between text-[10px]">
+                                <span class="text-gray-400">Forge Points</span>
+                                <span class="text-primary font-bold">+{{ number_format(floor($config->price / 100)) }} FP</span>
                             </div>
-                            <a href="{{ route('build-overview', ['id' => $config->id, 'type' => 'custom']) }}" class="w-10 h-10 rounded-xl bg-primary text-white flex items-center justify-center hover:bg-white hover:text-black hover:scale-110 transition-all shadow-[0_0_10px_rgba(255,107,0,0.4)]">
+                            <div class="flex items-center justify-between text-[10px]">
+                                <span class="text-gray-400">Shipping</span>
+                                <span class="text-white">{{ rand(0, 1) ? 'Free Shipping' : 'Calculated at checkout' }}</span>
+                            </div>
+                        </div>
+
+                        <div class="mt-auto pt-4 border-t border-white/10 flex items-center justify-between min-h-[72px]">
+                            @php
+                                $isOnSale = rand(0, 1) == 1; // 50% chance to be on sale
+                                $originalPrice = $config->price + (floor(rand(5000, 15000) / 1000) * 1000);
+                            @endphp
+
+                            <div class="flex items-center gap-3">
+                                @if($isOnSale)
+                                    @php
+                                        $saveAmount = $originalPrice - $config->price;
+                                        $saveAbbrev = $saveAmount >= 1000 ? floor($saveAmount / 1000) . 'K' : $saveAmount;
+                                    @endphp
+                                    <div class="w-10 h-10 rounded-lg bg-primary/20 border border-primary/30 flex flex-col items-center justify-center text-primary shrink-0">
+                                        <span class="text-[7px] font-black uppercase leading-none mb-0.5">Save</span>
+                                        <span class="text-xs font-black leading-none">{{ $saveAbbrev }}</span>
+                                    </div>
+                                @endif
+                                <div class="flex flex-col">
+                                    <span class="text-[9px] text-gray-500 uppercase tracking-widest block mb-0.5">Starting at</span>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-xl font-black text-white leading-none">₱{{ number_format($config->price) }}</span>
+                                        @if($isOnSale)
+                                            <span class="text-gray-500 text-xs line-through leading-none">₱{{ number_format($originalPrice) }}</span>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                            <a href="{{ route('build-overview', ['id' => $config->id, 'type' => 'custom']) }}" class="w-10 h-10 rounded-xl bg-primary text-white flex items-center justify-center hover:bg-white hover:text-black hover:scale-110 transition-all shadow-[0_0_10px_rgba(255,107,0,0.4)] shrink-0">
                                 <i class="ph-bold ph-arrow-right text-lg"></i>
                             </a>
                         </div>
@@ -306,24 +342,7 @@
     <x-footer />
 
 
-    <!-- Preloader Script -->
-    <script>
-        window.addEventListener('load', () => {
-            const preloader = document.getElementById('preloader');
-            if (preloader) {
-                if (!sessionStorage.getItem('techforge_visited')) {
-                    sessionStorage.setItem('techforge_visited', 'true');
-                    setTimeout(() => {
-                        preloader.classList.add('opacity-0');
-                        setTimeout(() => preloader.style.display = 'none', 1000); 
-                    }, 1800);
-                } else {
-                    preloader.classList.add('opacity-0');
-                    setTimeout(() => preloader.style.display = 'none', 1000);
-                }
-            }
-        });
-    </script>
+    
 
     <!-- Custom Slider JS -->
     <script>
@@ -456,21 +475,7 @@
         });
     </script>
 
-    <!-- Script for subtle interactive effects -->
-    <script>
-        document.addEventListener('mousemove', (e) => {
-            const x = e.clientX / window.innerWidth;
-            const y = e.clientY / window.innerHeight;
-            
-            const light1 = document.querySelector('.ambient-light-1');
-            const light2 = document.querySelector('.ambient-light-2');
-            
-            if (light1 && light2) {
-                light1.style.transform = `translate(${x * 20}px, ${y * 20}px)`;
-                light2.style.transform = `translate(${x * -30}px, ${y * -30}px)`;
-            }
-        });
-    </script>
+    @vite(['resources/js/Common/Preloader.js', 'resources/js/Common/AmbientEffects.js'])
 
     <!-- Load our compiled JavaScript (You can remove LiquidGlass initialization from inside this file) -->
     @vite(['resources/js/HomePage/Homepage.js', 'resources/js/Category/Category.js'])

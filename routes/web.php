@@ -64,8 +64,7 @@ Route::get('/build-pc', function () {
     return view('plugins.build-pc', compact('allComponents'));
 })->name('build-pc');
 
-Route::get('/gaming-pcs', [\App\Http\Controllers\GamingPcController::class, 'index'])->name('gaming-pcs');
-Route::get('/custom-pcs', [\App\Http\Controllers\CustomPcController::class, 'index'])->name('custom-pcs');
+Route::get('/pc-configurator', [\App\Http\Controllers\CustomPcController::class, 'index'])->name('pc-configurator');
 Route::get('/prebuilt-pcs', [\App\Http\Controllers\PrebuiltPcController::class, 'index'])->name('prebuilt-pcs');
 Route::get('/search', [\App\Http\Controllers\SearchController::class, 'index'])->name('search');
 

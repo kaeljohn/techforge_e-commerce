@@ -10,7 +10,7 @@ class CustomPcController extends Controller
     public function index()
     {
         $configs = CustombuiltConfig::with(['cpu', 'gpu', 'motherboard', 'ram', 'storage', 'powerSupply', 'pcCase'])->get();
-        $tiers = ['Entry Level', 'Mainstream', 'Enthusiast'];
-        return view('custom-pcs', compact('configs', 'tiers'));
+        $tiers = ['Mainstream', 'Pro', 'Elite', 'Ultimate'];
+        return view('pc-configurator', compact('configs', 'tiers'));
     }
 }

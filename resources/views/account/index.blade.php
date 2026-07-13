@@ -11,28 +11,7 @@
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: {
-                            DEFAULT: '#ff6b00',
-                            hover: '#e56000',
-                            glow: 'rgba(255, 107, 0, 0.5)'
-                        },
-                        dark: {
-                            bg: '#050505',
-                            surface: '#121212'
-                        }
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
+    @vite('resources/js/Common/TailwindConfig.js')
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
@@ -1091,40 +1070,9 @@
         </div>
     </main>
 
-    <!-- Preloader Script -->
-    <script>
-        window.addEventListener('load', () => {
-            const preloader = document.getElementById('preloader');
-            if (preloader) {
-                if (!sessionStorage.getItem('techforge_visited')) {
-                    sessionStorage.setItem('techforge_visited', 'true');
-                    setTimeout(() => {
-                        preloader.classList.add('opacity-0');
-                        setTimeout(() => preloader.style.display = 'none', 1000); 
-                    }, 1800);
-                } else {
-                    preloader.classList.add('opacity-0');
-                    setTimeout(() => preloader.style.display = 'none', 1000);
-                }
-            }
-        });
-    </script>
+    
 
-    <!-- Script for subtle interactive effects -->
-    <script>
-        document.addEventListener('mousemove', (e) => {
-            const x = e.clientX / window.innerWidth;
-            const y = e.clientY / window.innerHeight;
-            
-            const light1 = document.querySelector('.ambient-light-1');
-            const light2 = document.querySelector('.ambient-light-2');
-            
-            if (light1 && light2) {
-                light1.style.transform = `translate(${x * 20}px, ${y * 20}px)`;
-                light2.style.transform = `translate(${x * -30}px, ${y * -30}px)`;
-            }
-        });
-    </script>
+    @vite(['resources/js/Common/Preloader.js', 'resources/js/Common/AmbientEffects.js'])
 
     <!-- Global Toast Notification -->
     <div id="toast-notification" class="fixed bottom-6 right-6 z-[200] transform translate-y-20 opacity-0 transition-all duration-300 flex items-center gap-3 bg-[#13131a] border border-primary/30 shadow-[0_0_20px_rgba(255,107,0,0.2)] rounded-xl px-5 py-4 pointer-events-none">

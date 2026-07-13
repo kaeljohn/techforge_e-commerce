@@ -201,13 +201,10 @@
                         <div>
                             <h4 class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-6">Shop</h4>
                             <div class="flex flex-col gap-4">
-                                <a href="{{ url('/gaming-pcs') }}" class="block text-gray-300 hover:text-primary transition-colors">
-                                    <span class="font-bold text-sm tracking-normal capitalize">All Gaming PCs</span>
-                                </a>
                                 <a href="{{ url('/prebuilt-pcs') }}" class="block text-gray-300 hover:text-primary transition-colors">
                                     <span class="font-bold text-sm tracking-normal capitalize">Pre-Built PCs</span>
                                 </a>
-                                <a href="{{ url('/custom-pcs') }}" class="block text-gray-300 hover:text-primary transition-colors">
+                                <a href="{{ url('/pc-configurator') }}" class="block text-gray-300 hover:text-primary transition-colors">
                                     <span class="font-bold text-sm tracking-normal capitalize">Custom PC Builder</span>
                                 </a>
                             </div>

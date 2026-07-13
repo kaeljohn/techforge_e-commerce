@@ -6,5 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Cpu extends Model
 {
+    protected $table = 'component_cpus';
     //
 }
