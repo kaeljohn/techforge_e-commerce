@@ -255,7 +255,7 @@
                                 </div>
                             </div>
                             
-                            <button id="carousel-add-btn" data-name="AMD RYZEN 9 5950X w/ RTX 5090" data-price="56000" data-image="{{ Vite::asset('resources/img/Custom_Build_1.png') }}" class="w-full bg-white/5 hover:bg-gradient-to-r hover:from-primary hover:to-orange-400 text-white border border-white/10 hover:border-transparent py-3.5 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 group/btn add-to-cart-btn">
+                            <button id="carousel-add-btn" data-name="AMD RYZEN 9 5950X w/ RTX 5090" data-price="56000" data-image="https://images.unsplash.com/photo-1587202372634-32705e3bf49c?auto=format&fit=crop&q=80&w=800" class="w-full bg-white/5 hover:bg-gradient-to-r hover:from-primary hover:to-orange-400 text-white border border-white/10 hover:border-transparent py-3.5 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 group/btn add-to-cart-btn">
                                 <i class="ph ph-shopping-cart text-xl pointer-events-none"></i> Add to cart
                             </button>
                         </div>
