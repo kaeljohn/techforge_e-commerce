@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Ram extends Model
 {
-    protected $table = 'component_rams';
-    //
+    protected $table = 'components_rams';
+    
+    protected $fillable = [
+        'name', 'price', 'generation', 'capacity', 'speed', 'modules', 'image_url'
+    ];
 }

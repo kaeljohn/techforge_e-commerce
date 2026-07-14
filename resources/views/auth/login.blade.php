@@ -157,10 +157,10 @@
                         <form action="{{ route('login.post') }}" method="POST" class="space-y-4">
                             @csrf
                             <div>
-                                <label for="login" class="block text-xs font-medium text-gray-300 mb-1.5 ml-1">Email or Phone Number</label>
+                                <label for="email" class="block text-xs font-medium text-gray-300 mb-1.5 ml-1">Email</label>
                                 <div class="relative group">
-                                    <i class="ph ph-user absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors text-lg"></i>
-                                    <input type="text" name="login" id="login" class="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-11 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-primary/50 focus:bg-white/10 transition-all text-sm" placeholder="Email or +1 (555) 000-0000" required>
+                                    <i class="ph ph-envelope absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors text-lg"></i>
+                                    <input type="email" name="email" id="email" class="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-11 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-primary/50 focus:bg-white/10 transition-all text-sm" placeholder="name@example.com" required>
                                 </div>
                             </div>
 
@@ -178,10 +178,13 @@
                                 </div>
                             </div>
                             
-                            <div class="flex items-center gap-2 mt-2 ml-1">
-                                <input type="checkbox" name="remember" id="remember" class="w-3.5 h-3.5 rounded bg-white/10 border-white/20 text-primary focus:ring-primary focus:ring-offset-0 focus:ring-offset-transparent cursor-pointer">
-                                <label for="remember" class="text-xs text-gray-400 cursor-pointer select-none">Remember me for 30 days</label>
-                            </div>
+                            <label for="remember" class="flex items-center gap-2 mt-2 ml-1 cursor-pointer group w-fit">
+                                <div class="relative flex items-center justify-center">
+                                    <input type="checkbox" name="remember" id="remember" class="peer appearance-none w-4 h-4 rounded border border-white/20 bg-white/5 checked:bg-primary checked:border-primary transition-all cursor-pointer shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]">
+                                    <i class="ph-bold ph-check absolute text-white text-[10px] opacity-0 peer-checked:opacity-100 pointer-events-none transition-all scale-50 peer-checked:scale-100 duration-200"></i>
+                                </div>
+                                <span class="text-xs text-gray-400 group-hover:text-gray-300 transition-colors select-none">Remember me for 30 days</span>
+                            </label>
 
                             <button type="submit" class="w-full bg-gradient-to-r from-primary to-[#ff8c33] hover:from-[#ff8c33] hover:to-primary text-white py-3.5 rounded-xl font-bold transition-all duration-300 shadow-[0_0_15px_rgba(255,107,0,0.3)] hover:shadow-[0_0_25px_rgba(255,107,0,0.5)] hover:-translate-y-0.5 mt-2 flex items-center justify-center gap-2">
                                 Sign In <i class="ph-bold ph-sign-in"></i>
@@ -195,12 +198,12 @@
                         </div>
 
                         <div class="grid grid-cols-2 gap-3">
-                            <button class="flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all py-2.5 rounded-xl text-sm font-medium text-white group">
+                            <a href="{{ route('social.redirect', 'google') }}" class="flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all py-2.5 rounded-xl text-sm font-medium text-white group">
                                 <i class="ph-fill ph-google-logo text-lg text-gray-300 group-hover:text-white transition-colors"></i> Google
-                            </button>
-                            <button class="flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all py-2.5 rounded-xl text-sm font-medium text-white group">
-                                <i class="ph-fill ph-facebook-logo text-lg text-[#1877F2]"></i> Facebook
-                            </button>
+                            </a>
+                            <a href="{{ route('social.redirect', 'github') }}" class="flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all py-2.5 rounded-xl text-sm font-medium text-white group">
+                                <i class="ph-fill ph-github-logo text-lg text-gray-300 group-hover:text-white transition-colors"></i> GitHub
+                            </a>
                         </div>
 
                         <p class="text-center text-xs text-gray-400 mt-8">
@@ -221,10 +224,10 @@
                         <form action="{{ route('register.post') }}" method="POST" class="space-y-4">
                             @csrf
                             <div>
-                                <label for="phone" class="block text-xs font-medium text-gray-300 mb-1.5 ml-1">Phone Number</label>
+                                <label for="reg-email" class="block text-xs font-medium text-gray-300 mb-1.5 ml-1">Email</label>
                                 <div class="relative group">
-                                    <i class="ph ph-phone absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors text-lg"></i>
-                                    <input type="tel" name="phone" id="phone" class="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-11 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-primary/50 focus:bg-white/10 transition-all text-sm" placeholder="+1 (555) 000-0000" required>
+                                    <i class="ph ph-envelope absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors text-lg"></i>
+                                    <input type="email" name="email" id="reg-email" class="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-11 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-primary/50 focus:bg-white/10 transition-all text-sm" placeholder="name@example.com" required>
                                 </div>
                             </div>
                             
@@ -239,6 +242,14 @@
                                 </div>
                             </div>
                             
+                            <label for="reg-remember" class="flex items-center gap-2 mt-2 ml-1 cursor-pointer group w-fit">
+                                <div class="relative flex items-center justify-center">
+                                    <input type="checkbox" name="remember" id="reg-remember" class="peer appearance-none w-4 h-4 rounded border border-white/20 bg-white/5 checked:bg-primary checked:border-primary transition-all cursor-pointer shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]">
+                                    <i class="ph-bold ph-check absolute text-white text-[10px] opacity-0 peer-checked:opacity-100 pointer-events-none transition-all scale-50 peer-checked:scale-100 duration-200"></i>
+                                </div>
+                                <span class="text-xs text-gray-400 group-hover:text-gray-300 transition-colors select-none">Remember me for 30 days</span>
+                            </label>
+
                             <button type="submit" class="w-full bg-gradient-to-r from-primary to-[#ff8c33] hover:from-[#ff8c33] hover:to-primary text-white py-3.5 rounded-xl font-bold transition-all duration-300 shadow-[0_0_15px_rgba(255,107,0,0.3)] hover:shadow-[0_0_25px_rgba(255,107,0,0.5)] hover:-translate-y-0.5 mt-2 flex items-center justify-center gap-2">
                                 Continue <i class="ph-bold ph-arrow-right"></i>
                             </button>
@@ -251,12 +262,12 @@
                         </div>
 
                         <div class="grid grid-cols-2 gap-3">
-                            <button class="flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all py-2.5 rounded-xl text-sm font-medium text-white group">
+                            <a href="{{ route('social.redirect', 'google') }}" class="flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all py-2.5 rounded-xl text-sm font-medium text-white group">
                                 <i class="ph-fill ph-google-logo text-lg text-gray-300 group-hover:text-white transition-colors"></i> Google
-                            </button>
-                            <button class="flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all py-2.5 rounded-xl text-sm font-medium text-white group">
-                                <i class="ph-fill ph-facebook-logo text-lg text-[#1877F2]"></i> Facebook
-                            </button>
+                            </a>
+                            <a href="{{ route('social.redirect', 'github') }}" class="flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all py-2.5 rounded-xl text-sm font-medium text-white group">
+                                <i class="ph-fill ph-github-logo text-lg text-gray-300 group-hover:text-white transition-colors"></i> GitHub
+                            </a>
                         </div>
 
                         <p class="text-center text-xs text-gray-400 mt-8">

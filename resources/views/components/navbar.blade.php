@@ -336,3 +336,5 @@
             <a href="#" class="text-gray-200 hover:text-primary transition-colors py-2">Brands</a>
         </div>
     </div>
+
+    @vite('resources/js/Common/Navbar.js')

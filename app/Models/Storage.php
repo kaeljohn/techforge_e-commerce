@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Storage extends Model
 {
-    protected $table = 'component_storages';
-    protected $guarded = [];
+    protected $table = 'components_storages';
+
+    protected $fillable = [
+        'name', 'price', 'type', 'capacity', 'cache', 'form_factor', 'interface', 'image_url'
+    ];
 }

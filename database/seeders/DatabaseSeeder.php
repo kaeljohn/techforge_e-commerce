@@ -23,9 +23,8 @@ class DatabaseSeeder extends Seeder
         // ]);
 
         $this->call([
-            ComponentSeeder::class,
-            PrebuiltConfigsSeeder::class,
             ConfiguratorSeeder::class,
+            PrebuiltConfigsSeeder::class,
             CustombuiltConfigsSeeder::class,
         ]);
     }

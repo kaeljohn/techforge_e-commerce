@@ -13,34 +13,31 @@
 @endphp
 
 <div class="config-card w-full liquid-glass rounded-2xl p-5 border border-white/10 flex flex-col group hover:border-primary/50 transition-all duration-300" data-platform="{{ $platform }}">
-    <div class="mb-4">
-        <div class="flex justify-between items-start">
-            <span class="text-[9px] text-primary font-bold uppercase tracking-widest">{{ $platform }} BUILD</span>
-            <div class="flex flex-col items-end gap-0.5 mt-1">
-                @if($reviewCount > 0)
-                    <div class="flex gap-0.5">
-                        @for($i = 1; $i <= 5; $i++)
-                            @if($rating >= $i)
-                                <i class="ph-fill ph-star text-primary text-[10px]"></i>
-                            @elseif($rating >= $i - 0.5)
-                                <i class="ph-fill ph-star-half text-primary text-[10px]"></i>
-                            @else
-                                <i class="ph-fill ph-star text-gray-600 text-[10px]"></i>
-                            @endif
-                        @endfor
-                    </div>
-                    <span class="text-[8px] text-gray-400 font-medium leading-none">{{ $reviewCount }} Reviews</span>
-                @else
-                    <div class="flex gap-0.5">
-                        @for($i = 1; $i <= 5; $i++)
+    <div class="mb-4 flex justify-between items-start gap-2">
+        <h3 class="text-lg font-bold text-white leading-tight">{{ $config->name }}</h3>
+        <div class="flex flex-col items-end gap-0.5 shrink-0 mt-0.5">
+            @if($reviewCount > 0)
+                <div class="flex gap-0.5">
+                    @for($i = 1; $i <= 5; $i++)
+                        @if($rating >= $i)
+                            <i class="ph-fill ph-star text-primary text-[10px]"></i>
+                        @elseif($rating >= $i - 0.5)
+                            <i class="ph-fill ph-star-half text-primary text-[10px]"></i>
+                        @else
                             <i class="ph-fill ph-star text-gray-600 text-[10px]"></i>
-                        @endfor
-                    </div>
-                    <span class="text-[8px] text-gray-500 font-medium leading-none">No reviews</span>
-                @endif
-            </div>
+                        @endif
+                    @endfor
+                </div>
+                <span class="text-[8px] text-gray-400 font-medium leading-none">{{ $reviewCount }} Reviews</span>
+            @else
+                <div class="flex gap-0.5">
+                    @for($i = 1; $i <= 5; $i++)
+                        <i class="ph-fill ph-star text-gray-600 text-[10px]"></i>
+                    @endfor
+                </div>
+                <span class="text-[8px] text-gray-500 font-medium leading-none">No reviews</span>
+            @endif
         </div>
-        <h3 class="text-lg font-bold text-white leading-tight mt-0.5">{{ $config->name }}</h3>
     </div>
     
     <div class="aspect-[16/9] w-full rounded-xl bg-black/40 mb-4 flex items-center justify-center p-2 border border-white/5 overflow-hidden">

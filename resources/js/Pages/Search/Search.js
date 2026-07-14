@@ -131,7 +131,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     `;
                 } else {
                     actionBtnHtml = `
-                        <a href="${appUrl}/build-overview/${config.id}?type=custom" class="w-full py-2 rounded-full border border-primary text-primary hover:bg-primary hover:text-white font-bold transition-all duration-300 text-center flex items-center justify-center gap-2 text-sm">
+                        <a href="${appUrl}/configurator-overview/${config.id}" class="w-full py-2 rounded-full border border-primary text-primary hover:bg-primary hover:text-white font-bold transition-all duration-300 text-center flex items-center justify-center gap-2 text-sm">
                             <i class="ph-bold ph-wrench"></i> Customize This Build
                         </a>
                     `;

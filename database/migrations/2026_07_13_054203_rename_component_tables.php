@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::rename('cpus', 'component_cpus');
-        Schema::rename('gpus', 'component_gpus');
-        Schema::rename('motherboards', 'component_motherboards');
-        Schema::rename('rams', 'component_rams');
-        Schema::rename('storages', 'component_storages');
-        Schema::rename('power_supplies', 'component_power_supplies');
-        Schema::rename('pc_cases', 'component_pc_cases');
+        Schema::rename('cpus', 'components_cpus');
+        Schema::rename('gpus', 'components_gpus');
+        Schema::rename('motherboards', 'components_motherboards');
+        Schema::rename('rams', 'components_rams');
+        Schema::rename('storages', 'components_storages');
+        Schema::rename('power_supplies', 'components_power_supplies');
+        Schema::rename('pc_cases', 'components_pc_cases');
     }
 
     /**
@@ -25,12 +25,12 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::rename('component_cpus', 'cpus');
-        Schema::rename('component_gpus', 'gpus');
-        Schema::rename('component_motherboards', 'motherboards');
-        Schema::rename('component_rams', 'rams');
-        Schema::rename('component_storages', 'storages');
-        Schema::rename('component_power_supplies', 'power_supplies');
-        Schema::rename('component_pc_cases', 'pc_cases');
+        Schema::rename('components_cpus', 'cpus');
+        Schema::rename('components_gpus', 'gpus');
+        Schema::rename('components_motherboards', 'motherboards');
+        Schema::rename('components_rams', 'rams');
+        Schema::rename('components_storages', 'storages');
+        Schema::rename('components_power_supplies', 'power_supplies');
+        Schema::rename('components_pc_cases', 'pc_cases');
     }
 };

@@ -42,4 +42,9 @@ class PrebuiltConfig extends Model
     {
         return $this->belongsTo(PcCase::class);
     }
+
+    public function cooler()
+    {
+        return $this->belongsTo(Cooler::class);
+    }
 }

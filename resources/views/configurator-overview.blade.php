@@ -147,6 +147,67 @@
             stroke: #ff6b00;
             filter: drop-shadow(0 0 8px rgba(255, 107, 0, 0.6));
         }
+
+        @keyframes containerGlow {
+            0% { box-shadow: 0 0 0 0 rgba(255, 107, 0, 0); border-color: transparent; }
+            30% { box-shadow: 0 0 15px 2px rgba(255, 107, 0, 0.4); border-color: rgba(255, 107, 0, 0.5); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 107, 0, 0); border-color: transparent; }
+        }
+        @keyframes shineSlide {
+            0% { left: -100%; }
+            100% { left: 150%; }
+        }
+        .animate-shine {
+            animation: containerGlow 1.2s ease-out forwards;
+        }
+        .animate-shine::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255, 107, 0, 0.5), transparent);
+            transform: skewX(-20deg);
+            animation: shineSlide 1.2s ease-out forwards;
+            pointer-events: none;
+        }
+        @keyframes shakeRow {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+        .animate-shake {
+            animation: shakeRow 0.5s cubic-bezier(.36,.07,.19,.97) both;
+        }
+        .visualizer-slot.active.error {
+            animation: pulseError 1.5s infinite;
+        }
+        @keyframes pulseError {
+            0%, 100% {
+                fill: rgba(239, 68, 68, 0.1);
+                stroke: rgba(239, 68, 68, 0.6);
+                filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.3));
+            }
+            50% {
+                fill: rgba(239, 68, 68, 0.5);
+                stroke: rgba(239, 68, 68, 1);
+                filter: drop-shadow(0 0 12px rgba(239, 68, 68, 0.8));
+            }
+        }
+        .visualizer-text.error {
+            animation: pulseTextError 1.5s infinite;
+        }
+        @keyframes pulseTextError {
+            0%, 100% {
+                fill: rgba(239, 68, 68, 0.5);
+                opacity: 0.6;
+            }
+            50% {
+                fill: rgba(239, 68, 68, 1);
+                opacity: 1;
+            }
+        }
     </style>
 
     @vite('resources/css/liquidglass.css')
@@ -165,7 +226,7 @@
 
     <x-navbar />
     <!-- Product Selection Modal -->
-    <div id="product-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[100] opacity-0 pointer-events-none transition-all duration-300 flex items-center justify-center p-4">
+    <div id="product-modal" data-lenis-prevent class="fixed inset-0 bg-black/80 backdrop-blur-md z-[100] opacity-0 pointer-events-none transition-all duration-300 flex items-center justify-center p-4">
         <div class="liquid-glass-heavy w-full max-w-5xl max-h-[90vh] h-[800px] rounded-[2rem] border border-white/10 shadow-2xl flex flex-col transform scale-95 transition-transform duration-300 relative overflow-hidden bg-[#050505]">
             
             <!-- Modal Header -->
@@ -240,9 +301,11 @@
             </div>
 
             <!-- Modal Content (Products List) -->
-            <div class="p-8 overflow-y-auto custom-scrollbar flex-1 bg-[#050505]/30">
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="modal-products">
-                    <!-- JavaScript will populate this -->
+            <div id="modal-scroll-wrapper" class="p-8 overflow-y-auto custom-scrollbar flex-1 bg-[#050505]/30">
+                <div id="modal-scroll-content">
+                    <div class="flex flex-col gap-8" id="modal-products">
+                        <!-- JavaScript will populate this -->
+                    </div>
                 </div>
             </div>
         </div>
@@ -268,39 +331,44 @@
                         <!-- Motherboard Area -->
                         <g onclick="openModal('Motherboard')" class="cursor-pointer group">
                             <rect id="vis-motherboard" class="visualizer-slot" x="40" y="40" width="260" height="300" rx="4"/>
-                            <text x="170" y="65" fill="rgba(255,255,255,0.2)" text-anchor="middle" font-size="12" font-weight="bold" letter-spacing="2" class="group-hover:fill-primary transition-colors pointer-events-none">MOTHERBOARD</text>
+                            <text id="text-Motherboard" x="170" y="65" fill="rgba(255,255,255,0.2)" text-anchor="middle" font-size="12" font-weight="bold" letter-spacing="2" class="visualizer-text group-hover:fill-primary transition-colors pointer-events-none">MOTHERBOARD</text>
                         </g>
                         
                         <!-- CPU Area -->
                         <g onclick="openModal('Processor')" class="cursor-pointer group">
                             <rect id="vis-cpu" class="visualizer-slot" x="140" y="100" width="60" height="60" rx="4"/>
-                            <circle id="vis-cooler" class="visualizer-slot" cx="170" cy="130" r="40"/>
-                            <text x="170" y="134" fill="rgba(255,255,255,0.4)" text-anchor="middle" font-size="10" font-weight="bold" class="group-hover:fill-primary transition-colors pointer-events-none">CPU</text>
+                            <text id="text-Processor" x="170" y="134" fill="rgba(255,255,255,0.4)" text-anchor="middle" font-size="10" font-weight="bold" class="visualizer-text group-hover:fill-primary transition-colors pointer-events-none">CPU</text>
+                        </g>
+
+                        <!-- Cooler Area (Front Radiator/Fans) -->
+                        <g onclick="openModal('Cooling')" class="cursor-pointer group">
+                            <rect id="vis-cooler" class="visualizer-slot" x="315" y="60" width="35" height="240" rx="4"/>
+                            <text id="text-Cooling" x="332.5" y="180" fill="rgba(255,255,255,0.4)" text-anchor="middle" font-size="10" font-weight="bold" transform="rotate(90, 332.5, 180)" letter-spacing="2" class="visualizer-text group-hover:fill-primary transition-colors pointer-events-none">COOLER</text>
                         </g>
                         
                         <!-- RAM -->
                         <g onclick="openModal('Memory')" class="cursor-pointer group">
                             <rect id="vis-memory" class="visualizer-slot" x="220" y="90" width="10" height="80" rx="2"/>
                             <rect id="vis-memory-2" class="visualizer-slot" x="240" y="90" width="10" height="80" rx="2"/>
-                            <text x="235" y="80" fill="rgba(255,255,255,0.4)" text-anchor="middle" font-size="10" font-weight="bold" class="group-hover:fill-primary transition-colors">RAM</text>
+                            <text id="text-Memory" x="235" y="80" fill="rgba(255,255,255,0.4)" text-anchor="middle" font-size="10" font-weight="bold" class="visualizer-text group-hover:fill-primary transition-colors">RAM</text>
                         </g>
                         
                         <!-- GPU -->
                         <g onclick="openModal('Video Card')" class="cursor-pointer group">
                             <rect id="vis-gpu" class="visualizer-slot" x="40" y="220" width="240" height="50" rx="4"/>
-                            <text x="160" y="249" fill="rgba(255,255,255,0.4)" text-anchor="middle" font-size="12" font-weight="bold" letter-spacing="1" class="group-hover:fill-primary transition-colors pointer-events-none">GRAPHICS CARD</text>
+                            <text id="text-Video Card" x="160" y="249" fill="rgba(255,255,255,0.4)" text-anchor="middle" font-size="12" font-weight="bold" letter-spacing="1" class="visualizer-text group-hover:fill-primary transition-colors pointer-events-none">GRAPHICS CARD</text>
                         </g>
                         
                         <!-- Storage NVMe -->
                         <g onclick="openModal('Primary Storage')" class="cursor-pointer group">
                             <rect id="vis-ssd" class="visualizer-slot" x="140" y="280" width="60" height="15" rx="2"/>
-                            <text x="170" y="310" fill="rgba(255,255,255,0.4)" text-anchor="middle" font-size="10" font-weight="bold" class="group-hover:fill-primary transition-colors">SSD</text>
+                            <text id="text-Primary Storage" x="170" y="310" fill="rgba(255,255,255,0.4)" text-anchor="middle" font-size="10" font-weight="bold" class="visualizer-text group-hover:fill-primary transition-colors">SSD</text>
                         </g>
                         
                         <!-- PSU -->
                         <g onclick="openModal('Power Supply')" class="cursor-pointer group">
                             <rect id="vis-psu" class="visualizer-slot" x="40" y="370" width="120" height="90" rx="4"/>
-                            <text x="100" y="419" fill="rgba(255,255,255,0.4)" text-anchor="middle" font-size="12" font-weight="bold" letter-spacing="1" class="group-hover:fill-primary transition-colors pointer-events-none">POWER</text>
+                            <text id="text-Power Supply" x="100" y="419" fill="rgba(255,255,255,0.4)" text-anchor="middle" font-size="12" font-weight="bold" letter-spacing="1" class="visualizer-text group-hover:fill-primary transition-colors pointer-events-none">POWER</text>
                         </g>
                     </svg>
                 </div>
@@ -353,7 +421,7 @@
                             ['label' => 'Primary Storage', 'value' => $product->storage->name ?? 'N/A', 'icon' => 'ph-hard-drives'],
                             ['label' => 'Power Supply', 'value' => $product->powerSupply->name ?? 'N/A', 'icon' => 'ph-plug'],
                             ['label' => 'Motherboard', 'value' => $product->motherboard->name ?? 'N/A', 'icon' => 'ph-circuitry'],
-                            ['label' => 'Cooling', 'value' => $product->cooler ?? 'Standard Air Cooler', 'icon' => 'ph-fan'],
+                            ['label' => 'Cooling', 'value' => $product->cooler->name ?? 'Standard Air Cooler', 'icon' => 'ph-fan'],
                             ['label' => 'Warranty', 'value' => '3 Year Standard Warranty (Labor + Parts)', 'icon' => 'ph-shield-check', 'no_edit' => true],
                         ];
                         
@@ -371,26 +439,24 @@
 
                     <div class="space-y-4" id="specs-list">
                         @foreach($specs as $spec)
-                        <div class="group flex items-center justify-between p-5 rounded-2xl hover:bg-white/5 transition-colors border border-transparent hover:border-white/10">
-                            <div class="flex items-center gap-6 w-full max-w-[70%]">
+                        <div class="group relative overflow-hidden flex items-center justify-between p-5 rounded-2xl transition-colors border border-transparent">
+                            <div class="flex items-center gap-6 w-full">
                                 <div class="w-32 shrink-0 flex items-center gap-2">
-                                    <i class="{{ $spec['icon'] }} text-gray-500 text-lg group-hover:text-primary transition-colors"></i>
+                                    <i class="{{ $spec['icon'] }} text-gray-500 text-lg transition-colors"></i>
                                     <span class="text-xs font-bold text-gray-400 uppercase">{{ $spec['label'] }}</span>
                                 </div>
-                                <div class="text-sm font-bold text-gray-200 truncate group-hover:text-white transition-colors">
+                                <div class="text-sm font-bold text-gray-200 truncate transition-colors flex-1">
                                     {{ $spec['value'] }}
                                 </div>
                             </div>
                             
-                            @if(!isset($spec['no_edit']))
-                            <button onclick="openModal('{{ $spec['label'] }}')" type="button" class="text-xs font-bold text-primary opacity-0 group-hover:opacity-100 transition-opacity hover:underline">
-                                Edit
-                            </button>
-                            @else
-                            <button class="text-xs font-bold text-gray-600 cursor-not-allowed">
-                                Info
-                            </button>
-                            @endif
+                            <div class="action-slot shrink-0 ml-4 flex justify-end">
+                                @if(isset($spec['no_edit']))
+                                <button class="text-xs font-bold text-gray-600 cursor-not-allowed">
+                                    Info
+                                </button>
+                                @endif
+                            </div>
                         </div>
                         @endforeach
                     </div>
@@ -414,7 +480,8 @@
             'Primary Storage': @json($product->storage),
             'Motherboard': @json($product->motherboard),
             'Power Supply': @json($product->powerSupply),
-            'Case': @json($product->pcCase)
+            'Case': @json($product->pcCase),
+            'Cooling': @json($product->cooler)
         };
 
         const engine = new ConfiguratorEngine(allComponents, initialBuild);
@@ -429,31 +496,44 @@
             'Primary Storage': 'Storage',
             'Motherboard': 'Motherboard',
             'Power Supply': 'Power Supply',
-            'Case': 'Case'
+            'Case': 'Case',
+            'Cooling': 'Cooling'
         };
 
         let availableComponents = [];
 
-        // UI Updates
         const updateVisualizer = (build) => {
-            document.querySelectorAll('.visualizer-slot').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.visualizer-slot').forEach(el => el.classList.remove('active', 'error'));
+            document.querySelectorAll('.visualizer-text').forEach(el => el.classList.remove('error'));
             
             const mapping = {
-                'Processor': ['vis-cpu', 'vis-cooler'],
+                'Processor': ['vis-cpu'],
                 'Motherboard': ['vis-motherboard'],
                 'Memory': ['vis-memory', 'vis-memory-2'],
                 'Video Card': ['vis-gpu'],
                 'Primary Storage': ['vis-ssd'],
                 'Power Supply': ['vis-psu'],
-                'Case': ['vis-case']
+                'Case': ['vis-case'],
+                'Cooling': ['vis-cooler']
             };
 
             Object.keys(build).forEach(cat => {
                 if(build[cat] && mapping[cat]) {
+                    const compatibility = engine.checkCompatibility(build[cat], cat);
+                    const isError = !compatibility.compatible;
+                    
                     mapping[cat].forEach(id => {
                         const el = document.getElementById(id);
-                        if(el) el.classList.add('active');
+                        if(el) {
+                            el.classList.add('active');
+                            if (isError) el.classList.add('error');
+                        }
                     });
+                    
+                    const textEl = document.getElementById('text-' + cat);
+                    if (textEl && isError) {
+                        textEl.classList.add('error');
+                    }
                 }
             });
         };
@@ -465,7 +545,14 @@
             // Sync all labels
             Object.keys(build).forEach(category => {
                 const component = build[category];
-                updateUIText(category, component ? component.name : 'Select ' + category);
+                let conflictReason = null;
+                if (component) {
+                    const compatibility = engine.checkCompatibility(component, category);
+                    if (!compatibility.compatible) {
+                        conflictReason = compatibility.reason;
+                    }
+                }
+                updateUIText(category, component ? component.name : 'Select ' + category, !component, conflictReason);
             });
         });
 
@@ -494,33 +581,141 @@
 
             const finalDisplay = processed.filter(c => showIncompatible || c.compatible);
 
-            list.innerHTML = '';
-            if (finalDisplay.length === 0) {
-                list.innerHTML = '<div class="col-span-full text-center py-12"><i class="ph ph-magnifying-glass text-4xl text-gray-600 mb-2"></i><p class="text-gray-500">No components found.</p></div>';
-            } else {
-                finalDisplay.forEach(c => {
-                    const currentComp = engine.getComponent(currentCategory);
-                    const isSelected = currentComp && currentComp.id === c.id;
-                    const onClick = isSelected ? '' : `onclick="selectComponent(${c.id})"`;
-                    
-                    const imgUrl = c.image_url || 'https://via.placeholder.com/300x200/111/333?text=' + c.type;
-                    const opacityClass = !c.compatible ? 'opacity-50 grayscale pointer-events-none' : '';
-                    const borderClass = isSelected ? 'border-primary shadow-[0_0_15px_rgba(255,107,0,0.3)]' : 'border-white/5 hover:border-white/20 cursor-pointer';
+            const defaultComponentId = initialBuild[currentCategory] ? initialBuild[currentCategory].id : null;
+            const defaultComps = finalDisplay.filter(c => c.id === defaultComponentId);
+            const otherComps = finalDisplay.filter(c => c.id !== defaultComponentId);
 
+            const buildCard = (c) => {
+                const currentComp = engine.getComponent(currentCategory);
+                const isSelected = currentComp && currentComp.id === c.id;
+                const onClick = isSelected ? '' : `onclick="selectComponent(${c.id})"`;
+                
+                const opacityClass = !c.compatible ? 'opacity-60 grayscale' : '';
+                
+                let borderClass = 'border-white/5 hover:border-white/20 cursor-pointer';
+                if (isSelected) borderClass = 'border-primary shadow-[0_0_15px_rgba(255,107,0,0.3)]';
+                if (!c.compatible) borderClass = 'border-red-500/40 bg-red-500/5 cursor-pointer hover:border-red-500/60';
+
+                let iconClass = 'ph-cube';
+                if (c.component_category === 'Processor') iconClass = 'ph-cpu';
+                else if (c.component_category === 'Video Card') iconClass = 'ph-graphics-card';
+                else if (c.component_category === 'Memory') iconClass = 'ph-memory';
+                else if (c.component_category === 'Storage') iconClass = 'ph-hard-drives';
+                else if (c.component_category === 'Motherboard') iconClass = 'ph-circuitry';
+                else if (c.component_category === 'Power Supply') iconClass = 'ph-plug';
+                else if (c.component_category === 'Case') iconClass = 'ph-computer-tower';
+
+                const imageHtml = c.image_url 
+                    ? `<img src="${c.image_url}" class="max-h-full max-w-full object-contain group-hover:scale-110 transition-transform duration-300 relative z-0">`
+                    : `<i class="ph-light ${iconClass} text-6xl text-gray-500 group-hover:text-primary group-hover:scale-110 transition-all duration-300 relative z-0"></i>`;
+
+                let badgesHtml = '';
+                const renderBadge = (label, value) => {
+                    if (value === null || value === undefined || value === '') return '';
+                    return `<div class="flex items-center gap-1 bg-white/5 border border-white/10 px-2 py-0.5 rounded text-[9px] text-gray-300 uppercase tracking-wider"><span class="text-gray-500 font-medium">${label}:</span> <span class="font-bold">${value}</span></div>`;
+                };
+
+                let badgesContent = '';
+                if (c.component_category === 'Processor') {
+                    badgesContent += renderBadge('Cores', c.core_count);
+                    badgesContent += renderBadge('PCC', c.core_clock);
+                    badgesContent += renderBadge('PCBC', c.boost_clock);
+                    badgesContent += renderBadge('Arch', c.microarchitecture);
+                    badgesContent += renderBadge('TDP', c.tdp ? c.tdp + 'W' : null);
+                    badgesContent += renderBadge('IG', c.integrated_graphics);
+                } else if (c.component_category === 'Video Card') {
+                    badgesContent += renderBadge('Chipset', c.chipset);
+                    badgesContent += renderBadge('Memory', c.memory ? c.memory + 'GB' : null);
+                    badgesContent += renderBadge('Boost', c.boost_clock);
+                    badgesContent += renderBadge('Color', c.color);
+                    badgesContent += renderBadge('Length', c.length_mm ? c.length_mm + 'mm' : null);
+                } else if (c.component_category === 'Memory') {
+                    badgesContent += renderBadge('Speed', c.speed ? c.speed + ' MT/s' : null);
+                    badgesContent += renderBadge('Modules', c.modules);
+                } else if (c.component_category === 'Storage') {
+                    badgesContent += renderBadge('Capacity', c.capacity ? c.capacity + 'GB' : null);
+                    badgesContent += renderBadge('Type', c.type);
+                    badgesContent += renderBadge('Cache', c.cache);
+                    badgesContent += renderBadge('Form', c.form_factor);
+                    badgesContent += renderBadge('Interface', c.interface);
+                } else if (c.component_category === 'Power Supply') {
+                    badgesContent += renderBadge('Type', c.type); 
+                    badgesContent += renderBadge('Efficiency', c.efficiency);
+                    badgesContent += renderBadge('Wattage', c.wattage ? c.wattage + 'W' : null);
+                    badgesContent += renderBadge('Modular', c.modular);
+                    badgesContent += renderBadge('Color', c.color);
+                } else if (c.component_category === 'Motherboard') {
+                    badgesContent += renderBadge('Socket', c.socket);
+                    const formFactorMap = {1: 'E-ATX', 2: 'ATX', 3: 'Micro-ATX', 4: 'Mini-ITX'};
+                    badgesContent += renderBadge('Form', formFactorMap[c.form_factor] || c.form_factor);
+                    badgesContent += renderBadge('Max RAM', c.memory_max);
+                    badgesContent += renderBadge('Slots', c.memory_slots);
+                    badgesContent += renderBadge('Color', c.color);
+                } else if (c.component_category === 'Case') {
+                    badgesContent += renderBadge('Type', c.type);
+                    badgesContent += renderBadge('Color', c.color);
+                    badgesContent += renderBadge('Panel', c.side_panel);
+                } else if (c.component_category === 'Cooling') {
+                    badgesContent += renderBadge('RPM', c.fan_rpm);
+                    badgesContent += renderBadge('Noise', c.noise_level);
+                    badgesContent += renderBadge('Color', c.color);
+                    badgesContent += renderBadge('Radiator', c.radiator_size);
+                }
+
+                if (badgesContent) {
+                    badgesHtml = `<div class="flex flex-wrap gap-1.5 mb-2 mt-1">${badgesContent}</div>`;
+                }
+
+                return `
+                    <div class="liquid-glass p-4 rounded-2xl border ${borderClass} ${opacityClass} flex flex-col transition-all group relative" ${onClick}>
+                        <div class="w-full h-32 mb-4 bg-white/5 rounded-xl flex items-center justify-center p-2 relative overflow-hidden" style="isolation: isolate;">
+                            ${imageHtml}
+                            ${isSelected ? `
+                            <div class="absolute left-0 right-0 top-0 bottom-0 m-auto h-10 bg-primary group-hover:bg-white transition-colors duration-300 border-y border-primary/50 group-hover:border-white shadow-xl shadow-primary/20 z-20 flex items-center justify-center cursor-default pointer-events-none">
+                                <span class="text-white group-hover:text-primary transition-colors duration-300 text-[12px] font-black uppercase tracking-widest">Selected</span>
+                            </div>
+                            ` : ''}
+                            ${!c.compatible ? `
+                            <div class="absolute left-0 right-0 top-0 bottom-0 m-auto min-h-[40px] py-1 bg-red-600/90 backdrop-blur-md border-y border-red-500 shadow-xl shadow-red-600/20 z-20 flex items-center justify-center cursor-default pointer-events-none px-3 text-center">
+                                <span class="text-white text-[10px] font-black uppercase tracking-widest leading-tight drop-shadow-md">${c.reason}</span>
+                            </div>
+                            ` : ''}
+                        </div>
+                        <h4 class="font-bold text-white text-sm leading-tight ${badgesHtml ? 'mb-1' : 'mb-2'}">${c.name}</h4>
+                        ${badgesHtml}
+                        <div class="mt-auto flex justify-between items-end">
+                            <p class="text-primary font-black">P${parseFloat(c.price).toLocaleString()}</p>
+                        </div>
+                    </div>
+                `;
+            };
+
+            list.innerHTML = '';
+            
+            if (finalDisplay.length === 0) {
+                list.innerHTML = '<div class="text-center py-12"><i class="ph ph-magnifying-glass text-4xl text-gray-600 mb-2"></i><p class="text-gray-500">No components found.</p></div>';
+            } else {
+                if (defaultComps.length > 0) {
                     list.innerHTML += `
-                        <div class="liquid-glass p-4 rounded-2xl border ${borderClass} ${opacityClass} flex flex-col transition-all group relative" ${c.compatible ? onClick : ''}>
-                            <div class="w-full h-32 mb-4 bg-white/5 rounded-xl flex items-center justify-center p-2">
-                                <img src="${imgUrl}" class="max-h-full max-w-full object-contain group-hover:scale-110 transition-transform duration-300">
+                        <div class="mb-2">
+                            <h4 class="text-white font-bold mb-4 uppercase tracking-widest text-sm flex items-center gap-2"><i class="ph-fill ph-star text-primary"></i> Default Component</h4>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                                ${defaultComps.map(buildCard).join('')}
                             </div>
-                            <h4 class="font-bold text-white text-sm mb-2 leading-tight">${c.name}</h4>
-                            <div class="mt-auto flex justify-between items-end">
-                                <p class="text-primary font-black">P${parseFloat(c.price).toLocaleString()}</p>
-                                ${isSelected ? '<div class="bg-primary text-white text-[10px] font-bold px-2 py-1 rounded uppercase tracking-widest">Selected</div>' : ''}
-                            </div>
-                            ${!c.compatible ? `<div class="absolute top-2 right-2 bg-red-500/90 text-white text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded shadow-lg backdrop-blur-sm z-10">${c.reason}</div>` : ''}
                         </div>
                     `;
-                });
+                }
+                
+                if (otherComps.length > 0) {
+                    list.innerHTML += `
+                        <div>
+                            <h4 class="text-white font-bold mb-4 uppercase tracking-widest text-sm flex items-center gap-2"><i class="ph-fill ph-squares-four text-primary"></i> Available Options</h4>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                                ${otherComps.map(buildCard).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
             }
         }
 
@@ -531,14 +726,14 @@
             const title = document.getElementById('modal-title');
             
             if(!dbType) {
-                alert('No alternative parts available for ' + label);
+                showNotification('Unavailable', 'No alternative parts available for ' + label, 'alert');
                 return;
             }
             
             currentCategory = label;
             title.innerText = 'Select ' + label;
             
-            availableComponents = allComponents.filter(c => c.type === dbType);
+            availableComponents = allComponents.filter(c => c.component_category === dbType);
             
             document.getElementById('modal-search').value = '';
             document.getElementById('modal-sort').value = 'name_asc';
@@ -549,6 +744,10 @@
             
             modal.classList.remove('opacity-0', 'pointer-events-none');
             box.classList.remove('scale-95');
+            document.documentElement.style.overflow = 'hidden';
+            document.body.style.overflow = 'hidden';
+            if (window.lenis) window.lenis.stop();
+            if (window.startModalLenis) setTimeout(window.startModalLenis, 300); // wait for modal transition
         }
 
         function closeModal() {
@@ -556,6 +755,10 @@
             const box = modal.querySelector('.liquid-glass-heavy');
             modal.classList.add('opacity-0', 'pointer-events-none');
             box.classList.add('scale-95');
+            document.documentElement.style.overflow = '';
+            document.body.style.overflow = '';
+            if (window.lenis) window.lenis.start();
+            if (window.stopModalLenis) window.stopModalLenis();
         }
 
         document.getElementById('modal-search').addEventListener('input', renderModalProducts);
@@ -577,23 +780,120 @@
             document.querySelector('.text-3xl.font-black.text-white').innerText = 'P' + total.toLocaleString();
         }
 
-        function updateUIText(category, text) {
+        function updateUIText(category, text, isMissing = false, conflictReason = null) {
             const specsList = document.getElementById('specs-list');
             const rows = specsList.querySelectorAll('.group');
             rows.forEach(row => {
                 const labelEl = row.querySelector('.text-xs.font-bold.text-gray-400');
                 if (labelEl && labelEl.innerText.toLowerCase() === category.toLowerCase()) {
-                    const valueEl = row.querySelector('.text-sm.font-bold.text-gray-200');
-                    if (valueEl) valueEl.innerText = text;
+                    const valueEl = row.querySelector('.text-sm.font-bold');
+                    
+                    const actionSlot = row.querySelector('.action-slot');
+
+                    if (conflictReason) {
+                        row.classList.add('border-red-500/50', 'bg-red-500/5');
+                        row.classList.remove('border-transparent');
+                        valueEl.classList.add('text-red-400');
+                        valueEl.classList.remove('text-gray-200');
+                        valueEl.innerText = text;
+                        
+                        if (actionSlot) {
+                            actionSlot.innerHTML = `
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-red-500/10 border border-red-500/30 text-[10px] uppercase tracking-widest font-black rounded-lg text-red-500 animate-pulse shadow-[0_0_15px_rgba(239,68,68,0.15)] whitespace-nowrap">
+                                    <i class="ph-fill ph-warning"></i> ${conflictReason}
+                                </span>
+                            `;
+                        }
+                    } else if (isMissing) {
+                        row.classList.add('border-red-500/50', 'bg-red-500/5');
+                        row.classList.remove('border-transparent');
+                        valueEl.classList.add('text-red-400');
+                        valueEl.classList.remove('text-gray-200');
+                        valueEl.innerText = text;
+                        if (actionSlot && !labelEl.innerText.toLowerCase().includes('warranty')) {
+                            actionSlot.innerHTML = '';
+                        }
+                    } else {
+                        row.classList.remove('border-red-500/50', 'bg-red-500/5');
+                        row.classList.add('border-transparent');
+                        valueEl.classList.remove('text-red-400');
+                        valueEl.classList.add('text-gray-200');
+                        valueEl.innerText = text;
+                        if (actionSlot && !labelEl.innerText.toLowerCase().includes('warranty')) {
+                            actionSlot.innerHTML = '';
+                        }
+                    }
                 }
             });
+        }
+
+        function scrollToRowIfHidden(row, forceScroll = false) {
+            setTimeout(() => {
+                const rect = row.getBoundingClientRect();
+                const isVisible = (rect.top >= 100) && (rect.bottom <= window.innerHeight - 100);
+                if (!isVisible || forceScroll) {
+                    if (window.lenis) {
+                        window.lenis.scrollTo(row, { offset: -200, duration: 1.2, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
+                    } else {
+                        row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }
+            }, 300); // Give modal time to close and Lenis to restart
+        }
+
+        function playShineAnimation(category) {
+            const specsList = document.getElementById('specs-list');
+            const rows = specsList.querySelectorAll('.group');
+            rows.forEach(row => {
+                const labelEl = row.querySelector('.text-xs.font-bold.text-gray-400');
+                if (labelEl && labelEl.innerText.toLowerCase() === category.toLowerCase()) {
+                    row.classList.remove('animate-shine');
+                    void row.offsetWidth; // Trigger reflow
+                    row.classList.add('animate-shine');
+                    setTimeout(() => row.classList.remove('animate-shine'), 1500);
+                    scrollToRowIfHidden(row, false);
+                }
+            });
+        }
+
+        function playShakeAnimation(categories) {
+            const specsList = document.getElementById('specs-list');
+            const rows = specsList.querySelectorAll('.group');
+            let firstRow = null;
+            
+            rows.forEach(row => {
+                const labelEl = row.querySelector('.text-xs.font-bold.text-gray-400');
+                if (labelEl && categories.map(c => c.toLowerCase()).includes(labelEl.innerText.toLowerCase())) {
+                    row.classList.remove('animate-shake');
+                    void row.offsetWidth; // Trigger reflow
+                    row.classList.add('animate-shake');
+                    setTimeout(() => row.classList.remove('animate-shake'), 500);
+                    
+                    if (!firstRow) firstRow = row;
+                }
+            });
+            
+            if (firstRow) {
+                scrollToRowIfHidden(firstRow, true); // Force scroll to draw attention to error
+            }
         }
 
         function addToCart() {
             const currentBuild = engine.currentBuild;
             const missing = Object.entries(currentBuild).filter(([k,v]) => v === null);
             if (missing.length > 0) {
-                alert("Please select components for: " + missing.map(m => m[0]).join(', '));
+                showNotification('Missing Components', 'Please select components for: ' + missing.map(m => m[0]).join(', '), 'alert');
+                return;
+            }
+
+            const incompatible = [];
+            Object.keys(currentBuild).forEach(category => {
+                if (currentBuild[category] && !engine.checkCompatibility(currentBuild[category], category).compatible) {
+                    incompatible.push(category);
+                }
+            });
+            if (incompatible.length > 0) {
+                showNotification('Incompatible Build', 'Please resolve hardware conflicts for: ' + incompatible.join(', '), 'alert');
                 return;
             }
 
@@ -638,18 +938,24 @@
         function selectComponent(id) {
             const component = availableComponents.find(c => c.id === id);
             
-            const conflicts = engine.getConflictsIfSelected(currentCategory, component);
-            
-            if (conflicts.length > 0) {
-                let msg = "Changing this component will require changing your " + conflicts.join(', ') + ". Proceed?";
-                if(!confirm(msg)) {
-                    return;
-                }
-                conflicts.forEach(cat => engine.removeComponent(cat));
-            }
-            
             engine.setComponent(currentCategory, component);
             closeModal();
+            
+            const conflicts = [];
+            Object.keys(engine.currentBuild).forEach(cat => {
+                if (engine.currentBuild[cat]) {
+                    const compat = engine.checkCompatibility(engine.currentBuild[cat], cat);
+                    if (!compat.compatible) {
+                        conflicts.push(cat);
+                    }
+                }
+            });
+            
+            if (conflicts.length > 0) {
+                playShakeAnimation(conflicts);
+            } else {
+                playShineAnimation(currentCategory);
+            }
         }
 
         window.addEventListener('load', function() {
@@ -667,7 +973,7 @@
     <!-- Lenis Smooth Scroll -->
     <script src="https://unpkg.com/@studio-freight/lenis@1.0.39/dist/lenis.min.js"></script>
     <script>
-        const lenis = new Lenis({
+        window.lenis = new Lenis({
             duration: 1.2,
             easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
             direction: 'vertical',
@@ -678,11 +984,39 @@
             touchMultiplier: 2,
             infinite: false,
         });
+
+        window.modalLenis = null;
+
+        window.startModalLenis = function() {
+            if (window.modalLenis) return;
+            const wrapper = document.getElementById('modal-scroll-wrapper');
+            const content = document.getElementById('modal-scroll-content');
+            if (wrapper && content) {
+                window.modalLenis = new Lenis({
+                    wrapper: wrapper,
+                    content: content,
+                    duration: 1.2,
+                    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+                    direction: 'vertical',
+                    smooth: true,
+                });
+            }
+        };
+
+        window.stopModalLenis = function() {
+            if (window.modalLenis) {
+                window.modalLenis.destroy();
+                window.modalLenis = null;
+            }
+        };
+
         function raf(time) {
-            lenis.raf(time);
+            if (window.lenis) window.lenis.raf(time);
+            if (window.modalLenis) window.modalLenis.raf(time);
             requestAnimationFrame(raf);
         }
         requestAnimationFrame(raf);
     </script>
+    <x-notification />
 </body>
 </html>

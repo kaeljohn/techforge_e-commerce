@@ -34,7 +34,7 @@ class PrebuiltPcController extends Controller
         }
 
         $configs = $allConfigs->map(function($config) {
-            $config->html_card = view('components.product-card', ['config' => $config, 'type' => 'prebuilt'])->render();
+            $config->html_card = view('components.product-card2', ['config' => $config, 'type' => 'prebuilt'])->render();
             return $config;
         });
 

@@ -20,4 +20,5 @@ class CustombuiltConfig extends Model
     public function storage() { return $this->belongsTo(Storage::class); }
     public function powerSupply() { return $this->belongsTo(PowerSupply::class); }
     public function pcCase() { return $this->belongsTo(PcCase::class); }
+    public function cooler() { return $this->belongsTo(Cooler::class); }
 }

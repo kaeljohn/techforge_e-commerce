@@ -17,6 +17,9 @@ return new class extends Migration
             $table->decimal('price', 10, 2);
             $table->string('type'); // NVMe Gen4, NVMe Gen5, SATA SSD, HDD
             $table->integer('capacity'); // in GB
+            $table->string('cache')->nullable();
+            $table->string('form_factor')->nullable(); // e.g. M.2 2280
+            $table->string('interface')->nullable(); // e.g. PCIe 4.0 x4
             $table->string('image_url')->nullable();
             $table->timestamps();
         });

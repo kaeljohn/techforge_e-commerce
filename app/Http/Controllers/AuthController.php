@@ -12,36 +12,42 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $credentials = $request->validate([
-            'login' => ['required', 'string'],
+            'email' => ['required', 'email'],
             'password' => ['required'],
         ]);
 
-        $loginField = filter_var($credentials['login'], FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
         $remember = $request->has('remember');
 
-        if (Auth::attempt([$loginField => $credentials['login'], 'password' => $credentials['password']], $remember)) {
+        if (Auth::attempt(['email' => $credentials['email'], 'password' => $credentials['password']], $remember)) {
             $request->session()->regenerate();
+            if (session()->has('redirect_after_auth')) {
+                return redirect(session()->pull('redirect_after_auth'));
+            }
             return redirect()->intended('/');
         }
 
         return back()->withErrors([
-            'login' => 'The provided credentials do not match our records.',
-        ])->onlyInput('login');
+            'email' => 'The provided credentials do not match our records.',
+        ])->onlyInput('email');
     }
 
     public function register(Request $request)
     {
         $validated = $request->validate([
-            'phone' => ['required', 'string', 'max:20', 'unique:users'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8'],
         ]);
 
         $user = User::create([
-            'phone' => $validated['phone'],
+            'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
         ]);
 
-        Auth::login($user);
+        Auth::login($user, $request->has('remember'));
+
+        if (session()->has('redirect_after_auth')) {
+            return redirect(session()->pull('redirect_after_auth'))->with('success', 'Account created successfully!');
+        }
 
         return redirect()->route('account.profile')->with('success', 'Account created successfully! Please complete your profile.');
     }

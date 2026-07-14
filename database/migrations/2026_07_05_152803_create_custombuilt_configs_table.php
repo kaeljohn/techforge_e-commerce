@@ -23,6 +23,7 @@ return new class extends Migration
             $table->foreignId('storage_id')->constrained('storages');
             $table->foreignId('power_supply_id')->constrained('power_supplies');
             $table->foreignId('pc_case_id')->nullable()->constrained('pc_cases');
+            $table->foreignId('cooler_id')->nullable()->constrained('components_coolers');
             $table->timestamps();
         });
     }

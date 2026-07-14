@@ -11,18 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('products', function (Blueprint $table) {
+        Schema::create('components_coolers', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('category')->nullable();
-            $table->string('brand')->nullable();
-            $table->string('processor')->nullable();
-            $table->string('specs')->nullable();
             $table->decimal('price', 10, 2);
-            $table->decimal('rating', 3, 1)->nullable();
+            $table->string('fan_rpm')->nullable();
+            $table->string('noise_level')->nullable();
+            $table->string('color')->nullable();
+            $table->string('radiator_size')->nullable(); // e.g. "240mm", "360mm", "N/A" for air coolers
             $table->string('image_url')->nullable();
-            $table->string('badge')->nullable();
-            $table->boolean('is_sold_out')->default(false);
             $table->timestamps();
         });
     }
@@ -32,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('products');
+        Schema::dropIfExists('components_coolers');
     }
 };
