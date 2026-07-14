@@ -125,12 +125,12 @@
             
             <!-- Controls / Sort -->
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
-                <p class="text-sm text-gray-400">Showing <span class="text-white font-bold">{{ $configs->count() }}</span> products</p>
+                <p class="text-sm text-gray-400">Showing <span id="product-count" class="text-white font-bold">{{ $configs->count() }}</span> products</p>
                 
                 <div class="flex items-center gap-3 w-full sm:w-auto">
                     <span class="text-xs text-gray-500 uppercase tracking-widest font-bold">Sort By</span>
                     <div class="relative w-full sm:w-48">
-                        <select name="sort" onchange="document.getElementById('filter-form').submit()" class="w-full bg-black/40 border border-[#3a1810] rounded-xl py-2 pl-4 pr-10 text-sm text-white appearance-none cursor-pointer hover:border-[#5a2810] transition-colors focus:outline-none focus:border-primary">
+                        <select name="sort" onchange="document.getElementById('filter-form').requestSubmit()" class="w-full bg-black/40 border border-[#3a1810] rounded-xl py-2 pl-4 pr-10 text-sm text-white appearance-none cursor-pointer hover:border-[#5a2810] transition-colors focus:outline-none focus:border-primary">
                             <option {{ request('sort') == 'Recommended' ? 'selected' : '' }}>Recommended</option>
                             <option {{ request('sort') == 'Price: Low to High' ? 'selected' : '' }}>Price: Low to High</option>
                             <option {{ request('sort') == 'Price: High to Low' ? 'selected' : '' }}>Price: High to Low</option>
@@ -141,90 +141,14 @@
             </div>
 
             <!-- Grid -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                
-                @forelse($configs as $config)
-                <!-- Product Card -->
-                <div class="bg-gradient-to-b from-[#2a110a] to-[#140502] border border-[#3a1810] rounded-[2rem] p-4 relative overflow-hidden group hover:border-primary/50 transition-all duration-500 hover:shadow-[0_10px_30px_rgba(255,107,0,0.2)] flex flex-col h-full">
-                    
-                    <!-- Image -->
-                    <div class="relative rounded-2xl overflow-hidden aspect-[4/3] mb-5 bg-[#0a0a0a]">
-                        <img src="{{ $config->image_url ?? 'https://images.unsplash.com/photo-1587202372634-32705e3bf49c?auto=format&fit=crop&w=800&q=80' }}" alt="{{ $config->name }}" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700 opacity-90 group-hover:opacity-100">
-                    </div>
-
-                    <div class="flex flex-col flex-1">
-                        <!-- Product Name -->
-                        <h3 class="text-lg font-bold text-white group-hover:text-primary transition-colors line-clamp-1 mb-3">{{ $config->name }}</h3>
-                        
-                        <!-- Product Parts/Peripherals -->
-                        @if(isset($config->is_part) && $config->is_part)
-                            <!-- Part Details -->
-                            <div class="space-y-1.5 mb-4 text-xs text-gray-400">
-                                <p>Standalone component.</p>
-                            </div>
-                        @else
-                            <div class="space-y-1.5 mb-4 text-xs">
-                                <div class="flex items-center gap-2 text-gray-400"><i class="ph ph-cpu text-gray-500 text-sm shrink-0"></i> <span class="text-gray-300 truncate">{{ $config->cpu->name ?? 'N/A' }}</span></div>
-                                <div class="flex items-center gap-2 text-gray-400"><i class="ph ph-circuitry text-gray-500 text-sm shrink-0"></i> <span class="text-gray-300 truncate">{{ $config->motherboard->name ?? 'N/A' }}</span></div>
-                                <div class="flex items-center gap-2 text-gray-400"><i class="ph ph-graphics-card text-gray-500 text-sm shrink-0"></i> <span class="text-gray-300 truncate">{{ $config->gpu->name ?? 'N/A' }}</span></div>
-                                <div class="flex items-center gap-2 text-gray-400"><i class="ph ph-memory text-gray-500 text-sm shrink-0"></i> <span class="text-gray-300 truncate">{{ $config->ram->name ?? 'N/A' }}</span></div>
-                                <div class="flex items-center gap-2 text-gray-400"><i class="ph ph-hard-drives text-gray-500 text-sm shrink-0"></i> <span class="text-gray-300 truncate">{{ $config->storage->name ?? 'N/A' }}</span></div>
-                                <div class="flex items-center gap-2 text-gray-400"><i class="ph ph-plug text-gray-500 text-sm shrink-0"></i> <span class="text-gray-300 truncate">{{ $config->powerSupply->name ?? 'N/A' }}</span></div>
-                            </div>
-                        @endif
-                        
-                        <!-- Divider -->
-                        <hr class="border-white/10 my-4">
-                        
-                        <!-- Pricing & Action Button -->
-                        <div class="mt-auto pt-2">
-                            <div class="flex flex-col mb-4">
-                                <span class="text-xl font-black text-white">P{{ number_format($config->price) }}</span>
-                            </div>
-
-                            <!-- Action Button -->
-                            @if(isset($config->is_part) && $config->is_part)
-                                <button type="button" 
-                                    class="add-to-cart-btn w-full py-2 rounded-full border border-primary text-primary hover:bg-primary hover:text-white font-bold transition-all duration-300 text-center flex items-center justify-center gap-2 text-sm"
-                                    data-product-id="{{ $config->id }}"
-                                    data-name="{{ $config->name }}"
-                                    data-price="{{ $config->price }}"
-                                    data-image="{{ $config->image_url ?? '' }}">
-                                    <i class="ph-bold ph-shopping-cart"></i> Add to Cart
-                                </button>
-                            @elseif($config instanceof \App\Models\PrebuiltConfig)
-                                <button type="button" 
-                                    class="add-to-cart-btn w-full py-2 rounded-full border border-primary text-primary hover:bg-primary hover:text-white font-bold transition-all duration-300 text-center flex items-center justify-center gap-2 text-sm"
-                                    data-product-id="{{ $config->id }}"
-                                    data-name="{{ $config->name }}"
-                                    data-price="{{ $config->price }}"
-                                    data-image="{{ $config->image_url ?? '' }}">
-                                    <i class="ph-bold ph-shopping-cart"></i> Add to Cart
-                                </button>
-                            @else
-                                <a href="{{ route('build-overview', ['id' => $config->id, 'type' => 'custom']) }}" class="w-full py-2 rounded-full border border-primary text-primary hover:bg-primary hover:text-white font-bold transition-all duration-300 text-center flex items-center justify-center gap-2 text-sm">
-                                    <i class="ph-bold ph-wrench"></i> Customize This Build
-                                </a>
-                            @endif
-                        </div>
-                    </div>
-                </div>
-                @empty
-                    <div class="col-span-1 sm:col-span-2 xl:col-span-3 py-20 flex flex-col items-center justify-center text-center bg-black/20 rounded-[2rem] border border-white/5">
-                        <i class="ph ph-magnifying-glass text-6xl text-gray-600 mb-6"></i>
-                        <h3 class="text-2xl font-bold text-white mb-2">No items found</h3>
-                        <p class="text-gray-400">Try adjusting your search or filters.</p>
-                    </div>
-                @endforelse
-
+            <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                <!-- JS Populates here -->
             </div>
             
-            @if($configs->isNotEmpty() && method_exists($configs, 'links'))
             <!-- Pagination -->
-            <div class="mt-12 w-full">
-                {{ $configs->links('pagination::tailwind') }}
+            <div id="pagination-container" class="mt-12 w-full flex justify-center gap-2">
+                <!-- JS Populates here -->
             </div>
-            @endif
 
         </div>
 
@@ -232,6 +156,11 @@
     </div>
 
     <x-footer />
+    
+    <script>
+        window.initialConfigs = @json($configs);
+        window.appUrl = "{{ url('/') }}";
+    </script>
     
     <!-- Load our compiled JavaScript (You can remove LiquidGlass initialization from inside this file) -->
     @vite(['resources/js/HomePage/Homepage.js', 'resources/js/Category/Category.js', 'resources/js/Pages/Search/Search.js'])

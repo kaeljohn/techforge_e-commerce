@@ -33,21 +33,22 @@ Route::post('/account/profile', [\App\Http\Controllers\AccountController::class,
 Route::get('/build-overview/{id}', function (\Illuminate\Http\Request $request, $id) {
     if ($request->query('type') === 'custom') {
         $product = \App\Models\CustombuiltConfig::with(['cpu', 'gpu', 'motherboard', 'ram', 'storage', 'powerSupply', 'pcCase'])->findOrFail($id);
+        
+        $cpus = \App\Models\Cpu::all()->map(function($i) { $i->type = 'Processor'; return $i; });
+        $gpus = \App\Models\Gpu::all()->map(function($i) { $i->type = 'Video Card'; return $i; });
+        $rams = \App\Models\Ram::all()->map(function($i) { $i->type = 'Memory'; return $i; });
+        $storages = \App\Models\Storage::all()->map(function($i) { $i->type = 'Storage'; return $i; });
+        $mobos = \App\Models\Motherboard::all()->map(function($i) { $i->type = 'Motherboard'; return $i; });
+        $psus = \App\Models\PowerSupply::all()->map(function($i) { $i->type = 'Power Supply'; return $i; });
+        $cases = \App\Models\PcCase::all()->map(function($i) { $i->type = 'Case'; return $i; });
+        
+        $allComponents = $cpus->concat($gpus)->concat($rams)->concat($storages)->concat($mobos)->concat($psus)->concat($cases);
+        
+        return view('build-overview', compact('product', 'allComponents'));
     } else {
         $product = \App\Models\PrebuiltConfig::with(['cpu', 'gpu', 'motherboard', 'ram', 'storage', 'powerSupply', 'pcCase'])->findOrFail($id);
+        return view('prebuilt-overview', compact('product'));
     }
-    
-    $cpus = \App\Models\Cpu::all()->map(function($i) { $i->type = 'Processor'; return $i; });
-    $gpus = \App\Models\Gpu::all()->map(function($i) { $i->type = 'Video Card'; return $i; });
-    $rams = \App\Models\Ram::all()->map(function($i) { $i->type = 'Memory'; return $i; });
-    $storages = \App\Models\Storage::all()->map(function($i) { $i->type = 'Storage'; return $i; });
-    $mobos = \App\Models\Motherboard::all()->map(function($i) { $i->type = 'Motherboard'; return $i; });
-    $psus = \App\Models\PowerSupply::all()->map(function($i) { $i->type = 'Power Supply'; return $i; });
-    $cases = \App\Models\PcCase::all()->map(function($i) { $i->type = 'Case'; return $i; });
-    
-    $allComponents = $cpus->concat($gpus)->concat($rams)->concat($storages)->concat($mobos)->concat($psus)->concat($cases);
-    
-    return view('build-overview', compact('product', 'allComponents'));
 })->name('build-overview');
 
 Route::get('/build-pc', function () {

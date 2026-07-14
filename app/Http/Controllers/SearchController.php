@@ -89,48 +89,18 @@ class SearchController extends Controller
             $unfiltered = (clone $prebuiltBaseQuery)->get();
             $this->populateFilterCounts($unfiltered, $counts);
             
-            $q = $this->applyFilters($prebuiltBaseQuery, $request);
-            $configs = $q->paginate(6)->withQueryString();
+            $configs = $unfiltered;
             
         } elseif ($tab === 'custom') {
             $unfiltered = (clone $customBaseQuery)->get();
             $this->populateFilterCounts($unfiltered, $counts);
             
-            $q = $this->applyFilters($customBaseQuery, $request);
-            $configs = $q->paginate(6)->withQueryString();
+            $configs = $unfiltered;
             
         } elseif ($tab === 'parts') {
-            // Apply price filters
-            if ($request->filled('price_min')) {
-                $parts = $parts->where('price', '>=', $request->price_min);
-            }
-            if ($request->filled('price_max')) {
-                $parts = $parts->where('price', '<=', $request->price_max);
-            }
-            
-            $sort = $request->sort ?? 'recommended';
-            if ($sort === 'Price: Low to High') {
-                $parts = $parts->sortBy('price')->values();
-            } elseif ($sort === 'Price: High to Low') {
-                $parts = $parts->sortByDesc('price')->values();
-            } else {
-                $parts = $parts->sortBy('name')->values();
-            }
-
-            // Manually Paginate Collection
-            $currentPage = LengthAwarePaginator::resolveCurrentPage();
-            $perPage = 6;
-            $currentItems = $parts->slice(($currentPage - 1) * $perPage, $perPage)->all();
-            $configs = new LengthAwarePaginator($currentItems, $parts->count(), $perPage, $currentPage, [
-                'path' => LengthAwarePaginator::resolveCurrentPath(),
-                'query' => $request->query(),
-            ]);
+            $configs = $parts;
         } elseif ($tab === 'laptops') {
-            // Empty paginator
-            $configs = new LengthAwarePaginator([], 0, 6, 1, [
-                'path' => LengthAwarePaginator::resolveCurrentPath(),
-                'query' => $request->query(),
-            ]);
+            $configs = collect([]);
         }
 
         $totalResults = $prebuiltCount + $customCount + $partsCount + $laptopCount;

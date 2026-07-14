@@ -22,18 +22,46 @@ document.addEventListener('DOMContentLoaded', () => {
     const filterForm = document.getElementById('filter-form');
 
     // 2. Filter Checkbox Interactions (Event Delegation)
+    function updateParentCheckboxes() {
+        const parents = document.querySelectorAll('.brand-checkbox[data-parent]');
+        parents.forEach(parent => {
+            const parentId = parent.getAttribute('data-parent');
+            const children = document.querySelectorAll(`input[data-child-of="${parentId}"]`);
+            if (children.length === 0) return;
+            
+            const checkedCount = Array.from(children).filter(c => c.checked).length;
+            if (checkedCount === 0) {
+                parent.checked = false;
+                parent.classList.remove('is-indeterminate');
+            } else if (checkedCount === children.length) {
+                parent.checked = true;
+                parent.classList.remove('is-indeterminate');
+            } else {
+                parent.checked = false;
+                parent.classList.add('is-indeterminate');
+            }
+        });
+    }
+
+    // Call once on load to ensure sync
+    updateParentCheckboxes();
+
     document.addEventListener('change', (e) => {
         if (e.target.matches('.brand-checkbox[data-parent]')) {
             const parentId = e.target.getAttribute('data-parent');
             const children = document.querySelectorAll(`input[data-child-of="${parentId}"]`);
             children.forEach(child => child.checked = e.target.checked);
             
+            e.target.classList.remove('is-indeterminate');
+            
             const form = document.getElementById('filter-form');
-            if (form) form.submit();
+            if (form) { if (typeof form.requestSubmit === 'function') form.requestSubmit(); else form.submit(); }
         } else if (e.target.matches('#filter-form input[type="checkbox"]')) {
             if (!e.target.id || !e.target.id.includes('accordion')) {
+                updateParentCheckboxes();
+                
                 const form = document.getElementById('filter-form');
-                if (form) form.submit();
+                if (form) { if (typeof form.requestSubmit === 'function') form.requestSubmit(); else form.submit(); }
             }
         }
     });
@@ -95,7 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('change', (e) => {
         if (e.target.matches('#range-min') || e.target.matches('#range-max') || e.target.matches('#price-min') || e.target.matches('#price-max')) {
             const form = document.getElementById('filter-form');
-            if (form) form.submit();
+            if (form) { if (typeof form.requestSubmit === 'function') form.requestSubmit(); else form.submit(); }
         }
     });
 
@@ -103,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.key === 'Enter' && (e.target.matches('#price-min') || e.target.matches('#price-max'))) {
             e.preventDefault();
             const form = document.getElementById('filter-form');
-            if (form) form.submit();
+            if (form) { if (typeof form.requestSubmit === 'function') form.requestSubmit(); else form.submit(); }
         }
     });
 
@@ -111,7 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('change', (e) => {
         if (e.target.matches('select[name="sort"]')) {
             const form = document.getElementById('filter-form');
-            if (form) form.submit();
+            if (form) { if (typeof form.requestSubmit === 'function') form.requestSubmit(); else form.submit(); }
         }
     });
 });

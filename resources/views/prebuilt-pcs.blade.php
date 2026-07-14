@@ -193,7 +193,7 @@
             
             <!-- Controls / Sort -->
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
-                <p class="text-sm text-gray-400">Showing <span class="text-white font-bold">{{ $configs->count() }}</span> products</p>
+                <p class="text-sm text-gray-400">Showing <span id="product-count" class="text-white font-bold">{{ $configs->count() }}</span> products</p>
                 
                 <div class="flex items-center gap-3 w-full sm:w-auto">
                     <span class="text-xs text-gray-500 uppercase tracking-widest font-bold">Sort By</span>
@@ -211,62 +211,14 @@
             </div>
 
             <!-- Grid -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                
-                @forelse($configs as $config)
-                <!-- Product Card -->
-                <div class="bg-gradient-to-b from-[#2a110a] to-[#140502] border border-[#3a1810] rounded-[2rem] p-4 relative overflow-hidden group hover:border-primary/50 transition-all duration-500 hover:shadow-[0_10px_30px_rgba(255,107,0,0.2)] flex flex-col h-full">
-                    
-                    <!-- Image -->
-                    <div class="relative rounded-2xl overflow-hidden aspect-[4/3] mb-5 bg-[#0a0a0a]">
-                        <img src="{{ $config->image_url }}" alt="{{ $config->name }}" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700 opacity-90 group-hover:opacity-100">
-                    </div>
-
-                    <div class="flex flex-col flex-1">
-                        <!-- Product Name -->
-                        <h3 class="text-lg font-bold text-white group-hover:text-primary transition-colors line-clamp-1 mb-3">{{ $config->name }}</h3>
-                        
-                        <!-- Product Parts/Peripherals -->
-                        <div class="space-y-1.5 mb-4 text-xs">
-                            <div class="flex items-center gap-2 text-gray-400"><i class="ph ph-cpu text-gray-500 text-sm shrink-0"></i> <span class="text-gray-300 truncate">{{ $config->cpu->name }}</span></div>
-                            <div class="flex items-center gap-2 text-gray-400"><i class="ph ph-circuitry text-gray-500 text-sm shrink-0"></i> <span class="text-gray-300 truncate">{{ $config->motherboard->name }}</span></div>
-                            <div class="flex items-center gap-2 text-gray-400"><i class="ph ph-graphics-card text-gray-500 text-sm shrink-0"></i> <span class="text-gray-300 truncate">{{ $config->gpu->name }}</span></div>
-                            <div class="flex items-center gap-2 text-gray-400"><i class="ph ph-memory text-gray-500 text-sm shrink-0"></i> <span class="text-gray-300 truncate">{{ $config->ram->name }}</span></div>
-                            <div class="flex items-center gap-2 text-gray-400"><i class="ph ph-hard-drives text-gray-500 text-sm shrink-0"></i> <span class="text-gray-300 truncate">{{ $config->storage->name }}</span></div>
-                            <div class="flex items-center gap-2 text-gray-400"><i class="ph ph-plug text-gray-500 text-sm shrink-0"></i> <span class="text-gray-300 truncate">{{ $config->powerSupply->name }}</span></div>
-                        </div>
-                        
-                        <!-- Divider -->
-                        <hr class="border-white/10 my-4">
-                        
-                        <!-- Pricing & Action Button -->
-                        <div class="mt-auto pt-2">
-                            <div class="flex flex-col mb-4">
-                                <span class="text-xl font-black text-white">P{{ number_format($config->price) }}</span>
-                            </div>
-
-                            <!-- Action Button -->
-                            <a href="{{ route('build-overview', $config->id) }}" class="w-full py-2 rounded-full border border-primary text-primary hover:bg-primary hover:text-white font-bold transition-all duration-300 text-center flex items-center justify-center gap-2 text-sm">
-                                <i class="ph-bold ph-eye"></i> View Details
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                @empty
-                    <div class="col-span-1 sm:col-span-2 xl:col-span-3 py-20 flex flex-col items-center justify-center text-center bg-black/20 rounded-[2rem] border border-white/5">
-                        <i class="ph ph-magnifying-glass text-6xl text-gray-600 mb-6"></i>
-                        <h3 class="text-2xl font-bold text-white mb-2">No configurations found</h3>
-                    </div>
-                @endforelse
-
+            <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                <!-- JS Populates here -->
             </div>
             
-            @if($configs->isNotEmpty())
             <!-- Pagination -->
-            <div class="mt-12 w-full">
-                {{ $configs->links('pagination::tailwind') }}
+            <div id="pagination-container" class="mt-12 w-full flex justify-center gap-2">
+                <!-- JS Populates here -->
             </div>
-            @endif
 
         </div>
     </form>
@@ -298,8 +250,10 @@
 
     
 
-    <!-- Custom Slider JS & AJAX Filtering -->
     <script>
+        window.initialConfigs = @json($configs);
+        window.appUrl = "{{ url('/') }}";
+        
         document.addEventListener('DOMContentLoaded', function() {
             function bindMobileFilter() {
                 const mobileFilterBtn = document.getElementById('mobile-filter-btn');
@@ -318,99 +272,192 @@
             }
             bindMobileFilter();
 
-            // Intercept form submissions for AJAX Filtering
-            function bindAjaxForm() {
-                const filterForm = document.getElementById('filter-form');
-                if (filterForm && !filterForm.isAjaxBound) {
-                    filterForm.isAjaxBound = true;
-                    // Override the native submit method so inline onchange="this.form.submit()" triggers our event listener
-                    const originalSubmit = HTMLFormElement.prototype.submit;
-                    filterForm.submit = function() {
-                        const event = new Event('submit', { bubbles: true, cancelable: true });
-                        filterForm.dispatchEvent(event);
-                    };
+            const configs = window.initialConfigs || [];
+            const appUrl = window.appUrl || '';
+            let currentPage = 1;
+            const itemsPerPage = 6;
+            
+            const filterForm = document.getElementById('filter-form');
+            const productGrid = document.getElementById('product-grid');
+            const paginationContainer = document.getElementById('pagination-container');
+            const productCountEl = document.getElementById('product-count');
+            
+            function augmentProcName(name) {
+                if (!name) return '';
+                if (!name.startsWith('AMD') && name.includes('Ryzen')) return 'AMD ' + name;
+                if (!name.startsWith('Intel') && name.includes('Core')) return 'Intel ' + name;
+                return name;
+            }
 
-                    filterForm.addEventListener('submit', function(e) {
-                        e.preventDefault();
-                        
-                        const url = new URL(filterForm.action);
-                        const formData = new FormData(filterForm);
-                        
-                        const searchParams = new URLSearchParams();
-                        for (const pair of formData) {
-                            if (pair[1] !== '') {
-                                searchParams.append(pair[0], pair[1]);
-                            }
+            function augmentGpuName(name) {
+                if (!name) return '';
+                if (!name.startsWith('NVIDIA') && (name.includes('RTX') || name.includes('GTX'))) return 'NVIDIA ' + name;
+                if (!name.startsWith('AMD') && name.includes('RX')) return 'AMD ' + name;
+                return name;
+            }
+            
+            function formatNumber(num) {
+                return parseInt(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            }
+
+            function renderProducts(products) {
+                if (!productGrid) return;
+                
+                // Update count
+                if (productCountEl) {
+                    productCountEl.textContent = products.length;
+                }
+
+                // Pagination calculations
+                const totalPages = Math.ceil(products.length / itemsPerPage);
+                if (currentPage > totalPages && totalPages > 0) currentPage = totalPages;
+                if (currentPage < 1) currentPage = 1;
+
+                const startIndex = (currentPage - 1) * itemsPerPage;
+                const endIndex = startIndex + itemsPerPage;
+                const currentProducts = products.slice(startIndex, endIndex);
+
+                // Render HTML
+                if (currentProducts.length === 0) {
+                    productGrid.innerHTML = `
+                        <div class="col-span-1 sm:col-span-2 xl:col-span-3 py-20 flex flex-col items-center justify-center text-center bg-black/20 rounded-[2rem] border border-white/5">
+                            <i class="ph ph-magnifying-glass text-6xl text-gray-600 mb-6"></i>
+                            <h3 class="text-2xl font-bold text-white mb-2">No configurations found</h3>
+                        </div>
+                    `;
+                    paginationContainer.innerHTML = '';
+                    return;
+                }
+
+                let html = '';
+                currentProducts.forEach(config => {
+                    html += config.html_card;
+                });
+
+                productGrid.innerHTML = html;
+
+                // Render Pagination
+                let paginationHtml = '';
+                if (totalPages > 1) {
+                    paginationHtml += `
+                        <button ${currentPage === 1 ? 'disabled' : ''} class="px-4 py-2 bg-[#2a110a] hover:bg-[#3a1810] disabled:opacity-50 disabled:cursor-not-allowed rounded-lg text-white font-bold transition-colors" data-page="${currentPage - 1}">Prev</button>
+                    `;
+                    
+                    for (let i = 1; i <= totalPages; i++) {
+                        if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                            paginationHtml += `
+                                <button class="px-4 py-2 ${currentPage === i ? 'bg-primary' : 'bg-[#2a110a] hover:bg-[#3a1810]'} rounded-lg text-white font-bold transition-colors" data-page="${i}">${i}</button>
+                            `;
+                        } else if (i === currentPage - 2 || i === currentPage + 2) {
+                            paginationHtml += `<span class="px-4 py-2 text-gray-500">...</span>`;
                         }
-                        url.search = searchParams.toString();
+                    }
+
+                    paginationHtml += `
+                        <button ${currentPage === totalPages ? 'disabled' : ''} class="px-4 py-2 bg-[#2a110a] hover:bg-[#3a1810] disabled:opacity-50 disabled:cursor-not-allowed rounded-lg text-white font-bold transition-colors" data-page="${currentPage + 1}">Next</button>
+                    `;
+                }
+                paginationContainer.innerHTML = paginationHtml;
+
+                // Add event listeners to new pagination buttons
+                const pageBtns = paginationContainer.querySelectorAll('button[data-page]');
+                pageBtns.forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        currentPage = parseInt(btn.dataset.page);
                         
                         const contentArea = document.getElementById('search-results-container');
-                        if (contentArea) contentArea.style.opacity = '0.5';
-
-                        fetch(url.toString())
-                            .then(response => response.text())
-                            .then(html => {
-                                const parser = new DOMParser();
-                                const doc = parser.parseFromString(html, 'text/html');
-                                const newContentArea = doc.getElementById('search-results-container');
-                                
-                                if (newContentArea) {
-                                    contentArea.innerHTML = newContentArea.innerHTML;
-                                    contentArea.style.opacity = '1';
-                                }
-                                
-                                window.history.pushState({}, '', url.toString());
-                                bindMobileFilter();
-                                bindAjaxForm();
-                            })
-                            .catch(err => {
-                                console.error('AJAX load failed:', err);
-                                if (contentArea) contentArea.style.opacity = '1';
-                            });
-                    });
-                }
-            }
-            bindAjaxForm();
-
-            // AJAX Navigation for Pagination and Tabs
-            document.addEventListener('click', function(e) {
-                const link = e.target.closest('nav[role="navigation"] a, .tab-link');
-                if (link) {
-                    e.preventDefault();
-                    const url = link.href;
-                    const contentArea = document.getElementById('search-results-container');
-                    
-                    if (contentArea) contentArea.style.opacity = '0.5';
-
-                    fetch(url)
-                        .then(response => response.text())
-                        .then(html => {
-                            const parser = new DOMParser();
-                            const doc = parser.parseFromString(html, 'text/html');
-                            const newContentArea = doc.getElementById('search-results-container');
-                            
-                            if (newContentArea) {
-                                contentArea.innerHTML = newContentArea.innerHTML;
-                                contentArea.style.opacity = '1';
-                            }
-                            
-                            window.history.pushState({}, '', url);
-                            
-                            // scroll to top of grid
-                            window.scrollTo({
-                                top: contentArea.getBoundingClientRect().top + window.scrollY - 100,
-                                behavior: 'smooth'
-                            });
-
-                            bindMobileFilter();
-                            bindAjaxForm();
-                        })
-                        .catch(err => {
-                            console.error('AJAX load failed:', err);
-                            if (contentArea) contentArea.style.opacity = '1';
+                        window.scrollTo({
+                            top: contentArea.getBoundingClientRect().top + window.scrollY - 100,
+                            behavior: 'smooth'
                         });
+                        applyFilters();
+                    });
+                });
+            }
+
+            function applyFilters() {
+                if (!filterForm) return;
+
+                const formData = new FormData(filterForm);
+                const minPrice = parseFloat(formData.get('price_min')) || 0;
+                const maxPrice = parseFloat(formData.get('price_max')) || 9999999;
+                const processors = formData.getAll('processor[]');
+                const gpus = formData.getAll('gpu[]');
+                const rams = formData.getAll('ram[]');
+                const storages = formData.getAll('storage[]');
+                const sort = formData.get('sort') || 'Recommended';
+
+                let filtered = configs.filter(product => {
+                    // Price
+                    if (product.price < minPrice || product.price > maxPrice) return false;
+
+                    // Processor
+                    if (processors.length > 0) {
+                        const procName = augmentProcName(product.cpu?.name);
+                        if (!processors.includes(procName)) return false;
+                    }
+
+                    // GPU
+                    if (gpus.length > 0) {
+                        const gpuName = augmentGpuName(product.gpu?.name);
+                        if (!gpus.includes(gpuName)) return false;
+                    }
+
+                    // RAM
+                    if (rams.length > 0) {
+                        const ramName = product.ram?.name;
+                        if (!rams.includes(ramName)) return false;
+                    }
+
+                    // Storage
+                    if (storages.length > 0) {
+                        const storageName = product.storage?.name;
+                        if (storageName) {
+                            const size = storageName.trim().split(' ')[0];
+                            if (!storages.includes(size)) return false;
+                        } else {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                });
+
+                // Sort
+                if (sort === 'Price: Low to High') {
+                    filtered.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
+                } else if (sort === 'Price: High to Low') {
+                    filtered.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
+                } else if (sort === 'Newest Arrivals') {
+                    filtered.sort((a, b) => b.id - a.id);
+                } else if (sort === 'Customer Reviews') {
+                    // Placeholder for reviews if available
+                    filtered.sort((a, b) => b.id - a.id);
+                } else {
+                    // Default sort (Recommended)
+                    filtered.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
                 }
-            });
+
+                renderProducts(filtered);
+            }
+
+            if (filterForm) {
+                // Override the native submit method so Category.js calls this instead
+                filterForm.submit = function() {
+                    currentPage = 1;
+                    applyFilters();
+                };
+
+                filterForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    currentPage = 1;
+                    applyFilters();
+                });
+                
+                // Initial render
+                applyFilters();
+            }
         });
     </script>
 

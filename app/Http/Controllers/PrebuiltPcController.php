@@ -9,8 +9,8 @@ class PrebuiltPcController extends Controller
 {
     public function index(Request $request)
     {
-        // First get ALL configs to populate the counts accurately
-        $allConfigs = PrebuiltConfig::with(['cpu', 'gpu', 'ram', 'storage'])->get();
+        // Get ALL configs and eager load all relationships
+        $allConfigs = PrebuiltConfig::with(['cpu', 'gpu', 'motherboard', 'ram', 'storage', 'powerSupply'])->get();
         
         $counts = [
             'processors' => [],
@@ -20,105 +20,23 @@ class PrebuiltPcController extends Controller
         ];
 
         foreach ($allConfigs as $config) {
-            $procName = $config->cpu->name;
-            if (str_contains($procName, 'Ryzen')) $procName = 'AMD ' . $procName;
-            elseif (str_contains($procName, 'Core')) $procName = 'Intel ' . $procName;
-            $counts['processors'][$procName] = ($counts['processors'][$procName] ?? 0) + 1;
+            $procName = $config->cpu->name ?? '';
+            if ($procName) $counts['processors'][$procName] = ($counts['processors'][$procName] ?? 0) + 1;
 
-            $gpuName = $config->gpu->name;
-            if (str_contains($gpuName, 'RTX') || str_contains($gpuName, 'GTX')) $gpuName = 'NVIDIA ' . $gpuName;
-            elseif (str_contains($gpuName, 'RX')) $gpuName = 'AMD ' . $gpuName;
-            $counts['gpus'][$gpuName] = ($counts['gpus'][$gpuName] ?? 0) + 1;
+            $gpuName = $config->gpu->name ?? '';
+            if ($gpuName) $counts['gpus'][$gpuName] = ($counts['gpus'][$gpuName] ?? 0) + 1;
 
-            $ramName = $config->ram->name;
-            $counts['rams'][$ramName] = ($counts['rams'][$ramName] ?? 0) + 1;
+            $ramName = $config->ram->name ?? '';
+            if ($ramName) $counts['rams'][$ramName] = ($counts['rams'][$ramName] ?? 0) + 1;
 
-            $storageName = $config->storage->name;
-            $counts['storages'][$storageName] = ($counts['storages'][$storageName] ?? 0) + 1;
+            $storageName = $config->storage->name ?? '';
+            if ($storageName) $counts['storages'][$storageName] = ($counts['storages'][$storageName] ?? 0) + 1;
         }
 
-        // Now apply filters
-        $query = PrebuiltConfig::with(['cpu', 'gpu', 'motherboard', 'ram', 'storage', 'powerSupply']);
-
-        if ($request->filled('price_min')) {
-            $query->where('price', '>=', $request->price_min);
-        }
-        if ($request->filled('price_max')) {
-            $query->where('price', '<=', $request->price_max);
-        }
-
-        if ($request->filled('processor') || $request->filled('processor_brand')) {
-            $query->whereHas('cpu', function($q) use ($request) {
-                $procs = $request->processor ?? [];
-                $brands = $request->processor_brand ?? [];
-
-                $q->where(function($subQ) use ($procs, $brands) {
-                    if (!empty($procs)) {
-                        $cleanedProcs = array_map(function($p) {
-                            return str_replace(['AMD ', 'Intel '], '', $p);
-                        }, $procs);
-                        $subQ->whereIn('name', $cleanedProcs);
-                    }
-                    if (!empty($brands)) {
-                        foreach ($brands as $brand) {
-                            if ($brand === 'AMD') $subQ->orWhere('name', 'LIKE', '%Ryzen%');
-                            if ($brand === 'Intel') $subQ->orWhere('name', 'LIKE', '%Core%');
-                        }
-                    }
-                });
-            });
-        }
-
-        if ($request->filled('gpu') || $request->filled('gpu_brand')) {
-            $query->whereHas('gpu', function($q) use ($request) {
-                $gpus = $request->gpu ?? [];
-                $brands = $request->gpu_brand ?? [];
-
-                $q->where(function($subQ) use ($gpus, $brands) {
-                    if (!empty($gpus)) {
-                        $cleanedGpus = array_map(function($g) {
-                            return str_replace(['NVIDIA ', 'AMD '], '', $g);
-                        }, $gpus);
-                        $subQ->whereIn('name', $cleanedGpus);
-                    }
-                    if (!empty($brands)) {
-                        foreach ($brands as $brand) {
-                            if ($brand === 'NVIDIA') $subQ->orWhere('name', 'LIKE', '%RTX%')->orWhere('name', 'LIKE', '%GTX%');
-                            if ($brand === 'AMD') $subQ->orWhere('name', 'LIKE', '%RX%');
-                        }
-                    }
-                });
-            });
-        }
-
-        if ($request->filled('ram') || $request->filled('ram_capacity')) {
-            $query->whereHas('ram', function($q) use ($request) {
-                $rams = $request->ram ?? [];
-                $capacities = $request->ram_capacity ?? [];
-
-                $q->where(function($subQ) use ($rams, $capacities) {
-                    if (!empty($rams)) {
-                        $subQ->whereIn('name', $rams);
-                    }
-                    if (!empty($capacities)) {
-                        foreach ($capacities as $cap) {
-                            $subQ->orWhere('name', 'LIKE', $cap . '%');
-                        }
-                    }
-                });
-            });
-        }
-
-        $sort = $request->sort ?? 'recommended';
-        if ($sort === 'price_asc') {
-            $query->orderBy('price', 'asc');
-        } elseif ($sort === 'price_desc') {
-            $query->orderBy('price', 'desc');
-        } else {
-            $query->orderBy('price', 'desc'); // Recommended default
-        }
-
-        $configs = $query->paginate(6)->withQueryString();
+        $configs = $allConfigs->map(function($config) {
+            $config->html_card = view('components.product-card', ['config' => $config, 'type' => 'prebuilt'])->render();
+            return $config;
+        });
 
         $minPrices = array_filter([
             PrebuiltConfig::min('price'),

@@ -253,7 +253,7 @@
                         <div class="space-y-4">
                             @foreach(['16GB', '32GB', '64GB'] as $cap)
                                 @php
-                                    $ramOpts = collect($counts['rams'] ?? [])->filter(fn($c, $r) => str_starts_with($r, $cap));
+                                    $ramOpts = collect($counts['rams'] ?? [])->filter(fn($c, $r) => str_contains($r, $cap));
                                     $ramTotal = $ramOpts->count();
                                     $ramChecked = $ramOpts->keys()->intersect($reqRams)->count();
                                     $isCapChecked = $ramTotal > 0 && $ramChecked === $ramTotal;
