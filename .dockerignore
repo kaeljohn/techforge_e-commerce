@@ -1,0 +1,13 @@
+.git
+.env
+node_modules/
+vendor/
+npm-debug.log
+.idea/
+.vscode/
+public/hot
+public/storage
+storage/framework/cache/data/*
+storage/framework/sessions/*
+storage/framework/views/*
+storage/logs/*
