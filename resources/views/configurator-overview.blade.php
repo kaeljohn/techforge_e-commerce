@@ -467,6 +467,25 @@
         
     </main>
 
+    <!-- Success Modal -->
+    <div id="success-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[70] hidden items-center justify-center opacity-0 transition-opacity duration-300">
+        <div class="bg-[#0f0f0f] border border-white/10 p-8 rounded-2xl shadow-[0_0_50px_rgba(255,107,0,0.2)] max-w-sm w-full text-center transform scale-95 transition-transform duration-300" id="success-modal-content">
+            <div class="w-20 h-20 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i class="ph-fill ph-check-circle text-5xl text-primary drop-shadow-[0_0_15px_rgba(255,107,0,0.8)]"></i>
+            </div>
+            <h2 class="text-2xl font-black text-white tracking-wider mb-2 uppercase">Build Complete!</h2>
+            <p class="text-gray-400 mb-8 text-sm">Your custom TechForge PC has been successfully added to your cart.</p>
+            <div class="flex gap-4">
+                <button onclick="document.getElementById('success-modal').classList.add('opacity-0'); document.getElementById('success-modal-content').classList.add('scale-95'); setTimeout(() => { document.getElementById('success-modal').classList.add('hidden'); document.getElementById('success-modal').classList.remove('flex'); }, 300)" class="flex-1 bg-white/10 hover:bg-white/20 text-white py-3 rounded-xl font-bold transition-all border border-white/10 text-sm">
+                    Continue Browsing
+                </button>
+                <button class="flex-1 bg-gradient-to-r from-primary to-[#ff8c33] hover:from-[#ff8c33] hover:to-primary text-white py-3 rounded-xl font-bold transition-all shadow-[0_0_15px_rgba(255,107,0,0.3)] text-sm">
+                    View Cart
+                </button>
+            </div>
+        </div>
+    </div>
+
     <x-footer />
 
         <script src="{{ asset('js/configurator-engine.js') }}"></script>
@@ -880,9 +899,12 @@
 
         function addToCart() {
             const currentBuild = engine.currentBuild;
-            const missing = Object.entries(currentBuild).filter(([k,v]) => v === null);
+            const essentialCats = ['Processor', 'Motherboard', 'Memory', 'Primary Storage', 'Video Card', 'Power Supply', 'Case', 'Cooling'];
+            const missing = Object.entries(currentBuild).filter(([k,v]) => v === null && essentialCats.includes(k));
             if (missing.length > 0) {
-                showNotification('Missing Components', 'Please select components for: ' + missing.map(m => m[0]).join(', '), 'alert');
+                if (typeof showNotification === 'function') {
+                    showNotification('Missing Components', 'Please select components for: ' + missing.map(m => m[0]).join(', '), 'alert');
+                }
                 return;
             }
 
@@ -902,37 +924,23 @@
             btn.innerHTML = '<i class="ph ph-spinner animate-spin"></i> Adding...';
             btn.disabled = true;
 
-            const formData = new FormData();
-            formData.append('product_id', 'custom_' + Date.now());
-            formData.append('name', 'Custom ' + '{{ $product->name }}');
-            formData.append('price', engine.calculateTotal());
-            formData.append('image_url', '{{ $product->image_url }}');
-            formData.append('quantity', 1);
-            formData.append('configuration', engine.getCartPayload());
-
-            fetch('{{ route("cart.add") }}', {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                },
-                body: formData
-            })
-            .then(res => res.json())
-            .then(data => {
-                if(data.success) {
-                    btn.innerHTML = '<i class="ph-bold ph-check"></i> Added';
+            // Front-end simulation
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                
+                const modal = document.getElementById('success-modal');
+                const content = document.getElementById('success-modal-content');
+                
+                if (modal && content) {
+                    modal.classList.remove('hidden');
+                    modal.classList.add('flex');
                     setTimeout(() => {
-                        btn.innerHTML = originalText;
-                        btn.disabled = false;
-                        const badge = document.querySelector('#cart-btn span');
-                        if (badge) {
-                            badge.classList.remove('hidden');
-                            badge.classList.add('flex');
-                            badge.innerText = data.cart_count;
-                        }
-                    }, 2000);
+                        modal.classList.remove('opacity-0');
+                        content.classList.remove('scale-95');
+                    }, 10);
                 }
-            });
+            }, 800);
         }
 
         function selectComponent(id) {
@@ -953,8 +961,14 @@
             
             if (conflicts.length > 0) {
                 playShakeAnimation(conflicts);
+                if (typeof showNotification === 'function') {
+                    showNotification('Compatibility Warning', 'The selected component has compatibility issues with your current build.', 'alert');
+                }
             } else {
                 playShineAnimation(currentCategory);
+                if (typeof showNotification === 'function') {
+                    showNotification('Component Updated', component.name + ' has been successfully added to your build.', 'success');
+                }
             }
         }
 

@@ -21,7 +21,7 @@ class PrebuiltConfigsSeeder extends Seeder
 
         $builds = [
             [
-                'name' => 'AMD Ryzen™ 1080p Sweet Spot',
+                'name' => 'TechForge Cobalt',
                 'description' => 'Perfect balance for high-refresh 1080p gaming.',
                 'cpu_id' => Cpu::where('name', 'like', '%Ryzen 5%')->first()->id ?? 1,
                 'gpu_id' => Gpu::where('name', 'like', '%RTX 4060%')->orWhere('name', 'like', '%RX 7600%')->first()->id ?? 1,
@@ -35,7 +35,7 @@ class PrebuiltConfigsSeeder extends Seeder
                 'image_url' => 'https://images.unsplash.com/photo-1587202372775-e229f172b9d7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
             ],
             [
-                'name' => 'AMD Ryzen™ 4K High-End',
+                'name' => 'TechForge Titanium',
                 'description' => 'Uncompromised 4K performance for demanding titles.',
                 'cpu_id' => Cpu::where('name', 'like', '%Ryzen 7%')->first()->id ?? 2,
                 'gpu_id' => Gpu::where('name', 'like', '%RTX 4070%')->orWhere('name', 'like', '%RX 7800%')->first()->id ?? 2,
@@ -49,7 +49,7 @@ class PrebuiltConfigsSeeder extends Seeder
                 'image_url' => 'https://images.unsplash.com/photo-1547082299-de196ea013d6?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
             ],
             [
-                'name' => 'AMD Ryzen™ Enthusiast',
+                'name' => 'TechForge Tungsten',
                 'description' => 'The absolute pinnacle of AMD computing power.',
                 'cpu_id' => Cpu::where('name', 'like', '%Ryzen 9%')->first()->id ?? 3,
                 'gpu_id' => Gpu::where('name', 'like', '%RTX 4090%')->orWhere('name', 'like', '%RX 7900%')->first()->id ?? 3,
@@ -63,7 +63,7 @@ class PrebuiltConfigsSeeder extends Seeder
                 'image_url' => 'https://images.unsplash.com/photo-1593640408182-31c70c8268f5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
             ],
             [
-                'name' => 'Intel© 1080p Sweet Spot',
+                'name' => 'TechForge Chromium',
                 'description' => 'Smooth 1080p gaming with Intel reliability.',
                 'cpu_id' => Cpu::where('name', 'like', '%i5%')->first()->id ?? 1,
                 'gpu_id' => Gpu::where('name', 'like', '%RTX 4060 Ti%')->orWhere('name', 'like', '%RTX 3060%')->first()->id ?? 1,
@@ -77,7 +77,7 @@ class PrebuiltConfigsSeeder extends Seeder
                 'image_url' => 'https://images.unsplash.com/photo-1555680202-c86f0e12f086?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
             ],
             [
-                'name' => 'Intel© 4K High-End',
+                'name' => 'TechForge Palladium',
                 'description' => 'Premium 4K gaming and productivity.',
                 'cpu_id' => Cpu::where('name', 'like', '%i7%')->first()->id ?? 2,
                 'gpu_id' => Gpu::where('name', 'like', '%RTX 4080%')->first()->id ?? 2,
@@ -91,7 +91,7 @@ class PrebuiltConfigsSeeder extends Seeder
                 'image_url' => 'https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
             ],
             [
-                'name' => 'Intel© Enthusiast',
+                'name' => 'TechForge Iridium',
                 'description' => 'Ultimate Intel performance without compromise.',
                 'cpu_id' => Cpu::where('name', 'like', '%i9%')->first()->id ?? 3,
                 'gpu_id' => Gpu::where('name', 'like', '%RTX 4090%')->first()->id ?? 3,

@@ -89,6 +89,16 @@ class ConfiguratorSeeder extends Seeder
         \App\Models\Storage::create(['name' => '4TB (2x 2TB) NVMe PCIe 5.0 SSD', 'type' => 'NVMe Gen5', 'capacity' => 4000, 'price' => 24000, 'cache' => '4GB DRAM per drive', 'form_factor' => 'M.2 2280', 'interface' => 'PCIe 5.0 x4']);
         \App\Models\Storage::create(['name' => 'Kingston NV2 1TB', 'type' => 'NVMe M.2', 'capacity' => 1000, 'price' => 3200, 'cache' => 'DRAMless', 'form_factor' => 'M.2 2280', 'interface' => 'PCIe 4.0 x4']);
 
+        // SATA SSDs
+        \App\Models\Storage::create(['name' => 'Samsung 870 EVO 1TB', 'type' => 'SATA SSD', 'capacity' => 1000, 'price' => 4500, 'cache' => '1GB LPDDR4', 'form_factor' => '2.5"', 'interface' => 'SATA 6Gb/s']);
+        \App\Models\Storage::create(['name' => 'Crucial MX500 2TB', 'type' => 'SATA SSD', 'capacity' => 2000, 'price' => 7500, 'cache' => 'Crucial Custom', 'form_factor' => '2.5"', 'interface' => 'SATA 6Gb/s']);
+        \App\Models\Storage::create(['name' => 'Western Digital Blue 4TB', 'type' => 'SATA SSD', 'capacity' => 4000, 'price' => 15000, 'cache' => 'N/A', 'form_factor' => '2.5"', 'interface' => 'SATA 6Gb/s']);
+
+        // HDDs
+        \App\Models\Storage::create(['name' => 'Seagate Barracuda 2TB', 'type' => 'HDD', 'capacity' => 2000, 'price' => 2800, 'cache' => '256MB', 'form_factor' => '3.5"', 'interface' => 'SATA 6Gb/s']);
+        \App\Models\Storage::create(['name' => 'Western Digital Black 4TB', 'type' => 'HDD', 'capacity' => 4000, 'price' => 7500, 'cache' => '256MB', 'form_factor' => '3.5"', 'interface' => 'SATA 6Gb/s']);
+        \App\Models\Storage::create(['name' => 'Toshiba X300 8TB', 'type' => 'HDD', 'capacity' => 8000, 'price' => 11000, 'cache' => '256MB', 'form_factor' => '3.5"', 'interface' => 'SATA 6Gb/s']);
+
         // Coolers
         \App\Models\Cooler::truncate();
         \App\Models\Cooler::create(['name' => 'Deepcool AK400 Air Cooler', 'price' => 1500, 'fan_rpm' => '500-1850 RPM', 'noise_level' => '29 dB(A)', 'color' => 'Black', 'radiator_size' => 'N/A']);
@@ -96,5 +106,14 @@ class ConfiguratorSeeder extends Seeder
         \App\Models\Cooler::create(['name' => 'NZXT Kraken 240 RGB Liquid Cooler', 'price' => 8500, 'fan_rpm' => '500-1800 RPM', 'noise_level' => '30.6 dB(A)', 'color' => 'Black', 'radiator_size' => '240mm']);
         \App\Models\Cooler::create(['name' => 'Corsair iCUE Link H150i RGB', 'price' => 13500, 'fan_rpm' => '400-2400 RPM', 'noise_level' => '34.1 dB(A)', 'color' => 'Black', 'radiator_size' => '360mm']);
         \App\Models\Cooler::create(['name' => 'Arctic Liquid Freezer III 360', 'price' => 7500, 'fan_rpm' => '200-2000 RPM', 'noise_level' => '22.5 dB(A)', 'color' => 'Black', 'radiator_size' => '360mm']);
+
+        // Case Fans
+        \App\Models\ChasisFan::truncate();
+        \App\Models\ChasisFan::create(['name' => 'Corsair AF120 RGB Elite', 'price' => 1200, 'size' => '120mm', 'rpm' => '1900 RPM', 'airflow' => '59 CFM', 'noise_level' => '28.9 dB(A)', 'color' => 'Black', 'rgb' => true]);
+        \App\Models\ChasisFan::create(['name' => 'Noctua NF-A12x25 PWM', 'price' => 1800, 'size' => '120mm', 'rpm' => '2000 RPM', 'airflow' => '60 CFM', 'noise_level' => '22.6 dB(A)', 'color' => 'Brown', 'rgb' => false]);
+        \App\Models\ChasisFan::create(['name' => 'Lian Li UNI FAN SL-INF 120', 'price' => 1600, 'size' => '120mm', 'rpm' => '2100 RPM', 'airflow' => '61 CFM', 'noise_level' => '29 dB(A)', 'color' => 'White', 'rgb' => true]);
+        \App\Models\ChasisFan::create(['name' => 'Arctic P14 PWM PST', 'price' => 600, 'size' => '140mm', 'rpm' => '1700 RPM', 'airflow' => '72 CFM', 'noise_level' => '24 dB(A)', 'color' => 'Black', 'rgb' => false]);
+        \App\Models\ChasisFan::create(['name' => 'Be Quiet! Silent Wings 4', 'price' => 1300, 'size' => '140mm', 'rpm' => '1900 RPM', 'airflow' => '78 CFM', 'noise_level' => '29.3 dB(A)', 'color' => 'Black', 'rgb' => false]);
+        \App\Models\ChasisFan::create(['name' => 'NZXT F140 RGB', 'price' => 1400, 'size' => '140mm', 'rpm' => '1800 RPM', 'airflow' => '89 CFM', 'noise_level' => '32.5 dB(A)', 'color' => 'White', 'rgb' => true]);
     }
 }

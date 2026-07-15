@@ -205,7 +205,7 @@
                                     <span class="font-bold text-sm tracking-normal capitalize">Pre-Built PCs</span>
                                 </a>
                                 <a href="{{ url('/pc-configurator') }}" class="block text-gray-300 hover:text-primary transition-colors">
-                                    <span class="font-bold text-sm tracking-normal capitalize">Custom PC Builder</span>
+                                    <span class="font-bold text-sm tracking-normal capitalize">PC Configurator</span>
                                 </a>
                             </div>
                         </div>

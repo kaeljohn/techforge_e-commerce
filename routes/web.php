@@ -42,13 +42,14 @@ Route::get('/configurator-overview/{id}', function ($id) {
     $cpus = \App\Models\Cpu::all()->map(function($i) { $i->component_category = 'Processor'; return $i; });
     $gpus = \App\Models\Gpu::all()->map(function($i) { $i->component_category = 'Video Card'; return $i; });
     $rams = \App\Models\Ram::all()->map(function($i) { $i->component_category = 'Memory'; return $i; });
-    $storages = \App\Models\Storage::all()->map(function($i) { $i->component_category = 'Storage'; return $i; });
+    $storages = \App\Models\Storage::all()->map(function($i) { $i->storage_type = $i->type; $i->component_category = 'Storage'; return $i; });
     $mobos = \App\Models\Motherboard::all()->map(function($i) { $i->component_category = 'Motherboard'; return $i; });
     $psus = \App\Models\PowerSupply::all()->map(function($i) { $i->component_category = 'Power Supply'; return $i; });
     $cases = \App\Models\PcCase::all()->map(function($i) { $i->component_category = 'Case'; return $i; });
     $coolers = \App\Models\Cooler::all()->map(function($i) { $i->component_category = 'Cooling'; return $i; });
+    $caseFans = \App\Models\ChasisFan::all()->map(function($i) { $i->component_category = 'Case Fan'; return $i; });
     
-    $allComponents = $cpus->concat($gpus)->concat($rams)->concat($storages)->concat($mobos)->concat($psus)->concat($cases)->concat($coolers);
+    $allComponents = $cpus->concat($gpus)->concat($rams)->concat($storages)->concat($mobos)->concat($psus)->concat($cases)->concat($coolers)->concat($caseFans);
     
     return view('configurator-overview', compact('product', 'allComponents'));
 })->name('configurator-overview');
@@ -62,12 +63,14 @@ Route::get('/build-pc', function () {
     $cpus = \App\Models\Cpu::all()->map(function($i) { $i->type = 'Processor'; return $i; });
     $gpus = \App\Models\Gpu::all()->map(function($i) { $i->type = 'Video Card'; return $i; });
     $rams = \App\Models\Ram::all()->map(function($i) { $i->type = 'Memory'; return $i; });
-    $storages = \App\Models\Storage::all()->map(function($i) { $i->type = 'Storage'; return $i; });
+    $storages = \App\Models\Storage::all()->map(function($i) { $i->storage_type = $i->type; $i->type = 'Storage'; return $i; });
     $mobos = \App\Models\Motherboard::all()->map(function($i) { $i->type = 'Motherboard'; return $i; });
     $psus = \App\Models\PowerSupply::all()->map(function($i) { $i->type = 'Power Supply'; return $i; });
     $cases = \App\Models\PcCase::all()->map(function($i) { $i->type = 'Case'; return $i; });
-    
-    $allComponents = $cpus->concat($gpus)->concat($rams)->concat($storages)->concat($mobos)->concat($psus)->concat($cases);
+    $coolers = \App\Models\Cooler::all()->map(function($i) { $i->type = 'Cooling'; return $i; });
+    $caseFans = \App\Models\ChasisFan::all()->map(function($i) { $i->type = 'Case Fan'; return $i; });
+
+    $allComponents = $cpus->concat($gpus)->concat($rams)->concat($storages)->concat($mobos)->concat($psus)->concat($cases)->concat($coolers)->concat($caseFans);
 
     return view('plugins.build-pc', compact('allComponents'));
 })->name('build-pc');
