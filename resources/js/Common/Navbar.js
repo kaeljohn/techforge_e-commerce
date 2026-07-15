@@ -1,21 +1,4 @@
-// Search Bar Logic
-const mockSearchResults = [
-    { name: "RTX 5090 Graphics Card", type: "GPU", price: "₱266,250" },
-    { name: "RTX 3060 Graphics Card", type: "GPU", price: "₱16,500" },
-    { name: "AMD Ryzen 5 5600X", type: "CPU", price: "₱8,500" },
-    { name: "AMD Ryzen 9 5950X", type: "CPU", price: "₱24,000" },
-    { name: "650W Corsair Gold PSU", type: "Power Supply", price: "₱5,200" },
-    { name: "850W Seasonic Focus", type: "Power Supply", price: "₱7,500" },
-    { name: "B550 Aorus Elite Motherboard", type: "Motherboard", price: "₱9,200" },
-    { name: "32GB Kingston Fury DDR4 RAM", type: "Memory", price: "₱4,800" },
-    { name: "16GB G.Skill Trident Z DDR4 RAM", type: "Memory", price: "₱3,200" },
-    { name: "Logitech G Pro X Superlight", type: "Peripheral", price: "₱6,500" },
-    { name: "Razer Huntsman Mini Keyboard", type: "Peripheral", price: "₱5,800" },
-    { name: "Keychron Q1 Pro Mechanical Keyboard", type: "Peripheral", price: "₱9,500" },
-    { name: "Asus ROG Swift 1440p Monitor", type: "Monitor", price: "₱28,000" },
-    { name: "HyperX Cloud II Gaming Headset", type: "Audio", price: "₱4,200" }
-];
-
+// Search logic
 const searchContainer = document.getElementById('search-container');
 const searchInput = document.getElementById('search-input');
 const searchDropdown = document.getElementById('search-dropdown');
@@ -25,30 +8,41 @@ const searchOverlay = document.getElementById('search-overlay');
 
 if (searchInput && searchDropdown) {
     const ul = searchDropdown.querySelector('ul');
+    const defaultSearchHtml = `
+        <div class="px-5 mb-2">
+            <span class="text-xs font-bold text-gray-500 uppercase tracking-widest">Popular Searches</span>
+        </div>
+        <ul class="text-sm text-gray-300 flex flex-col">
+            <li><a href="/search?q=RTX%204090" class="flex items-center gap-3 px-5 py-2.5 hover:bg-white/5 hover:text-primary transition-colors"><i class="ph ph-magnifying-glass text-gray-500"></i> RTX 4090</a></li>
+            <li><a href="/search?q=Ryzen%207%207800X3D" class="flex items-center gap-3 px-5 py-2.5 hover:bg-white/5 hover:text-primary transition-colors"><i class="ph ph-magnifying-glass text-gray-500"></i> Ryzen 7 7800X3D</a></li>
+            <li><a href="/search?q=Prebuilt%20Gaming%20PC" class="flex items-center gap-3 px-5 py-2.5 hover:bg-white/5 hover:text-primary transition-colors"><i class="ph ph-magnifying-glass text-gray-500"></i> Prebuilt Gaming PC</a></li>
+            <li><a href="/search?q=32GB%20DDR5%20RAM" class="flex items-center gap-3 px-5 py-2.5 hover:bg-white/5 hover:text-primary transition-colors"><i class="ph ph-magnifying-glass text-gray-500"></i> 32GB DDR5 RAM</a></li>
+        </ul>
+    `;
 
     searchInput.addEventListener('focus', () => {
-        // Disable scroll
         if (window.lenis) window.lenis.stop();
         
-        // Close Cart if open
         if (cartDropdown && !cartDropdown.classList.contains('opacity-0')) {
             cartDropdown.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
             cartDropdown.classList.add('opacity-0', 'pointer-events-none', '-translate-y-2');
         }
 
-        // Show search dropdown only if there is text
-        if (searchInput.value.trim().length > 0) {
-            searchDropdown.classList.remove('opacity-0', 'pointer-events-none', '-translate-y-2');
-            searchDropdown.classList.add('opacity-100', 'pointer-events-auto', 'translate-y-0');
+        // Show search dropdown when focused, even if empty
+        searchDropdown.classList.remove('opacity-0', 'pointer-events-none', '-translate-y-2');
+        searchDropdown.classList.add('opacity-100', 'pointer-events-auto', 'translate-y-0');
+
+        if (searchInput.value.trim().length === 0) {
+            searchDropdown.innerHTML = defaultSearchHtml;
         }
 
-        // Show overlay
         if (searchOverlay) {
             searchOverlay.classList.remove('opacity-0', 'pointer-events-none');
             searchOverlay.classList.add('opacity-100', 'pointer-events-auto');
         }
     });
 
+    let debounceTimer;
     searchInput.addEventListener('input', () => {
         const query = searchInput.value.toLowerCase().trim();
         
@@ -56,41 +50,47 @@ if (searchInput && searchDropdown) {
             searchClear.classList.remove('opacity-0', 'pointer-events-none');
             searchClear.classList.add('opacity-100', 'pointer-events-auto');
             
-            const filteredResults = mockSearchResults.filter(item => 
-                item.name.toLowerCase().includes(query) || item.type.toLowerCase().includes(query)
-            );
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(async () => {
+                try {
+                    const response = await fetch(`/api/search/suggestions?q=${encodeURIComponent(query)}`);
+                    const results = await response.json();
+                    
+                    if (results.length > 0) {
+                        searchDropdown.innerHTML = `
+                            <ul class="text-sm text-gray-300 flex flex-col">
+                                ` + results.map(item => `
+                                    <li>
+                                        <a href="/search?q=${encodeURIComponent(item.name)}" class="flex items-center justify-between px-4 py-2 hover:bg-white/5 transition-colors group">
+                                            <div class="flex items-center gap-3">
+                                                <i class="ph ph-magnifying-glass text-primary text-lg group-hover:scale-110 transition-transform"></i>
+                                                <div class="flex flex-col">
+                                                    <span class="text-gray-200 font-medium text-sm">${item.name}</span>
+                                                    <span class="text-gray-500 font-light text-[10px] uppercase">${item.type}</span>
+                                                </div>
+                                            </div>
+                                            <span class="text-primary font-bold text-xs">${item.price}</span>
+                                        </a>
+                                    </li>
+                                `).join('') + `
+                            </ul>
+                        `;
+                    } else {
+                        searchDropdown.innerHTML = `
+                            <ul class="text-sm text-gray-300 flex flex-col">
+                                <li class="px-4 py-4 text-gray-500 text-sm text-center">No products found for "${query}"</li>
+                            </ul>
+                        `;
+                    }
+                } catch (error) {
+                    console.error('Error fetching search suggestions:', error);
+                }
+            }, 300);
             
-            if (filteredResults.length > 0) {
-                ul.innerHTML = filteredResults.slice(0, 6).map(item => `
-                    <li>
-                        <a href="#" class="flex items-center justify-between px-4 py-2 hover:bg-white/5 transition-colors group">
-                            <div class="flex items-center gap-3">
-                                <i class="ph ph-magnifying-glass text-primary text-lg group-hover:scale-110 transition-transform"></i>
-                                <div class="flex flex-col">
-                                    <span class="text-gray-200 font-medium text-sm">${item.name}</span>
-                                    <span class="text-gray-500 font-light text-[10px] uppercase">${item.type}</span>
-                                </div>
-                            </div>
-                            <span class="text-primary font-bold text-xs">${item.price}</span>
-                        </a>
-                    </li>
-                `).join('');
-            } else {
-                ul.innerHTML = `
-                    <li class="px-4 py-4 text-gray-500 text-sm text-center">No products found for "${query}"</li>
-                `;
-            }
-            
-            // Show search dropdown
-            searchDropdown.classList.remove('opacity-0', 'pointer-events-none', '-translate-y-2');
-            searchDropdown.classList.add('opacity-100', 'pointer-events-auto', 'translate-y-0');
         } else {
             searchClear.classList.remove('opacity-100', 'pointer-events-auto');
             searchClear.classList.add('opacity-0', 'pointer-events-none');
-            
-            // Hide search dropdown
-            searchDropdown.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
-            searchDropdown.classList.add('opacity-0', 'pointer-events-none', '-translate-y-2');
+            searchDropdown.innerHTML = defaultSearchHtml;
         }
     });
 
@@ -100,11 +100,7 @@ if (searchInput && searchDropdown) {
             searchInput.value = '';
             searchClear.classList.remove('opacity-100', 'pointer-events-auto');
             searchClear.classList.add('opacity-0', 'pointer-events-none');
-            
-            // Hide search dropdown
-            searchDropdown.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
-            searchDropdown.classList.add('opacity-0', 'pointer-events-none', '-translate-y-2');
-            
+            searchDropdown.innerHTML = defaultSearchHtml;
             searchInput.focus();
         });
     }

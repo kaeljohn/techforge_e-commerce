@@ -78,6 +78,7 @@ Route::get('/build-pc', function () {
 Route::get('/pc-configurator', [\App\Http\Controllers\CustomPcController::class, 'index'])->name('pc-configurator');
 Route::get('/prebuilt-pcs', [\App\Http\Controllers\PrebuiltPcController::class, 'index'])->name('prebuilt-pcs');
 Route::get('/search', [\App\Http\Controllers\SearchController::class, 'index'])->name('search');
+Route::get('/api/search/suggestions', [\App\Http\Controllers\SearchController::class, 'suggestions'])->name('search.suggestions');
 
 Route::get('/cart/checkout-redirect', function () {
     session()->put('redirect_after_auth', route('cart'));

@@ -116,9 +116,9 @@
         <input type="hidden" name="tab" value="{{ $tab }}">
 
         <!-- Product Filter Component -->
-        @if($tab !== 'parts')
+        <div id="filter-sidebar-wrapper" style="{{ ($tab === 'parts' || $tab === 'laptops') ? 'display: none;' : '' }}">
             <x-search-filter :counts="$counts" route="search" :globalMinPrice="$globalMinPrice" :globalMaxPrice="$globalMaxPrice" />
-        @endif
+        </div>
 
         <!-- Product Grid -->
         <div id="product-grid-area" class="flex-1 w-full lg:w-auto transition-opacity duration-300">

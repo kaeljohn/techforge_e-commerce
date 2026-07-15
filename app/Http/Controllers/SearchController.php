@@ -25,12 +25,12 @@ class SearchController extends Controller
         $prebuiltBaseQuery = PrebuiltConfig::with(['cpu', 'gpu', 'motherboard', 'ram', 'storage', 'powerSupply']);
         if ($query) {
             $prebuiltBaseQuery->where(function($q) use ($query) {
-                $q->where('name', 'LIKE', '%' . $query . '%')
+                $q->where('name', 'ILIKE', '%' . $query . '%')
                   ->orWhereHas('cpu', function($sub) use ($query) {
-                      $sub->where('name', 'LIKE', '%' . $query . '%');
+                      $sub->where('name', 'ILIKE', '%' . $query . '%');
                   })
                   ->orWhereHas('gpu', function($sub) use ($query) {
-                      $sub->where('name', 'LIKE', '%' . $query . '%');
+                      $sub->where('name', 'ILIKE', '%' . $query . '%');
                   });
             });
         }
@@ -40,12 +40,12 @@ class SearchController extends Controller
         $customBaseQuery = CustombuiltConfig::with(['cpu', 'gpu', 'motherboard', 'ram', 'storage', 'powerSupply']);
         if ($query) {
             $customBaseQuery->where(function($q) use ($query) {
-                $q->where('name', 'LIKE', '%' . $query . '%')
+                $q->where('name', 'ILIKE', '%' . $query . '%')
                   ->orWhereHas('cpu', function($sub) use ($query) {
-                      $sub->where('name', 'LIKE', '%' . $query . '%');
+                      $sub->where('name', 'ILIKE', '%' . $query . '%');
                   })
                   ->orWhereHas('gpu', function($sub) use ($query) {
-                      $sub->where('name', 'LIKE', '%' . $query . '%');
+                      $sub->where('name', 'ILIKE', '%' . $query . '%');
                   });
             });
         }
@@ -53,24 +53,33 @@ class SearchController extends Controller
 
         // 3. PARTS
         $parts = collect();
+        $partsCount = 0;
         $partModels = [
-            Cpu::class, Gpu::class, Motherboard::class, Ram::class, Storage::class, PowerSupply::class, PcCase::class
+            'Processor' => Cpu::class, 
+            'Video Card' => Gpu::class, 
+            'Motherboard' => Motherboard::class, 
+            'Memory' => Ram::class, 
+            'Storage' => Storage::class, 
+            'Power Supply' => PowerSupply::class, 
+            'Case' => PcCase::class
         ];
         
-        foreach ($partModels as $modelClass) {
+        foreach ($partModels as $type => $modelClass) {
             $modelQuery = $modelClass::query();
             if ($query) {
-                $modelQuery->where('name', 'LIKE', '%' . $query . '%');
+                $modelQuery->where('name', 'ILIKE', '%' . $query . '%');
             }
+            
             $res = $modelQuery->get();
-            // Assign a dummy category to identify it's a part
-            $res->transform(function ($item) {
+            $res->transform(function ($item) use ($type) {
                 $item->is_part = true;
+                $item->type = $type;
+                $item->search_category = 'parts';
                 return $item;
             });
             $parts = $parts->concat($res);
+            $partsCount += $res->count();
         }
-        $partsCount = $parts->count();
 
         // 4. LAPTOPS (Hardcoded to 0)
         $laptopCount = 0;
@@ -82,50 +91,52 @@ class SearchController extends Controller
             'storages' => [],
         ];
 
-        // 5. Handle Tab Specifics
-        $configs = collect();
-        
-        if ($tab === 'prebuilt') {
-            $unfiltered = (clone $prebuiltBaseQuery)->get();
-            $this->populateFilterCounts($unfiltered, $counts);
-            
-            $configs = $unfiltered;
-            
-        } elseif ($tab === 'custom') {
-            $unfiltered = (clone $customBaseQuery)->get();
-            $this->populateFilterCounts($unfiltered, $counts);
-            
-            $configs = $unfiltered;
-            
-        } elseif ($tab === 'parts') {
-            $configs = $parts;
-        } elseif ($tab === 'laptops') {
-            $configs = collect([]);
-        }
+        // 5. Compile All Results for Client-Side Tab Switching
+        $prebuilts = (clone $prebuiltBaseQuery)->get();
+        $prebuilts->transform(function ($item) {
+            $item->search_category = 'prebuilt';
+            return $item;
+        });
+
+        $customs = (clone $customBaseQuery)->get();
+        $customs->transform(function ($item) {
+            $item->search_category = 'custom';
+            return $item;
+        });
+
+        $configs = $prebuilts->concat($customs)->concat($parts);
+
+        // Sidebar counts (populate based on Prebuilt and Custom)
+        $this->populateFilterCounts($prebuilts, $counts);
+        $this->populateFilterCounts($customs, $counts);
 
         $totalResults = $prebuiltCount + $customCount + $partsCount + $laptopCount;
 
         $partModels = [\App\Models\Cpu::class, \App\Models\Gpu::class, \App\Models\Motherboard::class, \App\Models\Ram::class, \App\Models\Storage::class, \App\Models\PowerSupply::class, \App\Models\PcCase::class];
         
-        $minPricesArr = [
-            \App\Models\PrebuiltConfig::min('price'),
-            \App\Models\CustombuiltConfig::min('price'),
-        ];
-        $maxPricesArr = [
-            \App\Models\PrebuiltConfig::max('price'),
-            \App\Models\CustombuiltConfig::max('price'),
-        ];
+        $globalMinPrice = \Illuminate\Support\Facades\Cache::remember('global_min_price', 3600, function() use ($partModels) {
+            $minPricesArr = [
+                \App\Models\PrebuiltConfig::min('price'),
+                \App\Models\CustombuiltConfig::min('price'),
+            ];
+            foreach ($partModels as $modelClass) {
+                $minPricesArr[] = $modelClass::min('price');
+            }
+            $minPrices = array_filter($minPricesArr);
+            return !empty($minPrices) ? floor(min($minPrices)) : 0;
+        });
 
-        foreach ($partModels as $modelClass) {
-            $minPricesArr[] = $modelClass::min('price');
-            $maxPricesArr[] = $modelClass::max('price');
-        }
-
-        $minPrices = array_filter($minPricesArr);
-        $globalMinPrice = !empty($minPrices) ? floor(min($minPrices)) : 0;
-
-        $maxPrices = array_filter($maxPricesArr);
-        $globalMaxPrice = !empty($maxPrices) ? ceil(max($maxPrices)) : 250000;
+        $globalMaxPrice = \Illuminate\Support\Facades\Cache::remember('global_max_price', 3600, function() use ($partModels) {
+            $maxPricesArr = [
+                \App\Models\PrebuiltConfig::max('price'),
+                \App\Models\CustombuiltConfig::max('price'),
+            ];
+            foreach ($partModels as $modelClass) {
+                $maxPricesArr[] = $modelClass::max('price');
+            }
+            $maxPrices = array_filter($maxPricesArr);
+            return !empty($maxPrices) ? ceil(max($maxPrices)) : 250000;
+        });
 
         return view('search', compact(
             'query', 'tab', 'prebuiltCount', 'customCount', 
@@ -183,8 +194,8 @@ class SearchController extends Controller
                     }
                     if (!empty($brands)) {
                         foreach ($brands as $brand) {
-                            if ($brand === 'AMD') $subQ->orWhere('name', 'LIKE', '%Ryzen%');
-                            if ($brand === 'Intel') $subQ->orWhere('name', 'LIKE', '%Core%');
+                            if ($brand === 'AMD') $subQ->orWhere('name', 'ILIKE', '%Ryzen%');
+                            if ($brand === 'Intel') $subQ->orWhere('name', 'ILIKE', '%Core%');
                         }
                     }
                 });
@@ -208,8 +219,8 @@ class SearchController extends Controller
                     }
                     if (!empty($brands)) {
                         foreach ($brands as $brand) {
-                            if ($brand === 'NVIDIA') $subQ->orWhere('name', 'LIKE', '%RTX%')->orWhere('name', 'LIKE', '%GTX%');
-                            if ($brand === 'AMD') $subQ->orWhere('name', 'LIKE', '%RX%');
+                            if ($brand === 'NVIDIA') $subQ->orWhere('name', 'ILIKE', '%RTX%')->orWhere('name', 'ILIKE', '%GTX%');
+                            if ($brand === 'AMD') $subQ->orWhere('name', 'ILIKE', '%RX%');
                         }
                     }
                 });
@@ -227,7 +238,7 @@ class SearchController extends Controller
                     }
                     if (!empty($capacities)) {
                         foreach ($capacities as $cap) {
-                            $subQ->orWhere('name', 'LIKE', $cap . '%');
+                            $subQ->orWhere('name', 'ILIKE', $cap . '%');
                         }
                     }
                 });
@@ -244,5 +255,56 @@ class SearchController extends Controller
         }
 
         return $query;
+    }
+
+    public function suggestions(Request $request)
+    {
+        $query = $request->query('q', '');
+        if (empty($query)) {
+            return response()->json([]);
+        }
+
+        $searchTerm = '%' . $query . '%';
+
+        $prebuilt = \Illuminate\Support\Facades\DB::table('prebuilt_configs')
+            ->select('name', 'price', \Illuminate\Support\Facades\DB::raw("'Prebuilt PC' as type"))
+            ->where('name', 'ILIKE', $searchTerm)
+            ->limit(2);
+
+        $custom = \Illuminate\Support\Facades\DB::table('configurator_configs')
+            ->select('name', 'price', \Illuminate\Support\Facades\DB::raw("'Custom PC' as type"))
+            ->where('name', 'ILIKE', $searchTerm)
+            ->limit(2);
+
+        $cpu = \Illuminate\Support\Facades\DB::table('components_cpus')->select('name', 'price', \Illuminate\Support\Facades\DB::raw("'Processor' as type"))->where('name', 'ILIKE', $searchTerm)->limit(2);
+        $gpu = \Illuminate\Support\Facades\DB::table('components_gpus')->select('name', 'price', \Illuminate\Support\Facades\DB::raw("'Video Card' as type"))->where('name', 'ILIKE', $searchTerm)->limit(2);
+        $mobo = \Illuminate\Support\Facades\DB::table('components_motherboards')->select('name', 'price', \Illuminate\Support\Facades\DB::raw("'Motherboard' as type"))->where('name', 'ILIKE', $searchTerm)->limit(2);
+        $ram = \Illuminate\Support\Facades\DB::table('components_rams')->select('name', 'price', \Illuminate\Support\Facades\DB::raw("'Memory' as type"))->where('name', 'ILIKE', $searchTerm)->limit(2);
+        $storage = \Illuminate\Support\Facades\DB::table('components_storages')->select('name', 'price', \Illuminate\Support\Facades\DB::raw("'Storage' as type"))->where('name', 'ILIKE', $searchTerm)->limit(2);
+        $psu = \Illuminate\Support\Facades\DB::table('components_power_supplies')->select('name', 'price', \Illuminate\Support\Facades\DB::raw("'Power Supply' as type"))->where('name', 'ILIKE', $searchTerm)->limit(2);
+        $case = \Illuminate\Support\Facades\DB::table('components_pc_cases')->select('name', 'price', \Illuminate\Support\Facades\DB::raw("'Case' as type"))->where('name', 'ILIKE', $searchTerm)->limit(2);
+
+        $results = collect($prebuilt
+            ->unionAll($custom)
+            ->unionAll($cpu)
+            ->unionAll($gpu)
+            ->unionAll($mobo)
+            ->unionAll($ram)
+            ->unionAll($storage)
+            ->unionAll($psu)
+            ->unionAll($case)
+            ->limit(6)
+            ->get());
+
+        // Format and limit to top 6 total
+        $formatted = $results->take(6)->map(function ($item) {
+            return [
+                'name' => $item->name,
+                'type' => $item->type,
+                'price' => '₱' . number_format((float) $item->price, 2)
+            ];
+        });
+
+        return response()->json($formatted);
     }
 }

@@ -17,12 +17,7 @@
 
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-xl font-bold text-white">Filter</h2>
-                @php
-                    $resetParams = [];
-                    if(request()->has('q')) $resetParams['q'] = request('q');
-                    if(request()->has('tab')) $resetParams['tab'] = request('tab');
-                @endphp
-                <a href="{{ route($route, $resetParams) }}" class="text-xs text-primary hover:text-orange-400 font-bold uppercase tracking-widest transition-colors">Reset All</a>
+                <a href="#" id="reset-all-btn" class="text-xs text-primary hover:text-orange-400 font-bold uppercase tracking-widest transition-colors">Reset All</a>
             </div>
 
             <!-- Price Accordion -->
