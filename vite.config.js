@@ -13,6 +13,7 @@ export default defineConfig({
                 'resources/js/Common/AmbientEffects.js',
                 'resources/js/Common/Preloader.js',
                 'resources/js/Common/TailwindConfig.js',
+                'resources/js/Common/Navbar.js',
                 'resources/js/HomePage/Homepage.js',
                 'resources/js/Pages/BuildOverview/BuildOverview.js',
                 'resources/js/Pages/BuildPc/BuildPc.js',
