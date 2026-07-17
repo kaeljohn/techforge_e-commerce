@@ -38,7 +38,10 @@ class AuthController extends Controller
             'password' => ['required', 'string', 'min:8'],
         ]);
 
+        $username = explode('@', $validated['email'])[0] . rand(1000, 9999);
+
         $user = User::create([
+            'username' => $username,
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
         ]);
