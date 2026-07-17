@@ -221,6 +221,13 @@ if (gamingPcsBtn && gamingPcsDropdown && navOverlay) {
                 if (partsIcon) partsIcon.classList.remove('rotate-180', 'text-primary');
                 if (partsBtn) partsBtn.classList.remove('text-primary');
             }
+            // Close forge store if open
+            if (typeof forgeStoreDropdown !== 'undefined' && forgeStoreDropdown && !forgeStoreDropdown.classList.contains('opacity-0')) {
+                forgeStoreDropdown.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
+                forgeStoreDropdown.classList.add('opacity-0', 'pointer-events-none', 'translate-y-2');
+                if (typeof forgeStoreIcon !== 'undefined' && forgeStoreIcon) forgeStoreIcon.classList.remove('rotate-180', 'text-primary');
+                if (typeof forgeStoreBtn !== 'undefined' && forgeStoreBtn) forgeStoreBtn.classList.remove('text-primary');
+            }
 
             // Open
             gamingPcsDropdown.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-2');
@@ -306,6 +313,13 @@ if (gamingLaptopsBtn && gamingLaptopsDropdown && navOverlay) {
                 partsDropdown.classList.add('opacity-0', 'pointer-events-none', 'translate-y-2');
                 if (partsIcon) partsIcon.classList.remove('rotate-180', 'text-primary');
                 if (partsBtn) partsBtn.classList.remove('text-primary');
+            }
+            // Close forge store if open
+            if (typeof forgeStoreDropdown !== 'undefined' && forgeStoreDropdown && !forgeStoreDropdown.classList.contains('opacity-0')) {
+                forgeStoreDropdown.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
+                forgeStoreDropdown.classList.add('opacity-0', 'pointer-events-none', 'translate-y-2');
+                if (typeof forgeStoreIcon !== 'undefined' && forgeStoreIcon) forgeStoreIcon.classList.remove('rotate-180', 'text-primary');
+                if (typeof forgeStoreBtn !== 'undefined' && forgeStoreBtn) forgeStoreBtn.classList.remove('text-primary');
             }
 
             // Open
@@ -415,6 +429,106 @@ if (partsBtn && partsDropdown && navOverlay) {
                 navOverlay.classList.add('opacity-0', 'pointer-events-none');
                 partsIcon.classList.remove('rotate-180', 'text-primary');
                 partsBtn.classList.remove('text-primary');
+                
+                // Only start lenis if search is not open
+                if (!searchOverlay || searchOverlay.classList.contains('opacity-0')) {
+                    if (window.lenis) window.lenis.start();
+                }
+            }
+        }
+    });
+}
+
+// Forge Store Dropdown Logic
+const forgeStoreContainer = document.getElementById('forge-store-container');
+const forgeStoreBtn = document.getElementById('forge-store-btn');
+const forgeStoreDropdown = document.getElementById('forge-store-dropdown');
+const forgeStoreIcon = document.getElementById('forge-store-icon');
+
+if (forgeStoreBtn && forgeStoreDropdown && navOverlay) {
+    forgeStoreBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const isOpen = !forgeStoreDropdown.classList.contains('opacity-0');
+
+        if (isOpen) {
+            // Close
+            forgeStoreDropdown.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
+            forgeStoreDropdown.classList.add('opacity-0', 'pointer-events-none', 'translate-y-2');
+            navOverlay.classList.remove('opacity-100', 'pointer-events-auto');
+            navOverlay.classList.add('opacity-0', 'pointer-events-none');
+            forgeStoreIcon.classList.remove('rotate-180', 'text-primary');
+            forgeStoreBtn.classList.remove('text-primary');
+            
+            if (!searchDropdown || searchDropdown.classList.contains('opacity-0')) {
+                if (window.lenis) window.lenis.start();
+            }
+        } else {
+            // Close search dropdown if open
+            if (searchDropdown && !searchDropdown.classList.contains('opacity-0')) {
+                searchDropdown.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
+                searchDropdown.classList.add('opacity-0', 'pointer-events-none', '-translate-y-2');
+                if (searchOverlay) {
+                    searchOverlay.classList.remove('opacity-100', 'pointer-events-auto');
+                    searchOverlay.classList.add('opacity-0', 'pointer-events-none');
+                }
+            }
+            // Close cart if open
+            if (cartDropdown && !cartDropdown.classList.contains('opacity-0')) {
+                cartDropdown.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
+                cartDropdown.classList.add('opacity-0', 'pointer-events-none', '-translate-y-2');
+            }
+            // Close gaming PCs if open
+            if (typeof gamingPcsDropdown !== 'undefined' && gamingPcsDropdown && !gamingPcsDropdown.classList.contains('opacity-0')) {
+                gamingPcsDropdown.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
+                gamingPcsDropdown.classList.add('opacity-0', 'pointer-events-none', 'translate-y-2');
+                if (gamingPcsIcon) gamingPcsIcon.classList.remove('rotate-180', 'text-primary');
+                if (gamingPcsBtn) gamingPcsBtn.classList.remove('text-primary');
+            }
+            // Close gaming laptops if open
+            if (typeof gamingLaptopsDropdown !== 'undefined' && gamingLaptopsDropdown && !gamingLaptopsDropdown.classList.contains('opacity-0')) {
+                gamingLaptopsDropdown.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
+                gamingLaptopsDropdown.classList.add('opacity-0', 'pointer-events-none', 'translate-y-2');
+                if (gamingLaptopsIcon) gamingLaptopsIcon.classList.remove('rotate-180', 'text-primary');
+                if (gamingLaptopsBtn) gamingLaptopsBtn.classList.remove('text-primary');
+            }
+            // Close forge store if open
+            if (typeof forgeStoreDropdown !== 'undefined' && forgeStoreDropdown && !forgeStoreDropdown.classList.contains('opacity-0')) {
+                forgeStoreDropdown.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
+                forgeStoreDropdown.classList.add('opacity-0', 'pointer-events-none', 'translate-y-2');
+                if (typeof forgeStoreIcon !== 'undefined' && forgeStoreIcon) forgeStoreIcon.classList.remove('rotate-180', 'text-primary');
+                if (typeof forgeStoreBtn !== 'undefined' && forgeStoreBtn) forgeStoreBtn.classList.remove('text-primary');
+            }
+            // Close parts if open
+            if (typeof partsDropdown !== 'undefined' && partsDropdown && !partsDropdown.classList.contains('opacity-0')) {
+                partsDropdown.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
+                partsDropdown.classList.add('opacity-0', 'pointer-events-none', 'translate-y-2');
+                if (partsIcon) partsIcon.classList.remove('rotate-180', 'text-primary');
+                if (partsBtn) partsBtn.classList.remove('text-primary');
+            }
+
+            // Open
+            forgeStoreDropdown.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-2');
+            forgeStoreDropdown.classList.add('opacity-100', 'pointer-events-auto', 'translate-y-0');
+            navOverlay.classList.remove('opacity-0', 'pointer-events-none');
+            navOverlay.classList.add('opacity-100', 'pointer-events-auto');
+            forgeStoreIcon.classList.add('rotate-180', 'text-primary');
+            forgeStoreBtn.classList.add('text-primary');
+            if (window.lenis) window.lenis.stop();
+        }
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!forgeStoreContainer.contains(e.target)) {
+            // Close if clicking outside
+            if (!forgeStoreDropdown.classList.contains('opacity-0')) {
+                forgeStoreDropdown.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
+                forgeStoreDropdown.classList.add('opacity-0', 'pointer-events-none', 'translate-y-2');
+                navOverlay.classList.remove('opacity-100', 'pointer-events-auto');
+                navOverlay.classList.add('opacity-0', 'pointer-events-none');
+                forgeStoreIcon.classList.remove('rotate-180', 'text-primary');
+                forgeStoreBtn.classList.remove('text-primary');
                 
                 // Only start lenis if search is not open
                 if (!searchOverlay || searchOverlay.classList.contains('opacity-0')) {

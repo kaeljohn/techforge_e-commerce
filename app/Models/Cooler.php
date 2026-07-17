@@ -19,5 +19,6 @@ class Cooler extends Model
         'color',
         'radiator_size',
         'image_url',
+        'brand'
     ];
 }

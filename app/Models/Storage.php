@@ -10,5 +10,5 @@ class Storage extends Model
 
     protected $fillable = [
         'name', 'price', 'type', 'capacity', 'cache', 'form_factor', 'interface', 'image_url'
-    ];
+    , 'brand'];
 }

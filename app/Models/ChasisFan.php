@@ -10,5 +10,5 @@ class ChasisFan extends Model
 
     protected $fillable = [
         'name', 'price', 'size', 'rpm', 'airflow', 'noise_level', 'color', 'rgb', 'image_url'
-    ];
+    , 'brand'];
 }

@@ -61,7 +61,11 @@ class SearchController extends Controller
             'Memory' => Ram::class, 
             'Storage' => Storage::class, 
             'Power Supply' => PowerSupply::class, 
-            'Case' => PcCase::class
+            'Case' => PcCase::class,
+            'Keyboard' => \App\Models\AccessoryKeyboard::class,
+            'Mouse' => \App\Models\AccessoryMouse::class,
+            'Headset' => \App\Models\AccessoryHeadset::class,
+            'Monitor' => \App\Models\AccessoryMonitor::class,
         ];
         
         foreach ($partModels as $type => $modelClass) {
@@ -112,7 +116,12 @@ class SearchController extends Controller
 
         $totalResults = $prebuiltCount + $customCount + $partsCount + $laptopCount;
 
-        $partModels = [\App\Models\Cpu::class, \App\Models\Gpu::class, \App\Models\Motherboard::class, \App\Models\Ram::class, \App\Models\Storage::class, \App\Models\PowerSupply::class, \App\Models\PcCase::class];
+        $partModels = [
+            \App\Models\Cpu::class, \App\Models\Gpu::class, \App\Models\Motherboard::class, 
+            \App\Models\Ram::class, \App\Models\Storage::class, \App\Models\PowerSupply::class, \App\Models\PcCase::class,
+            \App\Models\AccessoryKeyboard::class, \App\Models\AccessoryMouse::class, 
+            \App\Models\AccessoryHeadset::class, \App\Models\AccessoryMonitor::class
+        ];
         
         $globalMinPrice = \Illuminate\Support\Facades\Cache::remember('global_min_price', 3600, function() use ($partModels) {
             $minPricesArr = [
@@ -283,6 +292,11 @@ class SearchController extends Controller
         $storage = \Illuminate\Support\Facades\DB::table('components_storages')->select('name', 'price', \Illuminate\Support\Facades\DB::raw("'Storage' as type"))->where('name', 'ILIKE', $searchTerm)->limit(2);
         $psu = \Illuminate\Support\Facades\DB::table('components_power_supplies')->select('name', 'price', \Illuminate\Support\Facades\DB::raw("'Power Supply' as type"))->where('name', 'ILIKE', $searchTerm)->limit(2);
         $case = \Illuminate\Support\Facades\DB::table('components_pc_cases')->select('name', 'price', \Illuminate\Support\Facades\DB::raw("'Case' as type"))->where('name', 'ILIKE', $searchTerm)->limit(2);
+        
+        $keyboard = \Illuminate\Support\Facades\DB::table('components_accessories_keyboards')->select('name', 'price', \Illuminate\Support\Facades\DB::raw("'Keyboard' as type"))->where('name', 'ILIKE', $searchTerm)->limit(2);
+        $mouse = \Illuminate\Support\Facades\DB::table('components_accessories_mice')->select('name', 'price', \Illuminate\Support\Facades\DB::raw("'Mouse' as type"))->where('name', 'ILIKE', $searchTerm)->limit(2);
+        $headset = \Illuminate\Support\Facades\DB::table('components_accessories_headsets')->select('name', 'price', \Illuminate\Support\Facades\DB::raw("'Headset' as type"))->where('name', 'ILIKE', $searchTerm)->limit(2);
+        $monitor = \Illuminate\Support\Facades\DB::table('components_accessories_monitors')->select('name', 'price', \Illuminate\Support\Facades\DB::raw("'Monitor' as type"))->where('name', 'ILIKE', $searchTerm)->limit(2);
 
         $results = collect($prebuilt
             ->unionAll($custom)
@@ -293,6 +307,10 @@ class SearchController extends Controller
             ->unionAll($storage)
             ->unionAll($psu)
             ->unionAll($case)
+            ->unionAll($keyboard)
+            ->unionAll($mouse)
+            ->unionAll($headset)
+            ->unionAll($monitor)
             ->limit(6)
             ->get());
 

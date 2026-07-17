@@ -8,7 +8,7 @@
     $originalPrice = $config->price + (floor(rand(5000, 15000) / 1000) * 1000);
     
     // Determine the route name and parameters based on the type
-    $routeName = $type === 'custom' ? 'configurator-overview' : 'prebuilt-overview';
+    $routeName = $type === 'custom' ? 'configurator-overview' : ($type === 'laptop' ? null : 'prebuilt-overview');
     $routeParams = ['id' => $config->id];
 @endphp
 
@@ -51,20 +51,26 @@
         </div>
         <div class="flex items-center gap-2 text-[11px]">
             <i class="ph ph-cpu text-gray-500 text-sm"></i>
-            <span class="text-gray-300 truncate">{{ optional($config->cpu)->name ?? 'N/A' }}</span>
+            <span class="text-gray-300 truncate">{{ $type === 'laptop' ? $config->processor : (optional($config->cpu)->name ?? 'N/A') }}</span>
         </div>
         <div class="flex items-center gap-2 text-[11px]">
             <i class="ph ph-graphics-card text-gray-500 text-sm"></i>
-            <span class="text-gray-300 truncate">{{ optional($config->gpu)->name ?? 'N/A' }}</span>
+            <span class="text-gray-300 truncate">{{ $type === 'laptop' ? $config->gpu : (optional($config->gpu)->name ?? 'N/A') }}</span>
         </div>
         <div class="flex items-center gap-2 text-[11px]">
             <i class="ph ph-memory text-gray-500 text-sm"></i>
-            <span class="text-gray-300 truncate">{{ optional($config->ram)->name ?? 'N/A' }}</span>
+            <span class="text-gray-300 truncate">{{ $type === 'laptop' ? $config->ram : (optional($config->ram)->name ?? 'N/A') }}</span>
         </div>
         <div class="flex items-center gap-2 text-[11px]">
             <i class="ph ph-hard-drives text-gray-500 text-sm"></i>
-            <span class="text-gray-300 truncate">{{ optional($config->storage)->name ?? 'N/A' }}</span>
+            <span class="text-gray-300 truncate">{{ $type === 'laptop' ? $config->storage : (optional($config->storage)->name ?? 'N/A') }}</span>
         </div>
+        @if($type === 'laptop' && $config->display)
+        <div class="flex items-center gap-2 text-[11px]">
+            <i class="ph ph-monitor text-gray-500 text-sm"></i>
+            <span class="text-gray-300 truncate">{{ $config->display }}</span>
+        </div>
+        @endif
     </div>
 
     <div class="pt-3 border-t border-white/10 mb-4 space-y-1">
@@ -100,7 +106,7 @@
                 </div>
             </div>
         </div>
-        <a href="{{ route($routeName, $routeParams) }}" class="w-10 h-10 rounded-xl bg-primary text-white flex items-center justify-center hover:bg-white hover:text-black hover:scale-110 transition-all shadow-[0_0_10px_rgba(255,107,0,0.4)] shrink-0">
+        <a href="{{ $routeName ? route($routeName, $routeParams) : '#' }}" class="w-10 h-10 rounded-xl bg-primary text-white flex items-center justify-center hover:bg-white hover:text-black hover:scale-110 transition-all shadow-[0_0_10px_rgba(255,107,0,0.4)] shrink-0">
             <i class="ph-bold ph-arrow-right text-lg"></i>
         </a>
     </div>

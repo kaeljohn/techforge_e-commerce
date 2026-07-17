@@ -77,6 +77,70 @@ Route::get('/build-pc', function () {
 
 Route::get('/pc-configurator', [\App\Http\Controllers\CustomPcController::class, 'index'])->name('pc-configurator');
 Route::get('/prebuilt-pcs', [\App\Http\Controllers\PrebuiltPcController::class, 'index'])->name('prebuilt-pcs');
+Route::get('/gaming-laptops', [\App\Http\Controllers\LaptopController::class, 'index'])->name('gaming-laptops');
+Route::get('/store/accessories', [\App\Http\Controllers\AccessoryController::class, 'index'])->name('store.accessories');
+Route::get('/store/monitors', [\App\Http\Controllers\AccessoryController::class, 'monitors'])->name('store.monitors');
+Route::get('/store/pc-parts', [\App\Http\Controllers\PcPartController::class, 'index'])->name('store.pc-parts');
+Route::get('/forge-store', function () {
+    $accessories = collect([
+        \App\Models\AccessoryKeyboard::latest()->first(),
+        \App\Models\AccessoryHeadset::latest()->first(),
+        \App\Models\AccessoryMouse::latest()->first(),
+        \App\Models\AccessoryMousePad::latest()->first(),
+        \App\Models\AccessorySpeakerSystem::latest()->first(),
+        \App\Models\AccessoryKeyboardAccessory::latest()->first()
+    ])->map(function ($item) {
+        $item->category = match(class_basename($item)) {
+            'AccessoryKeyboard' => 'Keyboard',
+            'AccessoryHeadset' => 'Headset',
+            'AccessoryMouse' => 'Mouse',
+            'AccessoryMousePad' => 'Mouse Pad',
+            'AccessorySpeakerSystem' => 'Audio',
+            'AccessoryKeyboardAccessory' => 'Keyboard Mod',
+            default => 'Accessory'
+        };
+        $item->rating = 5;
+        $item->reviews = rand(50, 200);
+        $item->sale = true;
+        $item->originalPrice = $item->price * 1.25;
+        return $item;
+    });
+
+    $monitors = \App\Models\AccessoryMonitor::latest()->take(6)->get()->map(function ($item) {
+        $item->category = 'Monitor';
+        $item->rating = 5;
+        $item->reviews = rand(20, 300);
+        $item->sale = true;
+        $item->originalPrice = $item->price * 1.2;
+        return $item;
+    });
+
+    $pcParts = collect([
+        \App\Models\Cpu::latest()->first(),
+        \App\Models\Gpu::latest()->first(),
+        \App\Models\Motherboard::latest()->first(),
+        \App\Models\Ram::latest()->first(),
+        \App\Models\Storage::latest()->first(),
+        \App\Models\PcCase::latest()->first(),
+    ])->map(function ($item) {
+        $item->category = match(class_basename($item)) {
+            'Cpu' => 'Processor',
+            'Gpu' => 'Video Card',
+            'Motherboard' => 'Motherboard',
+            'Ram' => 'Memory',
+            'Storage' => 'Storage',
+            'PcCase' => 'Case',
+            default => 'PC Part'
+        };
+        $item->rating = 5;
+        $item->reviews = rand(15, 200);
+        $item->sale = true;
+        $item->originalPrice = $item->price * 1.15;
+        return $item;
+    });
+
+    return view('forge-store', compact('accessories', 'monitors', 'pcParts'));
+})->name('forge-store');
 Route::get('/search', [\App\Http\Controllers\SearchController::class, 'index'])->name('search');
 Route::get('/api/search/suggestions', [\App\Http\Controllers\SearchController::class, 'suggestions'])->name('search.suggestions');
 

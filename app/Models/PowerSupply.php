@@ -10,5 +10,5 @@ class PowerSupply extends Model
     
     protected $fillable = [
         'name', 'price', 'wattage', 'form_factor', 'type', 'modular', 'color', 'efficiency', 'image_url'
-    ];
+    , 'brand'];
 }

@@ -19,5 +19,6 @@ class Cpu extends Model
         'microarchitecture',
         'integrated_graphics',
         'image_url',
+        'brand'
     ];
 }

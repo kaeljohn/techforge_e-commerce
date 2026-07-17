@@ -10,5 +10,5 @@ class Gpu extends Model
     
     protected $fillable = [
         'name', 'price', 'tdp', 'length_mm', 'chipset', 'memory', 'boost_clock', 'color', 'image_url'
-    ];
+    , 'brand'];
 }

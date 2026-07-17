@@ -10,5 +10,5 @@ class Ram extends Model
     
     protected $fillable = [
         'name', 'price', 'generation', 'capacity', 'speed', 'modules', 'image_url'
-    ];
+    , 'brand'];
 }

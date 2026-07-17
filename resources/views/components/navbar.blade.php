@@ -62,8 +62,8 @@
 
             <!-- Sign In -->
             @auth
-            <div class="hidden lg:flex items-center gap-4 relative">
-                <div id="user-dropdown-btn" class="flex items-center gap-2 cursor-pointer group">
+            <div class="hidden lg:flex items-center gap-4 relative group/user py-2">
+                <div class="flex items-center gap-2 cursor-pointer">
                     <i class="ph ph-user text-xl text-primary transition-colors"></i>
                     <div class="flex flex-col text-left">
                         <span class="text-[10px] text-gray-400 leading-tight">Welcome</span>
@@ -72,7 +72,7 @@
                 </div>
                 
                 <!-- Dropdown Menu -->
-                <div id="user-dropdown" class="opacity-0 pointer-events-none scale-95 transition-all duration-300 origin-top-right absolute top-full right-0 mt-4 w-56 liquid-glass border border-white/10 rounded-xl shadow-2xl py-2 z-50" onclick="event.stopPropagation();">
+                <div class="opacity-0 pointer-events-none scale-95 group-hover/user:opacity-100 group-hover/user:pointer-events-auto group-hover/user:scale-100 transition-all duration-300 origin-top-right absolute top-full right-0 mt-0 w-56 liquid-glass border border-white/10 rounded-xl shadow-2xl py-2 z-50">
                     <div class="px-4 py-3 border-b border-white/10 mb-2 bg-white/5 mx-2 rounded-lg">
                         <p class="text-[10px] text-gray-400 uppercase font-bold tracking-wider mb-0.5">FORGE Points</p>
                         <div class="flex items-end gap-2">
@@ -94,38 +94,25 @@
                         </button>
                     </form>
                 </div>
-                
-                <script>
-                    const btn = document.getElementById('user-dropdown-btn');
-                    const dropdown = document.getElementById('user-dropdown');
-                    if(btn && dropdown) {
-                        btn.addEventListener('click', (e) => {
-                            e.stopPropagation();
-                            if(dropdown.classList.contains('opacity-0')) {
-                                dropdown.classList.remove('opacity-0', 'pointer-events-none', 'scale-95');
-                                dropdown.classList.add('opacity-100', 'pointer-events-auto', 'scale-100');
-                            } else {
-                                dropdown.classList.add('opacity-0', 'pointer-events-none', 'scale-95');
-                                dropdown.classList.remove('opacity-100', 'pointer-events-auto', 'scale-100');
-                            }
-                        });
-                        document.addEventListener('click', () => {
-                            if (!dropdown.classList.contains('opacity-0')) {
-                                dropdown.classList.add('opacity-0', 'pointer-events-none', 'scale-95');
-                                dropdown.classList.remove('opacity-100', 'pointer-events-auto', 'scale-100');
-                            }
-                        });
-                    }
-                </script>
             </div>
             @else
-            <a href="{{ route('login') }}" class="hidden lg:flex items-center gap-2 cursor-pointer group">
-                <i class="ph ph-user text-xl text-gray-400 group-hover:text-primary transition-colors"></i>
-                <div class="flex flex-col text-left">
-                    <span class="text-[10px] text-gray-400 leading-tight">Welcome</span>
-                    <span class="text-sm font-bold text-white group-hover:text-primary transition-colors leading-tight">Sign In / Register</span>
+            <div class="hidden lg:flex relative group/guest py-2">
+                <a href="{{ route('login') }}" class="flex items-center gap-2 cursor-pointer">
+                    <i class="ph ph-user text-xl text-gray-400 group-hover/guest:text-primary transition-colors"></i>
+                    <div class="flex flex-col text-left">
+                        <span class="text-[10px] text-gray-400 leading-tight">Welcome</span>
+                        <span class="text-sm font-bold text-white group-hover/guest:text-primary transition-colors leading-tight">Sign In / Register</span>
+                    </div>
+                </a>
+                
+                <!-- Unauthenticated Dropdown -->
+                <div class="opacity-0 pointer-events-none scale-95 group-hover/guest:opacity-100 group-hover/guest:pointer-events-auto group-hover/guest:scale-100 transition-all duration-300 origin-top-right absolute top-full right-0 mt-0 w-64 liquid-glass border border-white/10 rounded-xl shadow-2xl p-4 z-50">
+                    <h4 class="text-sm font-bold text-white mb-2">Join TechForge</h4>
+                    <p class="text-[11px] text-gray-400 mb-4 leading-snug">Earn Forge Points, track orders, and checkout faster.</p>
+                    <a href="{{ route('login') }}" class="block w-full bg-gradient-to-r from-primary to-orange-400 hover:from-primary hover:to-orange-500 text-white text-center py-2.5 rounded-xl font-bold text-sm transition-colors mb-2 shadow-[0_0_15px_rgba(255,107,0,0.3)]">Sign In</a>
+                    <a href="{{ route('login') }}" class="block w-full bg-white/5 hover:bg-white/10 border border-white/10 text-white text-center py-2.5 rounded-xl font-bold text-sm transition-colors">Create Account</a>
                 </div>
-            </a>
+            </div>
             @endauth
 
             <!-- Notification Container -->
@@ -166,7 +153,7 @@
             </div>
 
             <!-- Cart Container -->
-            <div id="cart-container" class="relative z-30 shrink-0">
+            <div id="cart-container" class="relative z-30 shrink-0 group/cart py-2">
                 <a href="{{ route('cart') }}" id="cart-btn" class="flex items-center gap-2 w-auto h-11 px-3 sm:px-4 rounded-2xl border border-white/10 hover:border-white/20 hover:bg-white/5 transition-all text-gray-300 hover:text-white relative">
                     <div class="relative">
                         <i class="ph ph-shopping-cart text-xl"></i>
@@ -178,7 +165,13 @@
                     </div>
                 </a>
 
-
+                <!-- Cart Dropdown -->
+                <div class="opacity-0 pointer-events-none scale-95 group-hover/cart:opacity-100 group-hover/cart:pointer-events-auto group-hover/cart:scale-100 transition-all duration-300 origin-top-right absolute top-full right-0 mt-0 w-72 liquid-glass border border-white/10 rounded-xl shadow-2xl p-6 z-50 flex flex-col items-center text-center">
+                    <i class="ph-light ph-shopping-cart text-4xl text-gray-500 mb-3"></i>
+                    <h4 class="text-white font-bold text-sm mb-1">Your Cart is Empty</h4>
+                    <p class="text-xs text-gray-400 mb-4 leading-relaxed">Looks like you haven't added anything to your cart yet.</p>
+                    <a href="{{ url('/forge-store') }}" class="w-full bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold text-xs py-2.5 rounded-lg transition-colors">Continue Shopping</a>
+                </div>
             </div>
             
         </div>
@@ -195,8 +188,8 @@
                 </a>
 
                 <!-- Dropdown Mega Menu -->
-                <div id="gaming-pcs-dropdown" class="absolute top-[calc(100%+1rem)] -left-2 w-[550px] liquid-glass-heavy border border-white/10 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] opacity-0 pointer-events-none transition-all duration-300 transform translate-y-2 overflow-hidden z-[75]">
-                    <div class="grid grid-cols-2 gap-8 pt-8 pb-6 px-8">
+                <div id="gaming-pcs-dropdown" class="absolute top-[calc(100%+1rem)] -left-2 w-[400px] liquid-glass-heavy border border-white/10 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] opacity-0 pointer-events-none transition-all duration-300 transform translate-y-2 overflow-hidden z-[75]">
+                    <div class="grid grid-cols-1 gap-8 pt-8 pb-6 px-8">
                         <!-- Column 1: Shop -->
                         <div>
                             <h4 class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-6">Shop</h4>
@@ -206,19 +199,6 @@
                                 </a>
                                 <a href="{{ url('/pc-configurator') }}" class="block text-gray-300 hover:text-primary transition-colors">
                                     <span class="font-bold text-sm tracking-normal capitalize">PC Configurator</span>
-                                </a>
-                            </div>
-                        </div>
-
-                        <!-- Column 2: Shop By -->
-                        <div>
-                            <h4 class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-6">Shop By</h4>
-                            <div class="flex flex-col gap-4">
-                                <a href="#" class="block text-gray-300 hover:text-blue-500 transition-colors">
-                                    <span class="font-bold text-sm tracking-normal capitalize">Intel Gaming PCs</span>
-                                </a>
-                                <a href="#" class="block text-gray-300 hover:text-red-500 transition-colors">
-                                    <span class="font-bold text-sm tracking-normal capitalize">AMD Gaming PCs</span>
                                 </a>
                             </div>
                         </div>
@@ -248,86 +228,77 @@
                 </a>
 
                 <!-- Dropdown Mega Menu -->
-                <div id="gaming-laptops-dropdown" class="absolute top-[calc(100%+1rem)] -left-2 w-[700px] liquid-glass-heavy border border-white/10 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] opacity-0 pointer-events-none transition-all duration-300 transform translate-y-2 overflow-hidden z-[75]">
-                    <div class="grid grid-cols-3 gap-8 pt-8 pb-8 px-8">
+                <div id="gaming-laptops-dropdown" class="absolute top-[calc(100%+1rem)] -left-2 w-[400px] liquid-glass-heavy border border-white/10 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] opacity-0 pointer-events-none transition-all duration-300 transform translate-y-2 overflow-hidden z-[75]">
+                    <div class="grid grid-cols-1 gap-8 pt-8 pb-6 px-8">
                         <!-- Column 1: Shop -->
                         <div>
                             <h4 class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-6">Shop</h4>
                             <div class="flex flex-col gap-4">
-                                <a href="#" class="block text-gray-300 hover:text-primary transition-colors">
+                                <a href="{{ url('/gaming-laptops') }}" class="block text-gray-300 hover:text-primary transition-colors">
                                     <span class="font-bold text-sm tracking-normal capitalize">All Gaming Laptops</span>
-                                </a>
-                                <a href="#" class="block text-gray-300 hover:text-primary transition-colors">
-                                    <span class="font-bold text-sm tracking-normal capitalize">Refurbished Laptops</span>
-                                </a>
-                            </div>
-                        </div>
-
-                        <!-- Column 2: Shop By -->
-                        <div>
-                            <h4 class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-6">Shop By</h4>
-                            <div class="flex flex-col gap-4">
-                                <a href="#" class="block text-gray-300 hover:text-primary transition-colors">
-                                    <span class="font-bold text-sm tracking-normal capitalize">ASUS Laptops</span>
-                                </a>
-                                <a href="#" class="block text-gray-300 hover:text-primary transition-colors">
-                                    <span class="font-bold text-sm tracking-normal capitalize">MSI Laptops</span>
-                                </a>
-                            </div>
-                        </div>
-
-                        <!-- Column 3: Shop By -->
-                        <div>
-                            <h4 class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-6">Shop By</h4>
-                            <div class="flex flex-col gap-4">
-                                <a href="#" class="block text-gray-300 hover:text-blue-500 transition-colors">
-                                    <span class="font-bold text-sm tracking-normal capitalize">Intel Laptops</span>
-                                </a>
-                                <a href="#" class="block text-gray-300 hover:text-red-500 transition-colors">
-                                    <span class="font-bold text-sm tracking-normal capitalize">AMD Laptops</span>
-                                </a>
-                                <a href="#" class="block text-gray-300 hover:text-green-500 transition-colors">
-                                    <span class="font-bold text-sm tracking-normal capitalize">NVIDIA Laptops</span>
                                 </a>
                             </div>
                         </div>
                     </div>
+                    
+                    <!-- Banner -->
+                    <div class="bg-black/60 border-t border-white/10 p-6 relative overflow-hidden group/banner">
+                        <div class="relative z-10 w-[70%]">
+                            <p class="text-[9px] text-gray-400 uppercase tracking-widest mb-1">Unleash true mobility.</p>
+                            <h4 class="text-xl font-bold text-white mb-2">POWER ON THE GO</h4>
+                            <p class="text-[11px] text-gray-400 tracking-normal leading-relaxed mb-4 normal-case">Experience desktop-class performance wherever you are with our RTX 40-series gaming laptops.</p>
+                            <a href="{{ url('/gaming-laptops') }}" class="inline-block px-5 py-2 border border-white/20 text-xs font-bold text-white rounded-full hover:bg-white hover:text-black transition-all">Shop Laptops</a>
+                        </div>
+                        
+                        <!-- Decoration -->
+                        <div class="absolute -right-4 bottom-0 w-32 h-full flex items-center justify-center opacity-50 group-hover/banner:opacity-100 group-hover/banner:scale-110 transition-all duration-500">
+                            <i class="ph-fill ph-laptop text-[100px] text-primary/30 blur-[2px]"></i>
+                            <i class="ph-fill ph-lightning text-[70px] text-primary absolute drop-shadow-[0_0_10px_rgba(255,107,0,0.5)]"></i>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <a href="#" class="text-gray-200 hover:text-primary transition-colors py-2">PC Builder</a>
-            <div class="relative" id="parts-container">
-                <a href="#" id="parts-btn" class="text-gray-200 hover:text-primary transition-colors flex items-center gap-1.5 py-2 cursor-pointer">
-                    Parts & Accessories <i id="parts-icon" class="ph ph-caret-down text-[10px] text-gray-500 transition-colors"></i>
+            <a href="{{ url('/build-pc') }}" class="text-gray-200 hover:text-primary transition-colors py-2">PC Forge</a>
+            <div class="relative" id="forge-store-container">
+                <a href="#" id="forge-store-btn" class="text-gray-200 hover:text-primary transition-colors flex items-center gap-1.5 py-2 cursor-pointer">
+                    Forge Store <i id="forge-store-icon" class="ph ph-caret-down text-[10px] text-gray-500 transition-colors"></i>
                 </a>
 
                 <!-- Dropdown Mega Menu -->
-                <div id="parts-dropdown" class="absolute top-[calc(100%+1rem)] -left-2 w-[600px] liquid-glass-heavy border border-white/10 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] opacity-0 pointer-events-none transition-all duration-300 transform translate-y-2 overflow-hidden z-[75]">
-                    <div class="grid grid-cols-2 gap-8 pt-8 pb-8 px-8">
-                        <!-- Column 1: Gaming Accessories and Monitors -->
+                <div id="forge-store-dropdown" class="absolute top-[calc(100%+1rem)] -left-2 w-[800px] liquid-glass-heavy border border-white/10 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] opacity-0 pointer-events-none transition-all duration-300 transform translate-y-2 overflow-hidden z-[75]">
+                    <div class="grid grid-cols-3 gap-8 pt-8 pb-8 px-8">
+                        <!-- Column 1: Store -->
                         <div>
-                            <h4 class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-6">Gaming Accessories and Monitors</h4>
+                            <h4 class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-6 h-8">Store</h4>
                             <div class="flex flex-col gap-4">
-                                <a href="#" class="block text-gray-300 hover:text-primary transition-colors"><span class="font-bold text-sm tracking-normal capitalize">Monitors</span></a>
-                                <a href="#" class="block text-gray-300 hover:text-primary transition-colors"><span class="font-bold text-sm tracking-normal capitalize">Keyboards</span></a>
-                                <a href="#" class="block text-gray-300 hover:text-primary transition-colors"><span class="font-bold text-sm tracking-normal capitalize">Keyboard Accessories</span></a>
-                                <a href="#" class="block text-gray-300 hover:text-primary transition-colors"><span class="font-bold text-sm tracking-normal capitalize">Headsets</span></a>
-                                <a href="#" class="block text-gray-300 hover:text-primary transition-colors"><span class="font-bold text-sm tracking-normal capitalize">Mice</span></a>
-                                <a href="#" class="block text-gray-300 hover:text-primary transition-colors"><span class="font-bold text-sm tracking-normal capitalize">Mouse Pad</span></a>
-                                <a href="#" class="block text-gray-300 hover:text-primary transition-colors"><span class="font-bold text-sm tracking-normal capitalize">Speaker Systems</span></a>
+                                <a href="{{ url('/forge-store') }}" class="block text-gray-300 hover:text-primary transition-colors"><span class="font-bold text-sm tracking-normal capitalize">Explore Forge Store</span></a>
                             </div>
                         </div>
 
-                        <!-- Column 2: PC Parts -->
+                        <!-- Column 2: Gaming Accessories and Monitors -->
                         <div>
-                            <h4 class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-6">PC Parts</h4>
+                            <h4 class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-6 h-8">Gaming Accessories and Monitors</h4>
                             <div class="flex flex-col gap-4">
-                                <a href="#" class="block text-gray-300 hover:text-primary transition-colors"><span class="font-bold text-sm tracking-normal capitalize">Cases</span></a>
-                                <a href="#" class="block text-gray-300 hover:text-primary transition-colors"><span class="font-bold text-sm tracking-normal capitalize">Storage</span></a>
-                                <a href="#" class="block text-gray-300 hover:text-primary transition-colors"><span class="font-bold text-sm tracking-normal capitalize">Video Cards</span></a>
-                                <a href="#" class="block text-gray-300 hover:text-primary transition-colors"><span class="font-bold text-sm tracking-normal capitalize">PC Cooling</span></a>
-                                <a href="#" class="block text-gray-300 hover:text-primary transition-colors"><span class="font-bold text-sm tracking-normal capitalize">Power Supplies</span></a>
-                                <a href="#" class="block text-gray-300 hover:text-primary transition-colors"><span class="font-bold text-sm tracking-normal capitalize">Motherboards</span></a>
-                                <a href="#" class="block text-gray-300 hover:text-primary transition-colors"><span class="font-bold text-sm tracking-normal capitalize">Other Accessories</span></a>
+                                <a href="{{ route('store.monitors') }}" class="block text-gray-300 hover:text-primary transition-colors"><span class="font-bold text-sm tracking-normal capitalize">Monitors</span></a>
+                                <a href="{{ route('store.accessories', ['category' => 'keyboards']) }}" class="block text-gray-300 hover:text-primary transition-colors"><span class="font-bold text-sm tracking-normal capitalize">Keyboards</span></a>
+                                <a href="{{ route('store.accessories', ['category' => 'keyboard-accessories']) }}" class="block text-gray-300 hover:text-primary transition-colors"><span class="font-bold text-sm tracking-normal capitalize">Keyboard Accessories</span></a>
+                                <a href="{{ route('store.accessories', ['category' => 'headsets']) }}" class="block text-gray-300 hover:text-primary transition-colors"><span class="font-bold text-sm tracking-normal capitalize">Headsets</span></a>
+                                <a href="{{ route('store.accessories', ['category' => 'mice']) }}" class="block text-gray-300 hover:text-primary transition-colors"><span class="font-bold text-sm tracking-normal capitalize">Mice</span></a>
+                                <a href="{{ route('store.accessories', ['category' => 'mouse-pads']) }}" class="block text-gray-300 hover:text-primary transition-colors"><span class="font-bold text-sm tracking-normal capitalize">Mouse Pad</span></a>
+                                <a href="{{ route('store.accessories', ['category' => 'speaker-systems']) }}" class="block text-gray-300 hover:text-primary transition-colors"><span class="font-bold text-sm tracking-normal capitalize">Speaker Systems</span></a>
+                            </div>
+                        </div>
+
+                        <!-- Column 3: PC Parts -->
+                        <div>
+                            <h4 class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-6 h-8">PC Parts</h4>
+                            <div class="flex flex-col gap-4">
+                                <a href="{{ route('store.pc-parts', ['category' => 'cases']) }}" class="block text-gray-300 hover:text-primary transition-colors"><span class="font-bold text-sm tracking-normal capitalize">Cases</span></a>
+                                <a href="{{ route('store.pc-parts', ['category' => 'storages']) }}" class="block text-gray-300 hover:text-primary transition-colors"><span class="font-bold text-sm tracking-normal capitalize">Storage</span></a>
+                                <a href="{{ route('store.pc-parts', ['category' => 'video-cards']) }}" class="block text-gray-300 hover:text-primary transition-colors"><span class="font-bold text-sm tracking-normal capitalize">Video Cards</span></a>
+                                <a href="{{ route('store.pc-parts', ['category' => 'coolers']) }}" class="block text-gray-300 hover:text-primary transition-colors"><span class="font-bold text-sm tracking-normal capitalize">PC Cooling</span></a>
+                                <a href="{{ route('store.pc-parts', ['category' => 'power-supplies']) }}" class="block text-gray-300 hover:text-primary transition-colors"><span class="font-bold text-sm tracking-normal capitalize">Power Supplies</span></a>
+                                <a href="{{ route('store.pc-parts', ['category' => 'motherboards']) }}" class="block text-gray-300 hover:text-primary transition-colors"><span class="font-bold text-sm tracking-normal capitalize">Motherboards</span></a>
                             </div>
                         </div>
                     </div>
