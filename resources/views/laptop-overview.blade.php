@@ -92,29 +92,27 @@
             
             $shortSpecs = [
                 ['label' => 'OS', 'value' => 'Windows 11 Home'],
-                ['label' => 'Case', 'value' => $product->pcCase->name ?? 'Standard TechForge Case'],
-                ['label' => 'Processor', 'value' => $product->cpu->name ?? 'N/A'],
-                ['label' => 'Video Card', 'value' => $product->gpu->name ?? 'N/A'],
-                ['label' => 'Memory', 'value' => $product->ram->name ?? 'N/A'],
-                ['label' => 'Motherboard', 'value' => $product->motherboard->name ?? 'N/A'],
-                ['label' => 'Storage', 'value' => $product->storage->name ?? 'N/A'],
-                ['label' => 'Warranty', 'value' => '3 Year Standard Warranty'],
+                ['label' => 'Display', 'value' => $product->display ?? '15.6" FHD 144Hz'],
+                ['label' => 'Processor', 'value' => $product->processor ?? 'N/A'],
+                ['label' => 'Video Card', 'value' => $product->gpu ?? 'N/A'],
+                ['label' => 'Memory', 'value' => $product->ram ?? 'N/A'],
+                ['label' => 'Storage', 'value' => $product->storage ?? 'N/A'],
+                ['label' => 'Warranty', 'value' => '1 Year Limited Warranty'],
             ];
             
             $detailedSpecs = [
                 ['label' => 'Operating System', 'value' => 'Windows 11 Home 64-bit'],
-                ['label' => 'Case', 'value' => $product->pcCase->name ?? 'Standard TechForge Case'],
-                ['label' => 'Processor', 'value' => $product->cpu->name ?? 'N/A'],
-                ['label' => 'Video Card', 'value' => $product->gpu->name ?? 'N/A'],
-                ['label' => 'Memory', 'value' => $product->ram->name ?? 'N/A'],
-                ['label' => 'Motherboard', 'value' => $product->motherboard->name ?? 'N/A'],
-                ['label' => 'Storage', 'value' => $product->storage->name ?? 'N/A'],
-                ['label' => 'Processor Cooling', 'value' => 'TechForge Liquid Cooler 240mm'],
-                ['label' => 'Power Supply', 'value' => $product->powerSupply->name ?? 'N/A'],
-                ['label' => 'WiFi', 'value' => 'Wi-Fi 6 (802.11ax) + Bluetooth 5.2'],
-                ['label' => 'Keyboard', 'value' => 'TechForge Mechanical Gaming Keyboard (RGB)'],
-                ['label' => 'Mouse', 'value' => 'TechForge Precision Gaming Mouse'],
-                ['label' => 'Warranty', 'value' => '3 Year Standard Warranty (Labor + Parts)'],
+                ['label' => 'Display', 'value' => $product->display ?? '15.6" FHD (1920x1080) 144Hz IPS'],
+                ['label' => 'Processor', 'value' => $product->processor ?? 'N/A'],
+                ['label' => 'Video Card', 'value' => $product->gpu ?? 'N/A'],
+                ['label' => 'Memory', 'value' => $product->ram ?? 'N/A'],
+                ['label' => 'Storage', 'value' => $product->storage ?? 'N/A'],
+                ['label' => 'Camera', 'value' => '720p HD Camera with Privacy Shutter'],
+                ['label' => 'Audio', 'value' => 'Stereo Speakers, Nahimic Audio'],
+                ['label' => 'Networking', 'value' => 'Wi-Fi 6 (802.11ax) + Bluetooth 5.2'],
+                ['label' => 'Keyboard', 'value' => '4-Zone RGB Backlit Keyboard'],
+                ['label' => 'Battery', 'value' => '4-Cell 80Whr Polymer Battery'],
+                ['label' => 'Warranty', 'value' => '1 Year Standard Warranty (Labor + Parts)'],
             ];
         @endphp
 
@@ -195,19 +193,19 @@
                     <div class="grid grid-cols-3 gap-2">
                         <div class="bg-[#050505]/50 border border-white/5 rounded-xl p-3 text-center backdrop-blur-sm group hover:border-primary/30 transition-colors cursor-default">
                             <div class="text-primary font-black text-xl mb-1">
-                                {{ str_contains(strtoupper($product->gpu->name ?? ''), '4090') ? '160+' : (str_contains(strtoupper($product->gpu->name ?? ''), '4080') ? '140+' : '110+') }}
+                                {{ str_contains(strtoupper($product->gpu ?? ''), '4090') ? '160+' : (str_contains(strtoupper($product->gpu ?? ''), '4080') ? '140+' : '110+') }}
                             </div>
                             <div class="text-[9px] text-gray-400 font-bold uppercase">Cyberpunk</div>
                         </div>
                         <div class="bg-[#050505]/50 border border-white/5 rounded-xl p-3 text-center backdrop-blur-sm group hover:border-primary/30 transition-colors cursor-default">
                             <div class="text-primary font-black text-xl mb-1">
-                                {{ str_contains(strtoupper($product->gpu->name ?? ''), '4090') ? '350+' : (str_contains(strtoupper($product->gpu->name ?? ''), '4080') ? '300+' : '220+') }}
+                                {{ str_contains(strtoupper($product->gpu ?? ''), '4090') ? '350+' : (str_contains(strtoupper($product->gpu ?? ''), '4080') ? '300+' : '220+') }}
                             </div>
                             <div class="text-[9px] text-gray-400 font-bold uppercase">Valorant</div>
                         </div>
                         <div class="bg-[#050505]/50 border border-white/5 rounded-xl p-3 text-center backdrop-blur-sm group hover:border-primary/30 transition-colors cursor-default">
                             <div class="text-primary font-black text-xl mb-1">
-                                {{ str_contains(strtoupper($product->gpu->name ?? ''), '4090') ? '180+' : (str_contains(strtoupper($product->gpu->name ?? ''), '4080') ? '150+' : '120+') }}
+                                {{ str_contains(strtoupper($product->gpu ?? ''), '4090') ? '180+' : (str_contains(strtoupper($product->gpu ?? ''), '4080') ? '150+' : '120+') }}
                             </div>
                             <div class="text-[9px] text-gray-400 font-bold uppercase">Warzone</div>
                         </div>
@@ -227,7 +225,7 @@
                         </div>
                         
                         <!-- Add to Cart (Placeholder) -->
-                        <button type="button" id="main-add-to-cart" onclick="window.addToCart('{{ $product->id }}', '{{ addslashes($product->name) }}', {{ $product->price }}, '{{ $product->image_url }}', parseInt(document.getElementById('qty').value) || 1, 'prebuilt')" class="flex-1 h-14 bg-primary hover:bg-white hover:text-black text-white rounded-xl font-black uppercase tracking-widest flex items-center justify-center gap-3 transition-all duration-300 shadow-[0_0_20px_rgba(255,107,0,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.5)] group">
+                        <button type="button" id="main-add-to-cart" onclick="window.addToCart('{{ $product->id }}', '{{ addslashes($product->name) }}', {{ $product->price }}, '{{ $product->image_url ?? $product->image ?? '' }}', parseInt(document.getElementById('qty').value) || 1, 'laptop')" class="flex-1 h-14 bg-primary hover:bg-white hover:text-black text-white rounded-xl font-black uppercase tracking-widest flex items-center justify-center gap-3 transition-all duration-300 shadow-[0_0_20px_rgba(255,107,0,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.5)] group">
                             <i class="ph-bold ph-shopping-cart text-xl group-hover:scale-110 transition-transform"></i> Add To Cart
                         </button>
                     </div>
@@ -261,20 +259,20 @@
             </h2>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div class="bg-[#050505]/50 border border-white/5 rounded-2xl p-6 text-center backdrop-blur-md transition-all hover:bg-white/5 hover:border-primary/30 group">
-                    <i class="ph-bold ph-desktop text-3xl text-primary mb-3 block drop-shadow-[0_0_10px_rgba(255,107,0,0.5)] group-hover:scale-110 transition-transform"></i>
-                    <span class="text-xs font-bold text-white uppercase tracking-wider">Prebuilt PC</span>
+                    <i class="ph-bold ph-laptop text-3xl text-primary mb-3 block drop-shadow-[0_0_10px_rgba(255,107,0,0.5)] group-hover:scale-110 transition-transform"></i>
+                    <span class="text-xs font-bold text-white uppercase tracking-wider">Gaming Laptop</span>
                 </div>
                 <div class="bg-[#050505]/50 border border-white/5 rounded-2xl p-6 text-center backdrop-blur-md transition-all hover:bg-white/5 hover:border-primary/30 group">
-                    <i class="ph-bold ph-plug text-3xl text-primary mb-3 block drop-shadow-[0_0_10px_rgba(255,107,0,0.5)] group-hover:scale-110 transition-transform"></i>
-                    <span class="text-xs font-bold text-white uppercase tracking-wider">Power Cable</span>
+                    <i class="ph-bold ph-battery-charging text-3xl text-primary mb-3 block drop-shadow-[0_0_10px_rgba(255,107,0,0.5)] group-hover:scale-110 transition-transform"></i>
+                    <span class="text-xs font-bold text-white uppercase tracking-wider">Power Adapter</span>
                 </div>
                 <div class="bg-[#050505]/50 border border-white/5 rounded-2xl p-6 text-center backdrop-blur-md transition-all hover:bg-white/5 hover:border-primary/30 group">
-                    <i class="ph-bold ph-keyboard text-3xl text-primary mb-3 block drop-shadow-[0_0_10px_rgba(255,107,0,0.5)] group-hover:scale-110 transition-transform"></i>
-                    <span class="text-xs font-bold text-white uppercase tracking-wider">RGB Keyboard</span>
+                    <i class="ph-bold ph-book-open text-3xl text-primary mb-3 block drop-shadow-[0_0_10px_rgba(255,107,0,0.5)] group-hover:scale-110 transition-transform"></i>
+                    <span class="text-xs font-bold text-white uppercase tracking-wider">User Manual</span>
                 </div>
                 <div class="bg-[#050505]/50 border border-white/5 rounded-2xl p-6 text-center backdrop-blur-md transition-all hover:bg-white/5 hover:border-primary/30 group">
-                    <i class="ph-bold ph-mouse text-3xl text-primary mb-3 block drop-shadow-[0_0_10px_rgba(255,107,0,0.5)] group-hover:scale-110 transition-transform"></i>
-                    <span class="text-xs font-bold text-white uppercase tracking-wider">Gaming Mouse</span>
+                    <i class="ph-bold ph-shield-check text-3xl text-primary mb-3 block drop-shadow-[0_0_10px_rgba(255,107,0,0.5)] group-hover:scale-110 transition-transform"></i>
+                    <span class="text-xs font-bold text-white uppercase tracking-wider">Warranty Card</span>
                 </div>
             </div>
         </div>

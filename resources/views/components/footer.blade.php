@@ -1,5 +1,5 @@
     <!-- Footer -->
-    <footer class="border-t border-white/10 pt-16 pb-8 mt-auto relative z-10">
+    <footer class="border-t border-white/5 pt-16 pb-8 mt-auto relative z-10 liquid-glass bg-black/60 backdrop-blur-2xl">
         <div class="max-w-7xl mx-auto px-10 sm:px-12 lg:px-14">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8 mb-12">
                 
@@ -20,42 +20,39 @@
                     </div>
                 </div>
 
-                <!-- Links 1 -->
+                <!-- Links 1 (Shop) -->
                 <div>
-                    <h4 class="text-primary font-semibold text-sm mb-4">Shop Categories</h4>
-                    <ul class="space-y-3 text-xs text-gray-400">
-                        <li><a href="#" class="hover:text-white transition-colors flex items-center gap-2"><i class="ph ph-caret-right text-[10px]"></i> PC Components</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors flex items-center gap-2"><i class="ph ph-caret-right text-[10px]"></i> Custom Builds</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors flex items-center gap-2"><i class="ph ph-caret-right text-[10px]"></i> Laptops & Notebooks</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors flex items-center gap-2"><i class="ph ph-caret-right text-[10px]"></i> Gaming Peripherals</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors flex items-center gap-2"><i class="ph ph-caret-right text-[10px]"></i> Monitors & Displays</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors flex items-center gap-2 text-primary"><i class="ph ph-caret-right text-[10px]"></i> Clearance & Sale</a></li>
+                    <h4 class="text-primary font-black text-xs tracking-widest uppercase mb-6">Shop</h4>
+                    <ul class="space-y-4 text-[13px] text-gray-400 font-medium">
+                        <li><a href="{{ route('prebuilt-pcs') }}" class="hover:text-white transition-colors">Pre-built PCs</a></li>
+                        <li><a href="{{ route('pc-configurator') }}" class="hover:text-white transition-colors">PC Configurator</a></li>
+                        <li><a href="{{ route('gaming-laptops') }}" class="hover:text-white transition-colors">All Gaming Laptops</a></li>
+                        <li><a href="{{ route('build-pc') }}" class="hover:text-white transition-colors">PC Forge</a></li>
+                        <li><a href="{{ route('forge-store') }}" class="hover:text-white transition-colors">Explore Forge Store</a></li>
                     </ul>
                 </div>
 
-                <!-- Links 2 -->
+                <!-- Links 2 (Support) -->
                 <div>
-                    <h4 class="text-primary font-semibold text-sm mb-4">Company</h4>
-                    <ul class="space-y-3 text-xs text-gray-400">
-                        <li><a href="#" class="hover:text-white transition-colors flex items-center gap-2"><i class="ph ph-caret-right text-[10px]"></i> About Us</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors flex items-center gap-2"><i class="ph ph-caret-right text-[10px]"></i> Careers</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors flex items-center gap-2"><i class="ph ph-caret-right text-[10px]"></i> Why TechForge?</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors flex items-center gap-2"><i class="ph ph-caret-right text-[10px]"></i> Affiliate Program</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors flex items-center gap-2"><i class="ph ph-caret-right text-[10px]"></i> Privacy Policy</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors flex items-center gap-2"><i class="ph ph-caret-right text-[10px]"></i> Terms & Conditions</a></li>
+                    <h4 class="text-primary font-black text-xs tracking-widest uppercase mb-6">Support</h4>
+                    <ul class="space-y-4 text-[13px] text-gray-400 font-medium">
+                        <li><a href="#" class="hover:text-white transition-colors">3-Year Warranty</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Order Tracking</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Returns</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Live Chat</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">FAQ</a></li>
                     </ul>
                 </div>
 
-                <!-- Links 3 -->
+                <!-- Links 3 (Company) -->
                 <div>
-                    <h4 class="text-primary font-semibold text-sm mb-4">Customer Support</h4>
-                    <ul class="space-y-3 text-xs text-gray-400">
-                        <li><a href="#" class="hover:text-white transition-colors flex items-center gap-2"><i class="ph ph-caret-right text-[10px]"></i> Help Center / FAQ</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors flex items-center gap-2"><i class="ph ph-caret-right text-[10px]"></i> Track Order</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors flex items-center gap-2"><i class="ph ph-caret-right text-[10px]"></i> Shipping Policy</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors flex items-center gap-2"><i class="ph ph-caret-right text-[10px]"></i> Returns & Refunds</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors flex items-center gap-2"><i class="ph ph-caret-right text-[10px]"></i> Warranty Info</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors flex items-center gap-2"><i class="ph ph-caret-right text-[10px]"></i> Contact Us</a></li>
+                    <h4 class="text-primary font-black text-xs tracking-widest uppercase mb-6">Company</h4>
+                    <ul class="space-y-4 text-[13px] text-gray-400 font-medium">
+                        <li><a href="#" class="hover:text-white transition-colors">About Us</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Careers</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Press Kit</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Affiliates</a></li>
+                        <li><a href="{{ url('/contact') }}" class="hover:text-white transition-colors">Contact</a></li>
                     </ul>
                 </div>
             </div>

@@ -320,16 +320,16 @@ document.addEventListener('DOMContentLoaded', () => {
             if (score === 0) {
                 badgeEl.classList.add('hidden');
             } else if (score < 40) {
-                badgeEl.textContent = 'Mainstream';
+                badgeEl.textContent = 'Core';
                 badgeEl.classList.add('bg-gray-500/20', 'text-gray-300');
             } else if (score < 70) {
-                badgeEl.textContent = 'Pro';
+                badgeEl.textContent = 'Advanced';
                 badgeEl.classList.add('bg-blue-500/20', 'text-blue-400');
             } else if (score < 90) {
-                badgeEl.textContent = 'Elite';
+                badgeEl.textContent = 'Extreme';
                 badgeEl.classList.add('bg-purple-500/20', 'text-purple-400');
             } else {
-                badgeEl.textContent = 'Ultimate';
+                badgeEl.textContent = 'Apex';
                 badgeEl.classList.add('bg-primary/20', 'text-primary');
             }
             

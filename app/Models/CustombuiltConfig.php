@@ -13,10 +13,13 @@ class CustombuiltConfig extends Model
     
     protected $guarded = [];
 
-    public function cpu() { return $this->belongsTo(Cpu::class); }
+    public function intelCpu() { return $this->belongsTo(Cpu::class, 'intel_cpu_id'); }
+    public function amdCpu() { return $this->belongsTo(Cpu::class, 'amd_cpu_id'); }
+    public function intelMotherboard() { return $this->belongsTo(Motherboard::class, 'intel_motherboard_id'); }
+    public function amdMotherboard() { return $this->belongsTo(Motherboard::class, 'amd_motherboard_id'); }
+    public function intelRam() { return $this->belongsTo(Ram::class, 'intel_ram_id'); }
+    public function amdRam() { return $this->belongsTo(Ram::class, 'amd_ram_id'); }
     public function gpu() { return $this->belongsTo(Gpu::class); }
-    public function motherboard() { return $this->belongsTo(Motherboard::class); }
-    public function ram() { return $this->belongsTo(Ram::class); }
     public function storage() { return $this->belongsTo(Storage::class); }
     public function powerSupply() { return $this->belongsTo(PowerSupply::class); }
     public function pcCase() { return $this->belongsTo(PcCase::class); }

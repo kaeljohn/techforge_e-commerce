@@ -154,10 +154,10 @@
 
             <!-- Cart Container -->
             <div id="cart-container" class="relative z-30 shrink-0 group/cart py-2">
-                <a href="{{ route('cart') }}" id="cart-btn" class="flex items-center gap-2 w-auto h-11 px-3 sm:px-4 rounded-2xl border border-white/10 hover:border-white/20 hover:bg-white/5 transition-all text-gray-300 hover:text-white relative">
+                <a href="#" id="cart-btn" onclick="event.preventDefault(); toggleMiniCart()" class="flex items-center gap-2 w-auto h-11 px-3 sm:px-4 rounded-2xl border border-white/10 hover:border-white/20 hover:bg-white/5 transition-all text-gray-300 hover:text-white relative">
                     <div class="relative">
                         <i class="ph ph-shopping-cart text-xl"></i>
-                        <span class="hidden absolute -top-1 -right-1 w-3.5 h-3.5 items-center justify-center text-[8px] font-bold bg-primary text-white rounded-full">0</span>
+                        <span id="cart-badge" class="hidden absolute -top-1 -right-1 w-3.5 h-3.5 flex items-center justify-center text-[8px] font-bold bg-primary text-white rounded-full">0</span>
                     </div>
                     <div class="hidden sm:flex flex-col text-left ml-1">
                         <span class="text-[10px] text-gray-400 leading-tight">Returns</span>
@@ -165,23 +165,14 @@
                     </div>
                 </a>
 
-                <!-- Cart Dropdown -->
-                <div class="opacity-0 pointer-events-none scale-95 group-hover/cart:opacity-100 group-hover/cart:pointer-events-auto group-hover/cart:scale-100 transition-all duration-300 origin-top-right absolute top-full right-0 mt-0 w-72 liquid-glass border border-white/10 rounded-xl shadow-2xl p-6 z-50 flex flex-col items-center text-center">
-                    <i class="ph-light ph-shopping-cart text-4xl text-gray-500 mb-3"></i>
-                    <h4 class="text-white font-bold text-sm mb-1">Your Cart is Empty</h4>
-                    <p class="text-xs text-gray-400 mb-4 leading-relaxed">Looks like you haven't added anything to your cart yet.</p>
-                    <a href="{{ url('/forge-store') }}" class="w-full bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold text-xs py-2.5 rounded-lg transition-colors">Continue Shopping</a>
-                </div>
-            </div>
+                            </div>
             
         </div>
     </nav>
 
     <!-- Secondary Navigation -->
-    <div id="secondary-nav" class="fixed w-[calc(100%-2rem)] sm:w-[calc(100%-3rem)] lg:w-[calc(100%-4rem)] max-w-7xl left-1/2 -translate-x-1/2 top-[96px] z-[70] hidden md:flex items-center px-6 py-2.5 liquid-glass border border-white/5 rounded-2xl shadow-xl transition-all duration-300">
+    <div id="secondary-nav" class="fixed w-[calc(100%-2rem)] sm:w-[calc(100%-3rem)] lg:w-[calc(100%-4rem)] max-w-7xl left-1/2 -translate-x-1/2 top-[112px] z-[70] hidden md:flex items-center px-6 py-2.5 liquid-glass border border-white/5 rounded-2xl shadow-xl transition-all duration-300">
         <div class="flex items-center gap-8 lg:gap-12 text-[10px] font-bold tracking-widest uppercase">
-            <a href="#" class="text-gray-200 hover:text-primary transition-colors py-2">Deals</a>
-            
             <div class="relative" id="gaming-pcs-container">
                 <a href="#" id="gaming-pcs-btn" class="text-gray-200 hover:text-primary transition-colors flex items-center gap-1.5 py-2 cursor-pointer">
                     Gaming PCs <i id="gaming-pcs-icon" class="ph ph-caret-down text-[10px] text-gray-500 transition-colors"></i>
@@ -303,9 +294,150 @@
                         </div>
                     </div>
                 </div>
+                </div>
             </div>
-            <a href="#" class="text-gray-200 hover:text-primary transition-colors py-2">Brands</a>
         </div>
     </div>
 
     @vite('resources/js/Common/Navbar.js')
+    <!-- Mini Cart Drawer -->
+    <div id="mini-cart-overlay" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[90] opacity-0 pointer-events-none transition-all duration-300" onclick="toggleMiniCart()"></div>
+
+    <div id="mini-cart-drawer" class="fixed top-0 right-0 w-full sm:w-[400px] h-full bg-[#050505] border-l border-white/10 shadow-2xl z-[100] transform translate-x-full transition-transform duration-500 flex flex-col">
+        <!-- Header -->
+        <div class="px-6 py-5 border-b border-white/10 flex items-center justify-between bg-white/5">
+            <h2 class="text-lg font-bold text-white tracking-widest uppercase flex items-center gap-3">
+                <i class="ph-bold ph-shopping-cart text-primary"></i> Your Cart
+            </h2>
+            <button onclick="toggleMiniCart()" class="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white flex items-center justify-center transition-all">
+                <i class="ph-bold ph-x"></i>
+            </button>
+        </div>
+
+        <!-- Cart Items -->
+        <div id="mini-cart-items" class="flex-1 overflow-y-auto p-6 space-y-4">
+            <div class="flex flex-col items-center justify-center h-full text-center opacity-50">
+                <i class="ph-light ph-shopping-cart text-5xl mb-3 text-gray-400"></i>
+                <p class="text-sm font-bold text-white">Your cart is empty.</p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="p-6 border-t border-white/10 bg-white/5">
+            <div class="flex items-center justify-between mb-4">
+                <span class="text-sm font-bold text-gray-400 uppercase tracking-widest">Subtotal</span>
+                <span id="mini-cart-subtotal" class="text-xl font-black text-white">₱0.00</span>
+            </div>
+            <a href="{{ route('cart') }}" class="block w-full bg-primary hover:bg-white hover:text-black text-white text-center py-4 rounded-xl font-black uppercase tracking-widest transition-all duration-300 shadow-[0_0_20px_rgba(255,107,0,0.3)]">
+                Checkout Now
+            </a>
+        </div>
+    </div>
+
+    <script>
+        window.csrfToken = "{{ csrf_token() }}";
+        
+        function toggleMiniCart() {
+            const drawer = document.getElementById('mini-cart-drawer');
+            const overlay = document.getElementById('mini-cart-overlay');
+            if (drawer.classList.contains('translate-x-full')) {
+                drawer.classList.remove('translate-x-full');
+                overlay.classList.remove('opacity-0', 'pointer-events-none');
+                overlay.classList.add('opacity-100', 'pointer-events-auto');
+            } else {
+                drawer.classList.add('translate-x-full');
+                overlay.classList.add('opacity-0', 'pointer-events-none');
+                overlay.classList.remove('opacity-100', 'pointer-events-auto');
+            }
+        }
+
+        function updateMiniCartUI(cartCount, items) {
+            const badge = document.getElementById('cart-badge');
+            if (cartCount > 0) {
+                badge.textContent = cartCount;
+                badge.classList.remove('hidden');
+                badge.classList.add('flex');
+            } else {
+                badge.classList.add('hidden');
+                badge.classList.remove('flex');
+            }
+
+            const itemsContainer = document.getElementById('mini-cart-items');
+            const subtotalEl = document.getElementById('mini-cart-subtotal');
+            
+            if (!items || items.length === 0) {
+                itemsContainer.innerHTML = `<div class="flex flex-col items-center justify-center h-full text-center opacity-50">
+                    <i class="ph-light ph-shopping-cart text-5xl mb-3 text-gray-400"></i>
+                    <p class="text-sm font-bold text-white">Your cart is empty.</p>
+                </div>`;
+                subtotalEl.textContent = '₱0.00';
+                return;
+            }
+
+            let html = '';
+            let subtotal = 0;
+            items.forEach(item => {
+                subtotal += item.price * item.quantity;
+                html += `
+                <div class="flex items-center gap-4 bg-black/40 border border-white/5 rounded-xl p-3">
+                    <div class="w-16 h-16 rounded-lg bg-white/5 flex items-center justify-center p-2 shrink-0">
+                        ${item.image_url ? `<img src="${item.image_url}" class="max-w-full max-h-full object-contain">` : `<i class="ph ph-package text-2xl text-gray-500"></i>`}
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h4 class="text-xs font-bold text-white truncate mb-1">${item.name}</h4>
+                        <div class="text-xs text-gray-400 mb-1">Qty: ${item.quantity}</div>
+                        <div class="text-sm font-bold text-primary">₱${parseFloat(item.price).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
+                    </div>
+                </div>`;
+            });
+
+            itemsContainer.innerHTML = html;
+            subtotalEl.textContent = '₱' + subtotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        }
+
+        window.addToCart = function(productId, name, price, imageUrl, quantity = 1, productType = 'generic') {
+            if (typeof price === 'string') {
+                price = parseFloat(price.replace(/,/g, ''));
+            }
+            fetch('/cart/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': window.csrfToken,
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    product_id: productId,
+                    name: name,
+                    price: price,
+                    image_url: imageUrl,
+                    quantity: quantity,
+                    product_type: productType
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    updateMiniCartUI(data.cart_count, data.cart_items);
+                    const drawer = document.getElementById('mini-cart-drawer');
+                    if (drawer && drawer.classList.contains('translate-x-full')) {
+                        toggleMiniCart();
+                    }
+                }
+            })
+            .catch(err => console.error('Error adding to cart:', err));
+        }
+
+        // Fetch initial cart count on load
+        document.addEventListener('DOMContentLoaded', () => {
+            fetch('/cart/count', {
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                updateMiniCartUI(data.cart_count, data.cart_items);
+            });
+        });
+    </script>

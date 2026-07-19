@@ -184,14 +184,7 @@
     <!-- Category Content -->
     <main class="max-w-[1500px] mx-auto px-4 lg:px-8 pb-32 relative z-10">
         
-        <!-- Platform Toggle Tabs -->
-        <div class="flex justify-center mb-12">
-            <div class="inline-flex bg-white/5 rounded-full p-1 border border-white/10" id="platform-tabs">
-                <button onclick="switchPlatform('All')" class="tab-btn active px-8 py-2.5 rounded-full text-sm font-bold transition-all bg-primary text-white shadow-[0_0_15px_rgba(255,107,0,0.4)]">All</button>
-                <button onclick="switchPlatform('AMD')" class="tab-btn px-8 py-2.5 rounded-full text-sm font-bold text-gray-400 hover:text-white transition-all">AMD</button>
-                <button onclick="switchPlatform('Intel')" class="tab-btn px-8 py-2.5 rounded-full text-sm font-bold text-gray-400 hover:text-white transition-all">Intel</button>
-            </div>
-        </div>
+
 
         <div id="configs-container" class="grid grid-cols-1 lg:grid-cols-4 gap-6 xl:gap-8">
             @foreach($tiers as $tier)
@@ -199,7 +192,7 @@
                 <div class="flex items-center justify-center gap-4 mb-6">
                     <div class="h-px bg-white/10 flex-1"></div>
                     <h2 class="text-xl font-black text-white uppercase tracking-widest flex items-center gap-2">
-                        <i class="ph {{ $tier == 'Ultimate' ? 'ph-rocket text-primary' : ($tier == 'Elite' ? 'ph-star text-primary' : ($tier == 'Pro' ? 'ph-lightning text-primary' : 'ph-game-controller text-primary')) }} text-2xl"></i> 
+                        <i class="ph {{ $tier == 'Apex' ? 'ph-rocket text-primary' : ($tier == 'Extreme' ? 'ph-star text-primary' : ($tier == 'Advanced' ? 'ph-lightning text-primary' : 'ph-game-controller text-primary')) }} text-2xl"></i> 
                         {{ $tier }}
                     </h2>
                     <div class="h-px bg-white/10 flex-1"></div>

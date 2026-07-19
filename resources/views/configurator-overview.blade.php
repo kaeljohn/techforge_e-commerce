@@ -373,12 +373,60 @@
                     </svg>
                 </div>
 
+                <!-- Configurator Instructions -->
+                <div class="mt-4 bg-[#050505]/50 border border-primary/20 rounded-2xl p-6 text-center max-w-md backdrop-blur-md shadow-[0_0_30px_rgba(255,107,0,0.05)] relative overflow-hidden group">
+                    <div class="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/5 to-primary/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                    <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-primary/30">
+                        <i class="ph-bold ph-hand-pointing text-2xl text-primary animate-pulse"></i>
+                    </div>
+                    <h3 class="text-white font-bold uppercase tracking-widest mb-2 text-sm">Interactive Builder</h3>
+                    <p class="text-gray-400 text-xs leading-relaxed">
+                        Click on any highlighted component slot in the blueprint diagram above to swap parts, customize your rig, and check hardware compatibility in real-time.
+                    </p>
+                </div>
+                <!-- Power & Performance Widgets -->
+                <div class="mt-4 grid grid-cols-2 gap-4 w-full max-w-md">
+                    <!-- Power Draw -->
+                    <div class="bg-[#050505]/50 border border-white/5 rounded-2xl p-4 backdrop-blur-md shadow-lg flex flex-col justify-center transition-colors duration-500" id="power-widget-box">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-1"><i class="ph-bold ph-lightning text-primary"></i> Power Draw</span>
+                            <span id="power-draw-text" class="text-[10px] font-bold text-white">0W / 0W</span>
+                        </div>
+                        <div class="w-full bg-white/5 rounded-full h-1.5 mb-1 overflow-hidden relative">
+                            <div id="power-draw-bar" class="bg-primary h-1.5 rounded-full transition-all duration-500 w-0 relative z-10"></div>
+                        </div>
+                        <div id="power-draw-warning" class="text-[9px] text-red-500 font-black uppercase tracking-wide opacity-0 transition-opacity mt-1">PSU Upgrade Required!</div>
+                    </div>
+                    
+                    <!-- Performance -->
+                    <div class="bg-[#050505]/50 border border-white/5 rounded-2xl p-4 backdrop-blur-md shadow-lg flex flex-col justify-center">
+                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-1 mb-1"><i class="ph-bold ph-crosshair text-primary"></i> Est. Gaming FPS</span>
+                        <div class="flex items-end gap-1">
+                            <span id="fps-value" class="text-2xl font-black text-white leading-none">--</span>
+                            <span class="text-[9px] font-bold text-gray-500 uppercase pb-0.5">@ 1440p High</span>
+                        </div>
+                    </div>
+                </div>
+
             </div>
             <!-- Right Column: Details & Specs -->
             <div class="w-full lg:w-7/12 flex flex-col">
                 <!-- Header -->
                 <div class="mb-8 border-b border-white/10 pb-6">
                     <h1 class="text-4xl lg:text-5xl font-black text-white mb-4">{{ $product->name }}</h1>
+
+                    <!-- Platform Toggle -->
+                    <div class="flex items-center gap-4 mb-6">
+                        <span class="text-gray-400 text-sm font-bold uppercase tracking-wider">Platform:</span>
+                        <div class="inline-flex bg-[#050505] rounded-full p-1 border border-white/10 relative">
+                            <!-- Toggle Indicator -->
+                            <div id="platform-indicator" class="absolute top-1 bottom-1 left-1 w-[calc(50%-4px)] bg-primary rounded-full transition-all duration-300 ease-out shadow-[0_0_15px_rgba(255,107,0,0.4)]"></div>
+                            
+                            <button id="btn-intel" onclick="switchPlatform('Intel')" class="relative z-10 px-6 py-2 rounded-full text-sm font-bold transition-all text-white">Intel</button>
+                            <button id="btn-amd" onclick="switchPlatform('AMD')" class="relative z-10 px-6 py-2 rounded-full text-sm font-bold transition-all text-gray-500 hover:text-white">AMD</button>
+                        </div>
+                    </div>
+
                     
                     <div class="flex items-center justify-between flex-wrap gap-4">
                         <!-- Rating -->
@@ -390,39 +438,64 @@
                         </div>
                         
                         <!-- Price & CTA -->
-                        <div class="flex items-center gap-6">
-                            <div class="text-right">
-                                @if($product->original_price && $product->original_price > $product->price)
-                                    <div class="text-sm text-gray-500 line-through">P{{ number_format($product->original_price) }}</div>
-                                @endif
-                                <div class="text-3xl font-black text-white">P{{ number_format($product->price) }}</div>
+                        <div class="w-full mt-4 pt-4 border-t border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+                            <!-- Breakdown Bar -->
+                            <div class="flex-1 min-w-[200px]">
+                                <div class="flex justify-between text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">
+                                    <span>Budget Distribution</span>
+                                </div>
+                                <div class="w-full bg-white/5 rounded-full h-1.5 overflow-hidden flex mb-2" id="price-breakdown-bar">
+                                    <!-- JS populated -->
+                                </div>
+                                <div class="flex gap-4" id="price-breakdown-legend">
+                                    <!-- JS populated -->
+                                </div>
                             </div>
-                            <button onclick="addToCart()" type="button" class="bg-primary hover:bg-primary-dark text-white px-8 py-3 rounded-xl font-bold uppercase tracking-widest transition-all hover:scale-105 hover:shadow-[0_0_20px_rgba(255,107,0,0.4)] flex items-center gap-2">
-                                <i class="ph-bold ph-shopping-cart"></i> Add to Cart
-                            </button>
+
+                            <div class="flex items-center gap-6 shrink-0">
+                                <div class="text-right">
+                                    @if($product->original_price && $product->original_price > $product->price)
+                                        <div class="text-sm text-gray-500 line-through">P{{ number_format($product->original_price) }}</div>
+                                    @endif
+                                    <div class="text-3xl font-black text-white">P{{ number_format($product->price) }}</div>
+                                </div>
+                                <button onclick="addBuildToCart()" type="button" class="bg-primary hover:bg-primary-dark text-white px-8 py-3 rounded-xl font-bold uppercase tracking-widest transition-all hover:scale-105 hover:shadow-[0_0_20px_rgba(255,107,0,0.4)] flex items-center gap-2">
+                                    <i class="ph-bold ph-shopping-cart"></i> Add to Cart
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Specs List -->
                 <div class="flex-grow">
-                    <h2 class="text-lg font-bold text-white uppercase tracking-widest mb-6 flex items-center gap-2">
-                        <i class="ph-bold ph-list-dashes text-primary"></i> Core Components
-                    </h2>
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-lg font-bold text-white uppercase tracking-widest flex items-center gap-2">
+                            <i class="ph-bold ph-list-dashes text-primary"></i> Core Components
+                        </h2>
+                        <div class="flex items-center gap-2">
+                            <button onclick="shareBuild()" class="text-[10px] font-bold uppercase tracking-widest text-primary border border-primary/20 hover:bg-primary/10 transition-all flex items-center gap-2 px-3 py-1.5 rounded-lg">
+                                <i class="ph-bold ph-share-network"></i> Share
+                            </button>
+                            <button onclick="resetToDefault()" class="text-[10px] font-bold uppercase tracking-widest text-gray-500 border border-white/5 hover:text-white hover:bg-white/10 transition-all flex items-center gap-2 px-3 py-1.5 rounded-lg">
+                                <i class="ph-bold ph-arrow-counter-clockwise"></i> Reset
+                            </button>
+                        </div>
+                    </div>
 
                     @php
                         // Map specs to nice icons and labels
                         $specs = [
-                            ['label' => 'Operating System', 'value' => $product->os ?? 'Windows 11 Home', 'icon' => 'ph-windows-logo'],
-                            ['label' => 'Case', 'value' => $product->pcCase->name ?? 'TechForge Standard Case', 'icon' => 'ph-computer-tower'],
-                            ['label' => 'Processor', 'value' => $product->cpu->name ?? 'N/A', 'icon' => 'ph-cpu'],
-                            ['label' => 'Video Card', 'value' => $product->gpu->name ?? 'N/A', 'icon' => 'ph-graphics-card'],
-                            ['label' => 'Memory', 'value' => $product->ram->name ?? 'N/A', 'icon' => 'ph-memory'],
-                            ['label' => 'Primary Storage', 'value' => $product->storage->name ?? 'N/A', 'icon' => 'ph-hard-drives'],
-                            ['label' => 'Power Supply', 'value' => $product->powerSupply->name ?? 'N/A', 'icon' => 'ph-plug'],
-                            ['label' => 'Motherboard', 'value' => $product->motherboard->name ?? 'N/A', 'icon' => 'ph-circuitry'],
-                            ['label' => 'Cooling', 'value' => $product->cooler->name ?? 'Standard Air Cooler', 'icon' => 'ph-fan'],
-                            ['label' => 'Warranty', 'value' => '3 Year Standard Warranty (Labor + Parts)', 'icon' => 'ph-shield-check', 'no_edit' => true],
+                            ['label' => 'Operating System', 'value' => $product->os ?? 'Windows 11 Home', 'icon' => 'ph-windows-logo', 'price' => 0],
+                            ['label' => 'Case', 'value' => $product->pcCase->name ?? 'TechForge Standard Case', 'icon' => 'ph-computer-tower', 'price' => $product->pcCase->price ?? 0],
+                            ['label' => 'Processor', 'value' => $product->intelCpu->name ?? 'N/A', 'icon' => 'ph-cpu', 'price' => $product->intelCpu->price ?? 0],
+                            ['label' => 'Video Card', 'value' => $product->gpu->name ?? 'N/A', 'icon' => 'ph-graphics-card', 'price' => $product->gpu->price ?? 0],
+                            ['label' => 'Memory', 'value' => $product->intelRam->name ?? 'N/A', 'icon' => 'ph-memory', 'price' => $product->intelRam->price ?? 0],
+                            ['label' => 'Primary Storage', 'value' => $product->storage->name ?? 'N/A', 'icon' => 'ph-hard-drives', 'price' => $product->storage->price ?? 0],
+                            ['label' => 'Power Supply', 'value' => $product->powerSupply->name ?? 'N/A', 'icon' => 'ph-plug', 'price' => $product->powerSupply->price ?? 0],
+                            ['label' => 'Motherboard', 'value' => $product->intelMotherboard->name ?? 'N/A', 'icon' => 'ph-circuitry', 'price' => $product->intelMotherboard->price ?? 0],
+                            ['label' => 'Cooling', 'value' => $product->cooler->name ?? 'Standard Air Cooler', 'icon' => 'ph-fan', 'price' => $product->cooler->price ?? 0],
+                            
                         ];
                         
                         $editUrl = route('build-pc', [
@@ -437,25 +510,27 @@
                         ]);
                     @endphp
 
-                    <div class="space-y-4" id="specs-list">
+                    <div class="liquid-glass backdrop-blur-2xl bg-[#050505]/60 rounded-2xl border border-white/5 divide-y divide-white/5" id="specs-list">
                         @foreach($specs as $spec)
-                        <div class="group relative overflow-hidden flex items-center justify-between p-5 rounded-2xl transition-colors border border-transparent">
-                            <div class="flex items-center gap-6 w-full">
-                                <div class="w-32 shrink-0 flex items-center gap-2">
+                        <div class="group relative overflow-hidden flex items-center justify-between p-4 sm:p-5 transition-colors hover:bg-white/5">
+                            <div class="flex items-center gap-4 sm:gap-6 flex-1 min-w-0">
+                                <div class="w-28 sm:w-32 shrink-0 flex items-center gap-2">
                                     <i class="{{ $spec['icon'] }} text-gray-500 text-lg transition-colors"></i>
-                                    <span class="text-xs font-bold text-gray-400 uppercase">{{ $spec['label'] }}</span>
+                                    <span class="text-[10px] sm:text-xs font-bold text-gray-400 uppercase">{{ $spec['label'] }}</span>
                                 </div>
-                                <div class="text-sm font-bold text-gray-200 truncate transition-colors flex-1">
+                                <div class="text-xs sm:text-sm font-bold text-gray-200 truncate transition-colors flex-1 component-value">
                                     {{ $spec['value'] }}
                                 </div>
                             </div>
-                            
-                            <div class="action-slot shrink-0 ml-4 flex justify-end">
-                                @if(isset($spec['no_edit']))
-                                <button class="text-xs font-bold text-gray-600 cursor-not-allowed">
-                                    Info
-                                </button>
-                                @endif
+                            <div class="flex items-center gap-4 shrink-0 ml-4">
+                                <div class="text-[10px] sm:text-xs font-bold text-primary text-right component-price min-w-[4rem]">
+                                    @if($spec['price'] > 0)
+                                        +P{{ number_format($spec['price']) }}
+                                    @endif
+                                </div>
+                                <div class="action-slot flex justify-end min-w-[2rem]">
+                                    <!-- Warning/Info badges will inject here via JS -->
+                                </div>
                             </div>
                         </div>
                         @endforeach
@@ -492,18 +567,192 @@
     <script>
         const allComponents = @json($allComponents);
         
+        const intelDefaults = {
+            'Processor': @json($product->intelCpu),
+            'Motherboard': @json($product->intelMotherboard),
+            'Memory': @json($product->intelRam)
+        };
+        const amdDefaults = {
+            'Processor': @json($product->amdCpu),
+            'Motherboard': @json($product->amdMotherboard),
+            'Memory': @json($product->amdRam)
+        };
+
         const initialBuild = {
-            'Processor': @json($product->cpu),
+            'Processor': intelDefaults['Processor'],
             'Video Card': @json($product->gpu),
-            'Memory': @json($product->ram),
+            'Memory': intelDefaults['Memory'],
             'Primary Storage': @json($product->storage),
-            'Motherboard': @json($product->motherboard),
+            'Motherboard': intelDefaults['Motherboard'],
             'Power Supply': @json($product->powerSupply),
             'Case': @json($product->pcCase),
             'Cooling': @json($product->cooler)
         };
 
         const engine = new ConfiguratorEngine(allComponents, initialBuild);
+
+        
+        window.shareBuild = function() {
+            if (typeof showNotification === 'function') {
+                showNotification('Link Copied!', 'The link to your custom build has been copied to your clipboard.', 'success');
+            }
+        };
+
+        function updateWidgets() {
+            // Power Draw
+            const psu = engine.getComponent('Power Supply');
+            const psuWattage = psu ? parseInt(psu.wattage || 0) : 0;
+            const requiredWattage = engine.getRequiredWattage();
+            
+            const powerText = document.getElementById('power-draw-text');
+            const powerBar = document.getElementById('power-draw-bar');
+            const powerWarning = document.getElementById('power-draw-warning');
+            const powerBox = document.getElementById('power-widget-box');
+            
+            if (powerText && powerBar) {
+                powerText.innerText = Math.ceil(requiredWattage) + 'W / ' + psuWattage + 'W';
+                const percentage = psuWattage > 0 ? Math.min((requiredWattage / psuWattage) * 100, 100) : 0;
+                powerBar.style.width = percentage + '%';
+                
+                powerBar.className = 'h-1.5 rounded-full transition-all duration-500 w-0 relative z-10'; // reset
+                if (percentage > 90) {
+                    powerBar.classList.add('bg-red-500', 'shadow-[0_0_10px_rgba(239,68,68,0.8)]');
+                    powerWarning.style.opacity = '1';
+                    powerBox.classList.add('border-red-500/30', 'bg-red-500/5');
+                } else if (percentage > 75) {
+                    powerBar.classList.add('bg-yellow-500', 'shadow-[0_0_10px_rgba(234,179,8,0.8)]');
+                    powerWarning.style.opacity = '0';
+                    powerBox.classList.remove('border-red-500/30', 'bg-red-500/5');
+                } else {
+                    powerBar.classList.add('bg-primary', 'shadow-[0_0_10px_rgba(255,107,0,0.8)]');
+                    powerWarning.style.opacity = '0';
+                    powerBox.classList.remove('border-red-500/30', 'bg-red-500/5');
+                }
+                
+                setTimeout(() => { powerBar.style.width = percentage + '%'; }, 50);
+            }
+            
+            // FPS Estimation
+            const gpu = engine.getComponent('Video Card');
+            const fpsValue = document.getElementById('fps-value');
+            if (fpsValue) {
+                if (gpu) {
+                    let baseFps = 60;
+                    const gpuName = gpu.name.toUpperCase();
+                    if (gpuName.includes('4090') || gpuName.includes('5090') || gpuName.includes('7900 XTX')) baseFps = 165;
+                    else if (gpuName.includes('4080') || gpuName.includes('5080') || gpuName.includes('7900')) baseFps = 144;
+                    else if (gpuName.includes('4070') || gpuName.includes('7800')) baseFps = 110;
+                    else if (gpuName.includes('4060') || gpuName.includes('7600')) baseFps = 85;
+                    else if (gpuName.includes('3080') || gpuName.includes('3090')) baseFps = 100;
+                    else baseFps = 75;
+                    
+                    fpsValue.innerText = baseFps;
+                } else {
+                    fpsValue.innerText = '--';
+                }
+            }
+            
+            // Price Breakdown
+            const total = engine.calculateTotal();
+            const cpu = engine.getComponent('Processor');
+            
+            if (total > 0 && gpu && cpu) {
+                const gpuPrice = parseFloat(gpu.price);
+                const cpuPrice = parseFloat(cpu.price);
+                const otherPrice = total - gpuPrice - cpuPrice;
+                
+                const gpuPct = (gpuPrice / total) * 100;
+                const cpuPct = (cpuPrice / total) * 100;
+                const otherPct = (otherPrice / total) * 100;
+                
+                const bar = document.getElementById('price-breakdown-bar');
+                const legend = document.getElementById('price-breakdown-legend');
+                
+                if (bar && legend) {
+                    bar.innerHTML = `
+                        <div style="width: ${gpuPct}%" class="bg-primary h-full transition-all duration-700 hover:brightness-125 cursor-help" title="GPU: P${gpuPrice.toLocaleString()}"></div>
+                        <div style="width: ${cpuPct}%" class="bg-blue-500 h-full transition-all duration-700 hover:brightness-125 cursor-help" title="CPU: P${cpuPrice.toLocaleString()}"></div>
+                        <div style="width: ${otherPct}%" class="bg-gray-600 h-full transition-all duration-700 hover:brightness-125 cursor-help" title="Other: P${otherPrice.toLocaleString()}"></div>
+                    `;
+                    
+                    legend.innerHTML = `
+                        <div class="flex items-center gap-1.5 text-[9px] font-bold text-gray-400 uppercase"><div class="w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_5px_rgba(255,107,0,0.8)]"></div> GPU (${Math.round(gpuPct)}%)</div>
+                        <div class="flex items-center gap-1.5 text-[9px] font-bold text-gray-400 uppercase"><div class="w-1.5 h-1.5 rounded-full bg-blue-500 shadow-[0_0_5px_rgba(59,130,246,0.8)]"></div> CPU (${Math.round(cpuPct)}%)</div>
+                        <div class="flex items-center gap-1.5 text-[9px] font-bold text-gray-400 uppercase"><div class="w-1.5 h-1.5 rounded-full bg-gray-600"></div> Other (${Math.round(otherPct)}%)</div>
+                    `;
+                }
+            }
+        }
+
+        window.resetToDefault = function() {
+            if (currentPlatform === 'Intel') {
+                engine.setComponent('Processor', intelDefaults['Processor']);
+                engine.setComponent('Motherboard', intelDefaults['Motherboard']);
+                engine.setComponent('Memory', intelDefaults['Memory']);
+            } else {
+                engine.setComponent('Processor', amdDefaults['Processor']);
+                engine.setComponent('Motherboard', amdDefaults['Motherboard']);
+                engine.setComponent('Memory', amdDefaults['Memory']);
+            }
+            
+            engine.setComponent('Video Card', initialBuild['Video Card']);
+            engine.setComponent('Primary Storage', initialBuild['Primary Storage']);
+            engine.setComponent('Power Supply', initialBuild['Power Supply']);
+            engine.setComponent('Case', initialBuild['Case']);
+            engine.setComponent('Cooling', initialBuild['Cooling']);
+            
+            if (typeof showNotification === 'function') {
+                showNotification('Reset Successful', 'Components have been restored to their defaults.', 'info');
+            }
+        };
+
+
+        let currentPlatform = 'Intel';
+        window.switchPlatform = function(platform) {
+            if (currentPlatform === platform) return;
+            currentPlatform = platform;
+
+            const btnIntel = document.getElementById('btn-intel');
+            const btnAmd = document.getElementById('btn-amd');
+            const indicator = document.getElementById('platform-indicator');
+
+            if (platform === 'Intel') {
+                btnIntel.classList.replace('text-gray-500', 'text-white');
+                btnAmd.classList.replace('text-white', 'text-gray-500');
+                indicator.style.transform = 'translateX(0)';
+                
+                engine.setComponent('Processor', intelDefaults['Processor']);
+                engine.setComponent('Motherboard', intelDefaults['Motherboard']);
+                engine.setComponent('Memory', intelDefaults['Memory']);
+                
+                if (typeof playShineAnimation === 'function') {
+                    playShineAnimation('Processor', true);
+                    playShineAnimation('Motherboard', true);
+                    playShineAnimation('Memory', true);
+                }
+                if (typeof showNotification === 'function') {
+                    showNotification('Platform Updated', 'Switched to Intel architecture.', 'success');
+                }
+            } else {
+                btnAmd.classList.replace('text-gray-500', 'text-white');
+                btnIntel.classList.replace('text-white', 'text-gray-500');
+                indicator.style.transform = 'translateX(100%)';
+                
+                engine.setComponent('Processor', amdDefaults['Processor']);
+                engine.setComponent('Motherboard', amdDefaults['Motherboard']);
+                engine.setComponent('Memory', amdDefaults['Memory']);
+                
+                if (typeof playShineAnimation === 'function') {
+                    playShineAnimation('Processor', true);
+                    playShineAnimation('Motherboard', true);
+                    playShineAnimation('Memory', true);
+                }
+                if (typeof showNotification === 'function') {
+                    showNotification('Platform Updated', 'Switched to AMD architecture.', 'success');
+                }
+            }
+        };
+
         setTimeout(() => updateVisualizer(initialBuild), 100);
         
         let currentCategory = '';
@@ -560,6 +809,7 @@
         engine.subscribe((build) => {
             updateVisualizer(build);
             updatePriceUI();
+            if(typeof updateWidgets === 'function') updateWidgets();
             
             // Sync all labels
             Object.keys(build).forEach(category => {
@@ -571,7 +821,7 @@
                         conflictReason = compatibility.reason;
                     }
                 }
-                updateUIText(category, component ? component.name : 'Select ' + category, !component, conflictReason);
+                updateUIText(category, component, !component, conflictReason);
             });
         });
 
@@ -799,33 +1049,40 @@
             document.querySelector('.text-3xl.font-black.text-white').innerText = 'P' + total.toLocaleString();
         }
 
-        function updateUIText(category, text, isMissing = false, conflictReason = null) {
+        function updateUIText(category, component, isMissing = false, conflictReason = null) {
             const specsList = document.getElementById('specs-list');
             const rows = specsList.querySelectorAll('.group');
+            const text = component ? component.name : 'Select ' + category;
+            const price = (component && component.price) ? component.price : 0;
+            
             rows.forEach(row => {
-                const labelEl = row.querySelector('.text-xs.font-bold.text-gray-400');
+                const labelEl = row.querySelector('.text-gray-400.uppercase');
                 if (labelEl && labelEl.innerText.toLowerCase() === category.toLowerCase()) {
-                    const valueEl = row.querySelector('.text-sm.font-bold');
-                    
+                    const valueEl = row.querySelector('.component-value');
+                    const priceEl = row.querySelector('.component-price');
                     const actionSlot = row.querySelector('.action-slot');
 
+                    if (priceEl && price > 0) {
+                        priceEl.innerText = '+P' + parseFloat(price).toLocaleString();
+                    } else if (priceEl) {
+                        priceEl.innerText = '';
+                    }
+
                     if (conflictReason) {
-                        row.classList.add('border-red-500/50', 'bg-red-500/5');
-                        row.classList.remove('border-transparent');
+                        row.classList.add('bg-red-500/10');
                         valueEl.classList.add('text-red-400');
                         valueEl.classList.remove('text-gray-200');
                         valueEl.innerText = text;
                         
                         if (actionSlot) {
                             actionSlot.innerHTML = `
-                                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-red-500/10 border border-red-500/30 text-[10px] uppercase tracking-widest font-black rounded-lg text-red-500 animate-pulse shadow-[0_0_15px_rgba(239,68,68,0.15)] whitespace-nowrap">
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-red-500/20 border border-red-500/30 text-[10px] uppercase tracking-widest font-black rounded-lg text-red-500 animate-pulse shadow-[0_0_15px_rgba(239,68,68,0.15)] whitespace-nowrap">
                                     <i class="ph-fill ph-warning"></i> ${conflictReason}
                                 </span>
                             `;
                         }
                     } else if (isMissing) {
-                        row.classList.add('border-red-500/50', 'bg-red-500/5');
-                        row.classList.remove('border-transparent');
+                        row.classList.add('bg-red-500/10');
                         valueEl.classList.add('text-red-400');
                         valueEl.classList.remove('text-gray-200');
                         valueEl.innerText = text;
@@ -833,8 +1090,7 @@
                             actionSlot.innerHTML = '';
                         }
                     } else {
-                        row.classList.remove('border-red-500/50', 'bg-red-500/5');
-                        row.classList.add('border-transparent');
+                        row.classList.remove('bg-red-500/10');
                         valueEl.classList.remove('text-red-400');
                         valueEl.classList.add('text-gray-200');
                         valueEl.innerText = text;
@@ -860,17 +1116,17 @@
             }, 300); // Give modal time to close and Lenis to restart
         }
 
-        function playShineAnimation(category) {
+        function playShineAnimation(category, preventScroll = false) {
             const specsList = document.getElementById('specs-list');
             const rows = specsList.querySelectorAll('.group');
             rows.forEach(row => {
-                const labelEl = row.querySelector('.text-xs.font-bold.text-gray-400');
+                const labelEl = row.querySelector('.text-gray-400.uppercase');
                 if (labelEl && labelEl.innerText.toLowerCase() === category.toLowerCase()) {
                     row.classList.remove('animate-shine');
                     void row.offsetWidth; // Trigger reflow
                     row.classList.add('animate-shine');
                     setTimeout(() => row.classList.remove('animate-shine'), 1500);
-                    scrollToRowIfHidden(row, false);
+                    if (!preventScroll) scrollToRowIfHidden(row, false);
                 }
             });
         }
@@ -881,7 +1137,7 @@
             let firstRow = null;
             
             rows.forEach(row => {
-                const labelEl = row.querySelector('.text-xs.font-bold.text-gray-400');
+                const labelEl = row.querySelector('.text-gray-400.uppercase');
                 if (labelEl && categories.map(c => c.toLowerCase()).includes(labelEl.innerText.toLowerCase())) {
                     row.classList.remove('animate-shake');
                     void row.offsetWidth; // Trigger reflow
@@ -897,7 +1153,7 @@
             }
         }
 
-        function addToCart() {
+        function addBuildToCart() {
             const currentBuild = engine.currentBuild;
             const essentialCats = ['Processor', 'Motherboard', 'Memory', 'Primary Storage', 'Video Card', 'Power Supply', 'Case', 'Cooling'];
             const missing = Object.entries(currentBuild).filter(([k,v]) => v === null && essentialCats.includes(k));
@@ -919,27 +1175,21 @@
                 return;
             }
 
-            const btn = document.querySelector('button[onclick="addToCart()"]');
+            const btn = document.querySelector('button[onclick="addBuildToCart()"]');
             const originalText = btn.innerHTML;
             btn.innerHTML = '<i class="ph ph-spinner animate-spin"></i> Adding...';
             btn.disabled = true;
 
-            // Front-end simulation
+            const total = engine.calculateTotal();
+            const caseComponent = engine.getComponent('Case');
+            const imageUrl = caseComponent ? (caseComponent.image_url || caseComponent.image || '') : '';
+            const customId = 'custom-pc-' + Date.now();
+
+            window.addToCart(customId, 'Custom PC Build', total, imageUrl, 1, 'custom');
+
             setTimeout(() => {
                 btn.innerHTML = originalText;
                 btn.disabled = false;
-                
-                const modal = document.getElementById('success-modal');
-                const content = document.getElementById('success-modal-content');
-                
-                if (modal && content) {
-                    modal.classList.remove('hidden');
-                    modal.classList.add('flex');
-                    setTimeout(() => {
-                        modal.classList.remove('opacity-0');
-                        content.classList.remove('scale-95');
-                    }, 10);
-                }
             }, 800);
         }
 

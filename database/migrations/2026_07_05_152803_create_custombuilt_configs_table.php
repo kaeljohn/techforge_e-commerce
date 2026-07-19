@@ -14,12 +14,14 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->decimal('price', 10, 2);
             $table->string('image_url')->nullable();
-            $table->string('platform'); // AMD, Intel
-            $table->string('tier'); // Entry Level, Mainstream, Enthusiast
-            $table->foreignId('cpu_id')->constrained('cpus');
+                        $table->string('tier'); // Core, Advanced, Extreme, Apex
+            $table->foreignId('intel_cpu_id')->constrained('cpus');
+            $table->foreignId('amd_cpu_id')->constrained('cpus');
+            $table->foreignId('intel_motherboard_id')->constrained('motherboards');
+            $table->foreignId('amd_motherboard_id')->constrained('motherboards');
+            $table->foreignId('intel_ram_id')->nullable()->constrained('rams');
+            $table->foreignId('amd_ram_id')->nullable()->constrained('rams');
             $table->foreignId('gpu_id')->constrained('gpus');
-            $table->foreignId('motherboard_id')->constrained('motherboards');
-            $table->foreignId('ram_id')->constrained('rams');
             $table->foreignId('storage_id')->constrained('storages');
             $table->foreignId('power_supply_id')->constrained('power_supplies');
             $table->foreignId('pc_case_id')->nullable()->constrained('pc_cases');

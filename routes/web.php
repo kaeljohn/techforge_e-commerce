@@ -3,7 +3,9 @@
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
+    $prebuiltPcs = \App\Models\PrebuiltConfig::with(['cpu', 'gpu', 'ram', 'storage', 'powerSupply'])->take(6)->get();
+    $customConfigs = \App\Models\CustombuiltConfig::with(['intelCpu', 'amdCpu', 'gpu', 'intelRam', 'amdRam', 'storage', 'powerSupply'])->take(4)->get();
+    return view('welcome', compact('prebuiltPcs', 'customConfigs'));
 });
 
 Route::get('/login', function () {
@@ -37,7 +39,7 @@ Route::get('/account/purchases', function () {
 Route::post('/account/profile', [\App\Http\Controllers\AccountController::class, 'updateProfile'])->name('account.profile.update');
 
 Route::get('/configurator-overview/{id}', function ($id) {
-    $product = \App\Models\CustombuiltConfig::with(['cpu', 'gpu', 'motherboard', 'ram', 'storage', 'powerSupply', 'pcCase', 'cooler'])->findOrFail($id);
+    $product = \App\Models\CustombuiltConfig::with(['intelCpu', 'amdCpu', 'gpu', 'intelMotherboard', 'amdMotherboard', 'intelRam', 'amdRam', 'storage', 'powerSupply', 'pcCase', 'cooler'])->findOrFail($id);
     
     $cpus = \App\Models\Cpu::all()->map(function($i) { $i->component_category = 'Processor'; return $i; });
     $gpus = \App\Models\Gpu::all()->map(function($i) { $i->component_category = 'Video Card'; return $i; });
@@ -53,6 +55,11 @@ Route::get('/configurator-overview/{id}', function ($id) {
     
     return view('configurator-overview', compact('product', 'allComponents'));
 })->name('configurator-overview');
+
+Route::get('/laptop-overview/{id}', function ($id) {
+    $product = \App\Models\Laptop::findOrFail($id);
+    return view('laptop-overview', compact('product'));
+})->name('laptop-overview');
 
 Route::get('/prebuilt-overview/{id}', function ($id) {
     $product = \App\Models\PrebuiltConfig::with(['cpu', 'gpu', 'motherboard', 'ram', 'storage', 'powerSupply', 'pcCase'])->findOrFail($id);
@@ -89,7 +96,7 @@ Route::get('/forge-store', function () {
         \App\Models\AccessoryMousePad::latest()->first(),
         \App\Models\AccessorySpeakerSystem::latest()->first(),
         \App\Models\AccessoryKeyboardAccessory::latest()->first()
-    ])->map(function ($item) {
+    ])->filter()->map(function ($item) {
         $item->category = match(class_basename($item)) {
             'AccessoryKeyboard' => 'Keyboard',
             'AccessoryHeadset' => 'Headset',
@@ -122,7 +129,7 @@ Route::get('/forge-store', function () {
         \App\Models\Ram::latest()->first(),
         \App\Models\Storage::latest()->first(),
         \App\Models\PcCase::latest()->first(),
-    ])->map(function ($item) {
+    ])->filter()->map(function ($item) {
         $item->category = match(class_basename($item)) {
             'Cpu' => 'Processor',
             'Gpu' => 'Video Card',
@@ -150,4 +157,6 @@ Route::get('/cart/checkout-redirect', function () {
 })->name('cart.checkout.redirect');
 
 Route::post('/cart/add', [\App\Http\Controllers\CartController::class, 'add'])->name('cart.add');
+Route::patch('/cart/update-quantity', [\App\Http\Controllers\CartController::class, 'updateQuantity'])->name('cart.update-quantity');
+Route::delete('/cart/remove', [\App\Http\Controllers\CartController::class, 'remove'])->name('cart.remove');
 Route::get('/cart/count', [\App\Http\Controllers\CartController::class, 'getCount'])->name('cart.count');
