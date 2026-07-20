@@ -166,6 +166,7 @@ class CartController extends Controller
                     'quantity' => $item->quantity,
                     'price' => $item->price,
                     'image_url' => $item->image_url,
+                    'configuration' => $item->configuration,
                 ];
             })->toArray();
         } else {
@@ -211,6 +212,7 @@ class CartController extends Controller
                 'quantity' => $item->quantity,
                 'price' => $item->price,
                 'image_url' => $item->image_url,
+                'configuration' => $item->configuration,
             ];
         })->values()->toArray();
     }

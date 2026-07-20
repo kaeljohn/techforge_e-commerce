@@ -29,14 +29,25 @@ Route::get('/notifications', function () {
 })->name('notifications');
 
 Route::get('/account/profile', function () {
-    return view('account.index');
+    return view('account.index', [
+        'paymentMethods' => \Illuminate\Support\Facades\Auth::check() ? \Illuminate\Support\Facades\Auth::user()->paymentMethods()->orderBy('is_default', 'desc')->get() : []
+    ]);
 })->name('account.profile');
 
 Route::get('/account/purchases', function () {
-    return view('account.index');
+    return view('account.index', [
+        'paymentMethods' => \Illuminate\Support\Facades\Auth::check() ? \Illuminate\Support\Facades\Auth::user()->paymentMethods()->orderBy('is_default', 'desc')->get() : []
+    ]);
 })->name('account.purchases');
 
 Route::post('/account/profile', [\App\Http\Controllers\AccountController::class, 'updateProfile'])->name('account.profile.update');
+
+// Payment Methods Routes
+Route::post('/account/payment-methods/card', [\App\Http\Controllers\PaymentMethodController::class, 'storeCard'])->name('account.payment-methods.store-card');
+Route::post('/account/payment-methods/bank', [\App\Http\Controllers\PaymentMethodController::class, 'storeBank'])->name('account.payment-methods.store-bank');
+Route::delete('/account/payment-methods/{paymentMethod}', [\App\Http\Controllers\PaymentMethodController::class, 'destroy'])->name('account.payment-methods.destroy');
+Route::post('/account/payment-methods/{paymentMethod}/update', [\App\Http\Controllers\PaymentMethodController::class, 'update'])->name('account.payment-methods.update');
+Route::post('/account/payment-methods/{paymentMethod}/default', [\App\Http\Controllers\PaymentMethodController::class, 'setDefault'])->name('account.payment-methods.set-default');
 
 Route::get('/configurator-overview/{id}', function ($id) {
     $product = \App\Models\CustombuiltConfig::with(['intelCpu', 'amdCpu', 'gpu', 'intelMotherboard', 'amdMotherboard', 'intelRam', 'amdRam', 'storage', 'powerSupply', 'pcCase', 'cooler'])->findOrFail($id);
@@ -204,3 +215,9 @@ Route::post('/cart/add', [\App\Http\Controllers\CartController::class, 'add'])->
 Route::patch('/cart/update-quantity', [\App\Http\Controllers\CartController::class, 'updateQuantity'])->name('cart.update-quantity');
 Route::delete('/cart/remove', [\App\Http\Controllers\CartController::class, 'remove'])->name('cart.remove');
 Route::get('/cart/count', [\App\Http\Controllers\CartController::class, 'getCount'])->name('cart.count');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/checkout', [\App\Http\Controllers\CheckoutController::class, 'index'])->name('checkout.index');
+    Route::post('/checkout/process', [\App\Http\Controllers\CheckoutController::class, 'process'])->name('checkout.process');
+    Route::get('/checkout/success/{id}', [\App\Http\Controllers\CheckoutController::class, 'success'])->name('checkout.success');
+});

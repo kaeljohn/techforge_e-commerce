@@ -445,83 +445,140 @@
                         </div>
                         
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-                            <!-- Card 1 (Default) -->
-                            <div class="relative bg-gradient-to-br from-[#1a1c29] to-[#0a0b10] border border-white/10 rounded-2xl p-6 shadow-[0_8px_30px_rgba(0,0,0,0.5)] overflow-hidden group">
-                                <!-- Card Background effects -->
+                            @forelse($paymentMethods->whereIn('type', ['credit_card', 'debit_card']) as $card)
+                            <div class="relative {{ $card->is_default ? 'bg-gradient-to-br from-[#1a1c29] to-[#0a0b10] border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.5)]' : 'bg-gradient-to-br from-[#1c2230] to-[#0d121c] border-white/5 hover:border-white/20 shadow-lg' }} border transition-all rounded-2xl p-6 overflow-hidden group">
+                                @if($card->is_default)
                                 <div class="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none"></div>
                                 <div class="absolute bottom-0 left-0 w-24 h-24 bg-primary/10 rounded-full blur-xl -ml-8 -mb-8 pointer-events-none"></div>
+                                @else
+                                <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none"></div>
+                                @endif
                                 
                                 <div class="flex items-start justify-between mb-8 relative z-10">
+                                    @if($card->is_default)
                                     <div class="flex items-center gap-2">
                                         <i class="ph-fill ph-check-circle text-primary text-xl"></i>
                                         <span class="text-xs font-bold text-primary uppercase tracking-wider">Default Card</span>
                                     </div>
-                                    <!-- Mastercard Logo -->
+                                    @else
+                                    <div class="h-6"></div> <!-- Spacer -->
+                                    @endif
+                                    
+                                    @if(strtolower($card->provider) === 'mastercard')
                                     <div class="flex items-center">
                                         <div class="w-8 h-8 bg-red-500 rounded-full opacity-80 mix-blend-screen"></div>
                                         <div class="w-8 h-8 bg-orange-500 rounded-full opacity-80 mix-blend-screen -ml-3"></div>
                                     </div>
+                                    @else
+                                    <div class="text-2xl font-black italic text-white/80 tracking-tighter">{{ strtoupper($card->provider) }}</div>
+                                    @endif
                                 </div>
                                 
                                 <div class="relative z-10">
-                                    <p class="text-xl tracking-[0.2em] font-mono text-white/90 mb-4">**** **** **** 4281</p>
+                                    <p class="text-xl tracking-[0.2em] font-mono {{ $card->is_default ? 'text-white/90' : 'text-white/70' }} mb-4">**** **** **** {{ $card->account_number_mask }}</p>
                                     <div class="flex items-center justify-between">
                                         <div class="flex flex-col">
-                                            <span class="text-[10px] text-gray-400 uppercase tracking-wider">Card Holder</span>
-                                            <span class="text-sm font-bold text-white uppercase">{{ Auth::user()->name ?? 'JOHN DOE' }}</span>
+                                            <span class="text-[10px] {{ $card->is_default ? 'text-gray-400' : 'text-gray-500' }} uppercase tracking-wider">Card Holder</span>
+                                            <span class="text-sm font-bold {{ $card->is_default ? 'text-white' : 'text-white/80' }} uppercase">{{ $card->account_name }}</span>
                                         </div>
                                         <div class="flex flex-col">
-                                            <span class="text-[10px] text-gray-400 uppercase tracking-wider">Expires</span>
-                                            <span class="text-sm font-bold text-white">08/28</span>
+                                            <span class="text-[10px] {{ $card->is_default ? 'text-gray-400' : 'text-gray-500' }} uppercase tracking-wider">Expires</span>
+                                            <span class="text-sm font-bold {{ $card->is_default ? 'text-white' : 'text-white/80' }}">{{ $card->expiry_date }}</span>
                                         </div>
                                     </div>
                                 </div>
                                 
                                 <!-- Hover Actions -->
                                 <div class="absolute inset-0 bg-black/60 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4 z-20">
-                                    <button class="bg-white/10 hover:bg-white/20 text-white p-3 rounded-full transition-colors" title="Edit">
-                                        <i class="ph-bold ph-pencil-simple text-xl"></i>
+                                    @if(!$card->is_default)
+                                    <form action="{{ route('account.payment-methods.set-default', $card->id) }}" method="POST">
+                                        @csrf
+                                        <button class="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors">
+                                            Set as Default
+                                        </button>
+                                    </form>
+                                    @endif
+                                    <button type="button" onclick="openEditCardModal('{{ $card->id }}', '{{ $card->account_name }}', '{{ $card->expiry_date }}', '{{ route('account.payment-methods.update', $card->id) }}')" class="bg-blue-500/10 hover:bg-blue-500/20 text-blue-500 p-2.5 rounded-lg transition-colors" title="Edit">
+                                        <i class="ph-bold ph-pencil-simple text-lg"></i>
                                     </button>
-                                    <button class="bg-red-500/10 hover:bg-red-500/20 text-red-500 p-3 rounded-full transition-colors" title="Delete">
-                                        <i class="ph-bold ph-trash text-xl"></i>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Card 2 -->
-                            <div class="relative bg-gradient-to-br from-[#1c2230] to-[#0d121c] border border-white/5 hover:border-white/20 transition-all rounded-2xl p-6 shadow-lg overflow-hidden group">
-                                <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none"></div>
-                                
-                                <div class="flex items-start justify-between mb-8 relative z-10">
-                                    <div class="h-6"></div> <!-- Spacer since not default -->
-                                    <!-- Visa Text -->
-                                    <div class="text-2xl font-black italic text-white/80 tracking-tighter">VISA</div>
-                                </div>
-                                
-                                <div class="relative z-10">
-                                    <p class="text-xl tracking-[0.2em] font-mono text-white/70 mb-4">**** **** **** 9014</p>
-                                    <div class="flex items-center justify-between">
-                                        <div class="flex flex-col">
-                                            <span class="text-[10px] text-gray-500 uppercase tracking-wider">Card Holder</span>
-                                            <span class="text-sm font-bold text-white/80 uppercase">{{ Auth::user()->name ?? 'JOHN DOE' }}</span>
-                                        </div>
-                                        <div class="flex flex-col">
-                                            <span class="text-[10px] text-gray-500 uppercase tracking-wider">Expires</span>
-                                            <span class="text-sm font-bold text-white/80">11/26</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <!-- Hover Actions -->
-                                <div class="absolute inset-0 bg-black/60 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4 z-20">
-                                    <button class="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors">
-                                        Set as Default
-                                    </button>
-                                    <button class="bg-red-500/10 hover:bg-red-500/20 text-red-500 p-2.5 rounded-lg transition-colors" title="Delete">
+                                    <button type="button" onclick="confirmDeleteModal('{{ route('account.payment-methods.destroy', $card->id) }}')" class="bg-red-500/10 hover:bg-red-500/20 text-red-500 p-2.5 rounded-lg transition-colors" title="Delete">
                                         <i class="ph-bold ph-trash text-lg"></i>
                                     </button>
                                 </div>
                             </div>
+                            @empty
+                            <div class="col-span-1 md:col-span-2 text-center py-8 bg-white/5 rounded-2xl border border-white/5">
+                                <i class="ph ph-credit-card text-4xl text-gray-500 mb-2"></i>
+                                <p class="text-gray-400 text-sm">No cards added yet.</p>
+                            </div>
+                            @endforelse
+                        </div>
+
+                        <!-- Bank Accounts Section -->
+                        <div class="border-b border-white/10 pb-4 mb-6 mt-12 relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <div>
+                                <h3 class="text-xl font-black text-white">Bank Accounts</h3>
+                            </div>
+                            <button onclick="openModal('add-bank-modal')" class="bg-[#1a1a1a] hover:bg-white/10 border border-white/10 text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-all shadow-lg flex items-center gap-2 whitespace-nowrap">
+                                <i class="ph-bold ph-bank"></i> Add Bank Account
+                            </button>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                            @forelse($paymentMethods->where('type', 'bank_account') as $bank)
+                            <div class="relative {{ $bank->is_default ? 'bg-gradient-to-br from-[#1a1c29] to-[#0a0b10] border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.5)]' : 'bg-[#13131a] border-white/5 hover:border-white/10 shadow-lg' }} border transition-all rounded-2xl p-6 overflow-hidden group">
+                                @if($bank->is_default)
+                                <div class="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none"></div>
+                                <div class="absolute bottom-0 left-0 w-24 h-24 bg-primary/10 rounded-full blur-xl -ml-8 -mb-8 pointer-events-none"></div>
+                                @endif
+                                
+                                <div class="flex items-start justify-between mb-6 relative z-10">
+                                    @if($bank->is_default)
+                                    <div class="flex items-center gap-2">
+                                        <i class="ph-fill ph-check-circle text-primary text-xl"></i>
+                                        <span class="text-xs font-bold text-primary uppercase tracking-wider">Default</span>
+                                    </div>
+                                    @else
+                                    <div class="flex items-center gap-2">
+                                        <i class="ph-fill ph-bank text-gray-500 text-xl"></i>
+                                        <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Bank</span>
+                                    </div>
+                                    @endif
+                                    
+                                    <div class="text-lg font-black italic text-white/90 tracking-tight">{{ $bank->provider }}</div>
+                                </div>
+                                
+                                <div class="relative z-10">
+                                    <p class="text-lg font-mono {{ $bank->is_default ? 'text-white/90' : 'text-white/70' }} mb-2">**** **** {{ $bank->account_number_mask }}</p>
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex flex-col">
+                                            <span class="text-[10px] {{ $bank->is_default ? 'text-gray-400' : 'text-gray-500' }} uppercase tracking-wider">Account Name</span>
+                                            <span class="text-sm font-bold {{ $bank->is_default ? 'text-white' : 'text-white/80' }} uppercase">{{ $bank->account_name }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Hover Actions -->
+                                <div class="absolute inset-0 bg-black/60 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4 z-20">
+                                    @if(!$bank->is_default)
+                                    <form action="{{ route('account.payment-methods.set-default', $bank->id) }}" method="POST">
+                                        @csrf
+                                        <button class="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors">
+                                            Set as Default
+                                        </button>
+                                    </form>
+                                    @endif
+                                    <button type="button" onclick="confirmDeleteModal('{{ route('account.payment-methods.destroy', $bank->id) }}')" class="bg-red-500/10 hover:bg-red-500/20 text-red-500 p-2.5 rounded-lg transition-colors" title="Delete">
+                                        <i class="ph-bold ph-trash text-lg"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            @empty
+                            <div class="col-span-1 md:col-span-2 text-center py-8 bg-white/5 rounded-2xl border border-white/5">
+                                <i class="ph ph-bank text-4xl text-gray-500 mb-2"></i>
+                                <p class="text-gray-400 text-sm">No bank accounts added yet.</p>
+                            </div>
+                            @endforelse
                         </div>
                     </div>
 
@@ -936,39 +993,201 @@
                     });
                 </script>
 
+            </div>
+        </div>
+    </main>
                 <!-- Modals -->
                 <!-- Add Card Modal -->
-                <div id="add-card-modal" class="fixed inset-0 z-[100] hidden items-center justify-center">
+                <div id="add-card-modal" class="fixed inset-0 z-[9999] hidden items-center justify-center">
                     <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeModal('add-card-modal')"></div>
                     <div class="relative bg-[#13131a] border border-white/10 rounded-2xl p-6 md:p-8 w-full max-w-lg shadow-[0_0_50px_rgba(0,0,0,0.5)] transform scale-95 opacity-0 transition-all duration-300">
                         <div class="flex items-center justify-between mb-6">
-                            <h3 class="text-xl font-black text-white">Add New Card</h3>
+                            <div class="flex items-center gap-3">
+                                <h3 class="text-xl font-black text-white font-mono uppercase tracking-widest">Add New Card</h3>
+                                <span class="bg-green-500/10 text-green-500 border border-green-500/20 px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider flex items-center gap-1">
+                                    <i class="ph-bold ph-lock-key"></i> 256-bit Secure
+                                </span>
+                            </div>
                             <button onclick="closeModal('add-card-modal')" class="text-gray-400 hover:text-white transition-colors">
                                 <i class="ph-bold ph-x text-xl"></i>
                             </button>
                         </div>
-                        <form>
+                        <form action="{{ route('account.payment-methods.store-card') }}" method="POST">
+                            @csrf
                             <div class="flex flex-col gap-4">
                                 <div class="flex flex-col gap-2">
-                                    <label class="text-xs font-bold text-gray-400 uppercase tracking-wider">Card Number</label>
-                                    <input type="text" placeholder="0000 0000 0000 0000" class="w-full bg-black/40 border border-white/10 focus:border-primary focus:ring-1 focus:ring-primary focus:bg-black/60 rounded-xl px-4 py-3 text-sm text-white transition-all outline-none font-mono">
+                                    <label class="text-xs font-bold text-gray-400 uppercase tracking-wider font-mono text-primary flex items-center gap-1">
+                                        <i class="ph-bold ph-magic-wand"></i> Test Brand Generator
+                                    </label>
+                                    <div class="relative flex items-center gap-3">
+                                        <div id="brand-icon-container" class="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
+                                            <i class="ph-bold ph-credit-card text-xl"></i>
+                                        </div>
+                                        <div class="relative flex-1">
+                                            <select id="mock_brand_selector" class="w-full bg-primary/10 border border-primary/20 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl px-4 py-2.5 text-sm text-primary font-bold transition-all outline-none appearance-none cursor-pointer font-mono">
+                                                <option value="" disabled selected class="bg-[#13131a] text-white">Select a brand to auto-fill prefix</option>
+                                                <option value="4" class="bg-[#13131a] text-white" data-icon="ph-cc-visa">Visa</option>
+                                                <option value="51" class="bg-[#13131a] text-white" data-icon="ph-cc-mastercard">Mastercard</option>
+                                                <option value="35" class="bg-[#13131a] text-white" data-icon="ph-cc-jcb">JCB</option>
+                                            </select>
+                                            <i class="ph-bold ph-caret-down absolute right-4 top-1/2 -translate-y-1/2 text-primary pointer-events-none"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <input type="hidden" name="card_type" value="credit_card">
+                                <div class="flex flex-col gap-2">
+                                    <label class="text-xs font-bold text-gray-400 uppercase tracking-wider font-mono">Card Number</label>
+                                    <input type="text" id="card_number" name="card_number" placeholder="0000 0000 0000 0000" maxlength="19" required class="w-full bg-black/40 border border-white/10 focus:border-red-500 focus:ring-1 focus:ring-red-500 focus:bg-black/60 rounded-xl px-4 py-3 text-sm text-white transition-all outline-none font-mono">
+                                    <span class="error-msg text-red-500 text-xs font-mono font-bold hidden" data-error-for="card_number"></span>
                                 </div>
                                 <div class="grid grid-cols-2 gap-4">
                                     <div class="flex flex-col gap-2">
-                                        <label class="text-xs font-bold text-gray-400 uppercase tracking-wider">Expiry Date</label>
-                                        <input type="text" placeholder="MM/YY" class="w-full bg-black/40 border border-white/10 focus:border-primary focus:ring-1 focus:ring-primary focus:bg-black/60 rounded-xl px-4 py-3 text-sm text-white transition-all outline-none font-mono">
+                                        <label class="text-xs font-bold text-gray-400 uppercase tracking-wider font-mono">Expiry Date</label>
+                                        <input type="text" id="expiry_date" name="expiry_date" placeholder="MM/YY" maxlength="5" required class="w-full bg-black/40 border border-white/10 focus:border-primary focus:ring-1 focus:ring-primary focus:bg-black/60 rounded-xl px-4 py-3 text-sm text-white transition-all outline-none font-mono">
+                                        <span class="error-msg text-red-500 text-xs font-mono font-bold hidden" data-error-for="expiry_date"></span>
                                     </div>
                                     <div class="flex flex-col gap-2">
-                                        <label class="text-xs font-bold text-gray-400 uppercase tracking-wider">CVV</label>
-                                        <input type="password" placeholder="123" class="w-full bg-black/40 border border-white/10 focus:border-primary focus:ring-1 focus:ring-primary focus:bg-black/60 rounded-xl px-4 py-3 text-sm text-white transition-all outline-none font-mono">
+                                        <label class="text-xs font-bold text-gray-400 uppercase tracking-wider font-mono">CVV</label>
+                                        <input type="password" id="cvv" name="cvv" placeholder="123" maxlength="4" required class="w-full bg-black/40 border border-white/10 focus:border-primary focus:ring-1 focus:ring-primary focus:bg-black/60 rounded-xl px-4 py-3 text-sm text-white transition-all outline-none font-mono">
+                                        <span class="error-msg text-red-500 text-xs font-mono font-bold hidden" data-error-for="cvv"></span>
                                     </div>
                                 </div>
                                 <div class="flex flex-col gap-2">
-                                    <label class="text-xs font-bold text-gray-400 uppercase tracking-wider">Cardholder Name</label>
-                                    <input type="text" placeholder="JOHN DOE" class="w-full bg-black/40 border border-white/10 focus:border-primary focus:ring-1 focus:ring-primary focus:bg-black/60 rounded-xl px-4 py-3 text-sm text-white transition-all outline-none uppercase">
+                                    <label class="text-xs font-bold text-gray-400 uppercase tracking-wider font-mono">Cardholder Name</label>
+                                    <input type="text" name="cardholder_name" placeholder="JOHN DOE" required class="w-full bg-black/40 border border-white/10 focus:border-primary focus:ring-1 focus:ring-primary focus:bg-black/60 rounded-xl px-4 py-3 text-sm text-white transition-all outline-none uppercase font-mono tracking-wider">
+                                    <span class="error-msg text-red-500 text-xs font-mono font-bold hidden" data-error-for="cardholder_name"></span>
                                 </div>
-                                <button type="button" class="mt-4 bg-gradient-to-r from-primary to-[#ff8c33] hover:from-[#ff8c33] hover:to-primary text-white w-full py-3 rounded-xl text-sm font-bold transition-all shadow-[0_0_15px_rgba(255,107,0,0.3)] hover:shadow-[0_0_25px_rgba(255,107,0,0.5)]" onclick="closeModal('add-card-modal'); showToast('Card saved successfully!')">
-                                    Save Card
+                                <button type="submit" class="mt-4 bg-gradient-to-r from-primary to-[#ff8c33] hover:from-[#ff8c33] hover:to-primary text-white w-full py-3 rounded-xl text-sm font-bold transition-all shadow-[0_0_15px_rgba(255,107,0,0.3)] hover:shadow-[0_0_25px_rgba(255,107,0,0.5)] flex justify-center items-center gap-2">
+                                    <i class="ph-bold ph-lock"></i> Save Card Securely
+                                </button>
+                                
+                                <div class="mt-4 pt-4 border-t border-white/10 flex items-center justify-center gap-6 opacity-60">
+                                    <div class="flex items-center gap-2">
+                                        <i class="ph-bold ph-shield-check text-2xl text-green-500"></i>
+                                        <div class="flex flex-col">
+                                            <span class="text-[10px] font-bold text-white uppercase tracking-wider">PCI-DSS</span>
+                                            <span class="text-[9px] text-gray-400">Compliant</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <i class="ph-fill ph-check-circle text-2xl text-blue-500"></i>
+                                        <div class="flex flex-col">
+                                            <span class="text-[10px] font-bold text-white uppercase tracking-wider">Verified</span>
+                                            <span class="text-[9px] text-gray-400">by Visa & MC</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mt-4 flex justify-center">
+                                    <div class="bg-red-500/10 border border-red-500/20 px-3 py-2 rounded-lg flex items-center gap-2">
+                                        <i class="ph-fill ph-warning-circle text-red-500 text-sm"></i>
+                                        <span class="text-[10px] font-bold text-red-400 uppercase tracking-wider">For test purposes only. Do not enter real card details.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <script>
+                    document.addEventListener('DOMContentLoaded', () => {
+                        const cardNumberInput = document.getElementById('card_number');
+                        const expiryDateInput = document.getElementById('expiry_date');
+                        const cvvInput = document.getElementById('cvv');
+
+                        if (cardNumberInput) {
+                            cardNumberInput.addEventListener('input', function (e) {
+                                let value = e.target.value.replace(/\D/g, ''); // Remove non-digits
+                                let formattedValue = '';
+                                for (let i = 0; i < value.length; i++) {
+                                    if (i > 0 && i % 4 === 0) {
+                                        formattedValue += ' ';
+                                    }
+                                    formattedValue += value[i];
+                                }
+                                e.target.value = formattedValue;
+                            });
+                        }
+
+                        if (expiryDateInput) {
+                            expiryDateInput.addEventListener('input', function (e) {
+                                let value = e.target.value.replace(/\D/g, ''); // Remove non-digits
+                                if (value.length >= 2) {
+                                    let month = parseInt(value.substring(0, 2), 10);
+                                    if (month > 12) month = 12;
+                                    if (month === 0 && value.length > 1) month = 1;
+                                    let monthStr = value.length > 1 ? month.toString().padStart(2, '0') : value;
+                                    value = monthStr + (value.length > 2 ? '/' + value.substring(2, 4) : '');
+                                }
+                                e.target.value = value;
+                            });
+                        }
+
+                        if (cvvInput) {
+                            cvvInput.addEventListener('input', function (e) {
+                                e.target.value = e.target.value.replace(/\D/g, ''); // Remove non-digits
+                            });
+                        }
+
+                        const mockBrandSelector = document.getElementById('mock_brand_selector');
+                        if (mockBrandSelector && cardNumberInput) {
+                            mockBrandSelector.addEventListener('change', (e) => {
+                                cardNumberInput.value = e.target.value;
+                                // Trigger input event to re-format
+                                cardNumberInput.dispatchEvent(new Event('input', { bubbles: true }));
+                                cardNumberInput.focus();
+
+                                // Update icon
+                                const selectedOption = e.target.options[e.target.selectedIndex];
+                                const iconClass = selectedOption.getAttribute('data-icon');
+                                const iconContainer = document.getElementById('brand-icon-container');
+                                if (iconContainer && iconClass) {
+                                    iconContainer.innerHTML = `<i class="ph-bold ${iconClass} text-xl"></i>`;
+                                }
+                            });
+                        }
+                    });
+                </script>
+
+                <!-- Add Bank Account Modal -->
+                <div id="add-bank-modal" class="fixed inset-0 z-[9999] hidden items-center justify-center">
+
+                    <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeModal('add-bank-modal')"></div>
+                    <div class="relative bg-[#13131a] border border-white/10 rounded-2xl p-6 md:p-8 w-full max-w-lg shadow-[0_0_50px_rgba(0,0,0,0.5)] transform scale-95 opacity-0 transition-all duration-300">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-xl font-black text-white font-mono uppercase tracking-widest">Add Bank Account</h3>
+                            <button onclick="closeModal('add-bank-modal')" class="text-gray-400 hover:text-white transition-colors">
+                                <i class="ph-bold ph-x text-xl"></i>
+                            </button>
+                        </div>
+                        <form action="{{ route('account.payment-methods.store-bank') }}" method="POST">
+                            @csrf
+                            <div class="flex flex-col gap-4">
+                                <div class="flex flex-col gap-2">
+                                    <label class="text-xs font-bold text-gray-400 uppercase tracking-wider font-mono">Bank Provider</label>
+                                    <div class="relative">
+                                        <select name="provider" required class="w-full bg-black/40 border border-white/10 focus:border-primary focus:ring-1 focus:ring-primary focus:bg-black/60 rounded-xl px-4 py-3 text-sm text-white transition-all outline-none appearance-none cursor-pointer font-mono">
+                                            <option value="" disabled selected class="bg-[#13131a] text-white">Select your bank</option>
+                                            <option value="BDO Unibank" class="bg-[#13131a] text-white">BDO Unibank</option>
+                                            <option value="BPI" class="bg-[#13131a] text-white">BPI (Bank of the Philippine Islands)</option>
+                                            <option value="UnionBank" class="bg-[#13131a] text-white">UnionBank of the Philippines</option>
+                                            <option value="Metrobank" class="bg-[#13131a] text-white">Metrobank</option>
+                                            <option value="GCash" class="bg-[#13131a] text-white">GCash</option>
+                                            <option value="Maya" class="bg-[#13131a] text-white">Maya</option>
+                                        </select>
+                                        <i class="ph-bold ph-caret-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"></i>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col gap-2">
+                                    <label class="text-xs font-bold text-gray-400 uppercase tracking-wider font-mono">Account Name</label>
+                                    <input type="text" name="account_name" placeholder="JOHN DOE" required class="w-full bg-black/40 border border-white/10 focus:border-primary focus:ring-1 focus:ring-primary focus:bg-black/60 rounded-xl px-4 py-3 text-sm text-white transition-all outline-none uppercase font-mono tracking-wider">
+                                </div>
+                                <div class="flex flex-col gap-2">
+                                    <label class="text-xs font-bold text-gray-400 uppercase tracking-wider font-mono">Account Number</label>
+                                    <input type="text" name="account_number" placeholder="0000 0000 0000" required class="w-full bg-black/40 border border-white/10 focus:border-primary focus:ring-1 focus:ring-primary focus:bg-black/60 rounded-xl px-4 py-3 text-sm text-white transition-all outline-none font-mono">
+                                </div>
+                                <button type="submit" class="mt-4 bg-[#1a1a1a] hover:bg-white/10 border border-white/10 text-white w-full py-3 rounded-xl text-sm font-bold transition-all shadow-[0_0_15px_rgba(255,107,0,0.1)] hover:shadow-[0_0_25px_rgba(255,255,255,0.1)]">
+                                    Save Bank Account
                                 </button>
                             </div>
                         </form>
@@ -977,23 +1196,96 @@
 
                 <!-- Success Notification Modal -->
                 @if (session('success'))
-                <div id="success-modal" class="fixed inset-0 z-[100] flex items-center justify-center">
+                <div id="success-modal" class="fixed inset-0 z-[9999] flex items-center justify-center">
                     <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeModal('success-modal')"></div>
                     <div class="relative bg-[#13131a] border border-primary/30 rounded-2xl p-8 w-full max-w-sm shadow-[0_0_50px_rgba(255,107,0,0.3)] transform scale-100 opacity-100 transition-all duration-300 text-center flex flex-col items-center">
                         <div class="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center mb-4 shadow-[0_0_20px_rgba(255,107,0,0.4)]">
                             <i class="ph-bold ph-check text-3xl text-primary"></i>
                         </div>
-                        <h3 class="text-xl font-black text-white mb-2">Success!</h3>
-                        <p class="text-sm text-gray-400 mb-6">{{ session('success') }}</p>
-                        <button onclick="closeModal('success-modal')" class="bg-primary hover:bg-[#ff8c33] text-white px-8 py-2.5 rounded-xl text-sm font-bold transition-all shadow-[0_0_15px_rgba(255,107,0,0.3)] hover:shadow-[0_0_25px_rgba(255,107,0,0.5)] w-full">
+                        <h3 class="text-xl font-black text-white mb-2 font-mono uppercase tracking-widest">Success!</h3>
+                        <p class="text-sm text-gray-400 mb-6 font-mono">{{ session('success') }}</p>
+                        <button onclick="closeModal('success-modal')" class="bg-primary hover:bg-[#ff8c33] text-white px-8 py-2.5 rounded-xl text-sm font-bold transition-all shadow-[0_0_15px_rgba(255,107,0,0.3)] hover:shadow-[0_0_25px_rgba(255,107,0,0.5)] w-full font-mono uppercase">
                             Close
                         </button>
                     </div>
                 </div>
                 @endif
 
+                <!-- Edit Card Modal -->
+                <div id="edit-card-modal" class="fixed inset-0 z-[9999] hidden items-center justify-center">
+                    <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeModal('edit-card-modal')"></div>
+                    <div class="relative bg-[#13131a] border border-white/10 rounded-2xl p-6 md:p-8 w-full max-w-lg shadow-[0_0_50px_rgba(0,0,0,0.5)] transform scale-95 opacity-0 transition-all duration-300">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-xl font-black text-white font-mono uppercase tracking-widest">Edit Card Details</h3>
+                            <button onclick="closeModal('edit-card-modal')" class="text-gray-400 hover:text-white transition-colors">
+                                <i class="ph-bold ph-x text-xl"></i>
+                            </button>
+                        </div>
+                        <form action="" method="POST">
+                            @csrf
+                            <div class="flex flex-col gap-4">
+                                <div class="flex flex-col gap-2">
+                                    <label class="text-xs font-bold text-gray-400 uppercase tracking-wider font-mono">Card Holder Name</label>
+                                    <input type="text" id="edit_cardholder_name" name="cardholder_name" required class="w-full bg-black/40 border border-white/10 focus:border-red-500 focus:ring-1 focus:ring-red-500 focus:bg-black/60 rounded-xl px-4 py-3 text-sm text-white transition-all outline-none font-mono">
+                                    <span class="error-msg text-red-500 text-xs font-mono font-bold hidden" data-error-for="cardholder_name"></span>
+                                </div>
+                                <div class="flex flex-col gap-2">
+                                    <label class="text-xs font-bold text-gray-400 uppercase tracking-wider font-mono">Expiry Date</label>
+                                    <input type="text" id="edit_expiry_date" name="expiry_date" placeholder="MM/YY" maxlength="5" required class="w-full bg-black/40 border border-white/10 focus:border-red-500 focus:ring-1 focus:ring-red-500 focus:bg-black/60 rounded-xl px-4 py-3 text-sm text-white transition-all outline-none font-mono">
+                                    <span class="error-msg text-red-500 text-xs font-mono font-bold hidden" data-error-for="expiry_date"></span>
+                                </div>
+                                <div class="mt-4 pt-4 border-t border-white/10">
+                                    <button type="submit" class="bg-primary hover:bg-[#ff8c33] text-white px-8 py-3 rounded-xl text-sm font-bold transition-all w-full flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(255,107,0,0.3)] hover:shadow-[0_0_25px_rgba(255,107,0,0.5)] font-mono uppercase tracking-wider">
+                                        <i class="ph-bold ph-floppy-disk"></i> Save Changes
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Delete Confirmation Modal -->
+                <div id="delete-confirmation-modal" class="fixed inset-0 z-[9999] hidden items-center justify-center">
+                    <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeModal('delete-confirmation-modal')"></div>
+                    <div class="relative bg-[#13131a] border border-red-500/30 rounded-2xl p-8 w-full max-w-sm shadow-[0_0_50px_rgba(239,68,68,0.3)] transform scale-95 opacity-0 transition-all duration-300 text-center flex flex-col items-center">
+                        <div class="w-16 h-16 rounded-full bg-red-500/20 flex items-center justify-center mb-4 shadow-[0_0_20px_rgba(239,68,68,0.4)]">
+                            <i class="ph-bold ph-warning text-3xl text-red-500"></i>
+                        </div>
+                        <h3 class="text-xl font-black text-white mb-2 font-mono uppercase tracking-widest">Remove Method?</h3>
+                        <p class="text-sm text-gray-400 mb-6 font-mono">Are you sure you want to delete this payment method? This cannot be undone.</p>
+                        
+                        <form action="" method="POST" class="w-full">
+                            @csrf
+                            @method('DELETE')
+                            <div class="flex gap-4">
+                                <button type="button" onclick="closeModal('delete-confirmation-modal')" class="bg-white/5 hover:bg-white/10 border border-white/10 text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-all w-full font-mono uppercase">
+                                    Cancel
+                                </button>
+                                <button type="submit" class="bg-red-500 hover:bg-red-400 text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-all shadow-[0_0_15px_rgba(239,68,68,0.3)] hover:shadow-[0_0_25px_rgba(239,68,68,0.5)] w-full font-mono uppercase">
+                                    Delete
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Error Notification Modal -->
+                <div id="error-modal" class="fixed inset-0 z-[9999] hidden items-center justify-center">
+                    <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeModal('error-modal')"></div>
+                    <div class="relative bg-[#13131a] border border-red-500/30 rounded-2xl p-8 w-full max-w-sm shadow-[0_0_50px_rgba(239,68,68,0.3)] transform scale-95 opacity-0 transition-all duration-300 text-center flex flex-col items-center">
+                        <div class="w-16 h-16 rounded-full bg-red-500/20 flex items-center justify-center mb-4 shadow-[0_0_20px_rgba(239,68,68,0.4)]">
+                            <i class="ph-bold ph-x text-3xl text-red-500"></i>
+                        </div>
+                        <h3 class="text-xl font-black text-white mb-2 font-mono uppercase tracking-widest">Wait a minute!</h3>
+                        <p class="text-sm text-gray-400 mb-6 font-mono">{{ session('error', '') }}</p>
+                        <button onclick="closeModal('error-modal')" class="bg-red-500 hover:bg-red-400 text-white px-8 py-2.5 rounded-xl text-sm font-bold transition-all shadow-[0_0_15px_rgba(239,68,68,0.3)] hover:shadow-[0_0_25px_rgba(239,68,68,0.5)] w-full font-mono uppercase">
+                            Close
+                        </button>
+                    </div>
+                </div>
+
                 <!-- Add Address Modal -->
-                <div id="add-address-modal" class="fixed inset-0 z-[100] hidden items-center justify-center">
+                <div id="add-address-modal" class="fixed inset-0 z-[9999] hidden items-center justify-center">
                     <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeModal('add-address-modal')"></div>
                     <div class="relative bg-[#13131a] border border-white/10 rounded-2xl p-6 md:p-8 w-full max-w-lg shadow-[0_0_50px_rgba(0,0,0,0.5)] transform scale-95 opacity-0 transition-all duration-300">
                         <div class="flex items-center justify-between mb-6">
@@ -1074,10 +1366,161 @@
                             modal.classList.add('hidden');
                         }, 300);
                     };
+
+                    window.openEditCardModal = function(id, name, expiry, actionUrl) {
+                        const modal = document.getElementById('edit-card-modal');
+                        if (!modal) return;
+                        modal.querySelector('form').action = actionUrl;
+                        modal.querySelector('#edit_cardholder_name').value = name;
+                        modal.querySelector('#edit_expiry_date').value = expiry;
+                        
+                        modal.classList.remove('hidden');
+                        modal.classList.add('flex');
+                        setTimeout(() => {
+                            const content = modal.querySelector('.relative');
+                            content.classList.remove('scale-95', 'opacity-0');
+                            content.classList.add('scale-100', 'opacity-100');
+                        }, 10);
+                    };
+
+                    window.confirmDeleteModal = function(actionUrl) {
+                        const modal = document.getElementById('delete-confirmation-modal');
+                        if (!modal) return;
+                        modal.querySelector('form').action = actionUrl;
+                        
+                        modal.classList.remove('hidden');
+                        modal.classList.add('flex');
+                        setTimeout(() => {
+                            const content = modal.querySelector('.relative');
+                            content.classList.remove('scale-95', 'opacity-0');
+                            content.classList.add('scale-100', 'opacity-100');
+                        }, 10);
+                    };
+
+                    // AJAX Form Submission for Modals
+                    const setupAjaxForm = (formSelector, modalId) => {
+                        const form = document.querySelector(formSelector);
+                        if (!form) return;
+                        form.addEventListener('submit', function(e) {
+                            e.preventDefault();
+                            const submitBtn = this.querySelector('button[type="submit"]');
+                            const originalHTML = submitBtn.innerHTML;
+                            submitBtn.innerHTML = '<i class="ph-bold ph-spinner animate-spin"></i> Saving...';
+                            submitBtn.disabled = true;
+
+                            fetch(this.action, {
+                                method: 'POST',
+                                body: new FormData(this),
+                                headers: { 
+                                    'X-Requested-With': 'XMLHttpRequest',
+                                    'Accept': 'application/json'
+                                }
+                            })
+                            .then(async (response) => {
+                                const data = await response.json().catch(() => ({}));
+                                if (!response.ok) throw data;
+                                return data;
+                            })
+                            .then(data => {
+                                form.querySelectorAll('.error-msg').forEach(el => el.classList.add('hidden'));
+                                closeModal(modalId);
+                                if (typeof window.showToast === 'function') {
+                                    window.showToast(data.success || 'Successfully saved!');
+                                }
+                                // Reload pane content
+                                fetch(window.location.href)
+                                .then(res => res.text())
+                                .then(html => {
+                                    const parser = new DOMParser();
+                                    const doc = parser.parseFromString(html, 'text/html');
+                                    const newPane = doc.getElementById('pane-bank-cards');
+                                    if (newPane) {
+                                        document.getElementById('pane-bank-cards').innerHTML = newPane.innerHTML;
+                                    }
+                                });
+                                submitBtn.innerHTML = originalHTML;
+                                submitBtn.disabled = false;
+                                this.reset();
+                            })
+                            .catch(err => {
+                                form.querySelectorAll('.error-msg').forEach(el => el.classList.add('hidden'));
+                                
+                                if (err.errors) {
+                                    // Display validation errors under inputs
+                                    for (const [field, messages] of Object.entries(err.errors)) {
+                                        const errorSpan = form.querySelector(`[data-error-for="${field}"]`);
+                                        if (errorSpan) {
+                                            errorSpan.textContent = messages[0];
+                                            errorSpan.classList.remove('hidden');
+                                        }
+                                    }
+                                } else {
+                                    closeModal(modalId);
+                                    const errorModal = document.getElementById('error-modal');
+                                    if (errorModal) {
+                                        errorModal.querySelector('p').textContent = err.error || err.message || 'Something went wrong';
+                                        errorModal.classList.remove('hidden');
+                                        errorModal.classList.add('flex');
+                                        setTimeout(() => {
+                                            const content = errorModal.querySelector('.relative');
+                                            content.classList.remove('scale-95', 'opacity-0');
+                                            content.classList.add('scale-100', 'opacity-100');
+                                        }, 10);
+                                    }
+                                }
+                                submitBtn.innerHTML = originalHTML;
+                                submitBtn.disabled = false;
+                            });
+                        });
+                    };
+
+                    setupAjaxForm('#add-card-modal form', 'add-card-modal');
+                    setupAjaxForm('#add-bank-modal form', 'add-bank-modal');
+                    setupAjaxForm('#edit-card-modal form', 'edit-card-modal');
+                    
+                    // Special case for delete: we don't want a success toast
+                    const deleteForm = document.querySelector('#delete-confirmation-modal form');
+                    if (deleteForm) {
+                        deleteForm.addEventListener('submit', function(e) {
+                            e.preventDefault();
+                            const submitBtn = this.querySelector('button[type="submit"]');
+                            const originalHTML = submitBtn.innerHTML;
+                            submitBtn.innerHTML = '<i class="ph-bold ph-spinner animate-spin"></i>';
+                            submitBtn.disabled = true;
+
+                            fetch(this.action, {
+                                method: 'POST',
+                                body: new FormData(this),
+                                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                            })
+                            .then(async (response) => {
+                                const data = await response.json().catch(() => ({}));
+                                if (!response.ok) throw new Error(data.error || 'Something went wrong');
+                                return data;
+                            })
+                            .then(data => {
+                                closeModal('delete-confirmation-modal');
+                                fetch(window.location.href)
+                                .then(res => res.text())
+                                .then(html => {
+                                    const parser = new DOMParser();
+                                    const doc = parser.parseFromString(html, 'text/html');
+                                    const newPane = doc.getElementById('pane-bank-cards');
+                                    if (newPane) {
+                                        document.getElementById('pane-bank-cards').innerHTML = newPane.innerHTML;
+                                    }
+                                });
+                                submitBtn.innerHTML = originalHTML;
+                                submitBtn.disabled = false;
+                            })
+                            .catch(err => {
+                                closeModal('delete-confirmation-modal');
+                                submitBtn.innerHTML = originalHTML;
+                                submitBtn.disabled = false;
+                            });
+                        });
+                    }
                 </script>
-            </div>
-        </div>
-    </main>
 
     
 

@@ -395,9 +395,16 @@
             subtotalEl.textContent = '₱' + subtotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
         }
 
-        window.addToCart = function(productId, name, price, imageUrl, quantity = 1, productType = 'generic', configuration = null) {
+        window.addToCart = function(productId, name, price, imageUrl, quantity = 1, productType = 'generic', configuration = null, btn = null) {
             if (typeof price === 'string') {
                 price = parseFloat(price.replace(/,/g, ''));
+            }
+
+            let originalContent = '';
+            if (btn) {
+                originalContent = btn.innerHTML;
+                btn.disabled = true;
+                btn.innerHTML = '<i class="ph ph-spinner animate-spin text-lg"></i>';
             }
 
             fetch('/cart/add', {
@@ -420,14 +427,33 @@
             .then(res => res.json())
             .then(data => {
                 if (data.success) {
+                    if (btn) {
+                        btn.innerHTML = '<i class="ph-bold ph-check text-lg"></i>';
+                        btn.classList.add('!bg-green-500', '!border-green-500', '!text-white');
+                        setTimeout(() => {
+                            btn.innerHTML = originalContent;
+                            btn.disabled = false;
+                            btn.classList.remove('!bg-green-500', '!border-green-500', '!text-white');
+                        }, 2000);
+                    }
+                    
                     updateMiniCartUI(data.cart_count, data.cart_items);
                     const drawer = document.getElementById('mini-cart-drawer');
                     if (drawer && drawer.classList.contains('translate-x-full')) {
                         toggleMiniCart();
                     }
+                } else if (btn) {
+                    btn.innerHTML = originalContent;
+                    btn.disabled = false;
                 }
             })
-            .catch(err => console.error('Error adding to cart:', err));
+            .catch(err => {
+                console.error('Error adding to cart:', err);
+                if (btn) {
+                    btn.innerHTML = originalContent;
+                    btn.disabled = false;
+                }
+            });
         }
 
         // Fetch initial cart count on load

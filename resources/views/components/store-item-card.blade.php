@@ -50,7 +50,7 @@
                 </div>
             </div>
         </div>
-        <button onclick="addToCart('{{ $id }}', '{{ addslashes($name) }}', {{ $price }}, '{{ $image }}', 1, 'accessory')" class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 text-white flex items-center justify-center hover:bg-primary hover:border-primary hover:text-white hover:scale-110 transition-all shrink-0 z-10 relative">
+        <button onclick="addToCart('{{ $id }}', '{{ addslashes($name) }}', {{ $price }}, '{{ $image }}', 1, 'accessory', null, event.currentTarget)" class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 text-white flex items-center justify-center hover:bg-primary hover:border-primary hover:text-white hover:scale-110 transition-all shrink-0 z-10 relative">
             <i class="ph-bold ph-shopping-cart-simple text-lg"></i>
         </button>
     </div>
