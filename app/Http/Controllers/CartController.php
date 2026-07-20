@@ -19,6 +19,7 @@ class CartController extends Controller
             'quantity' => 'integer|min:1',
             'image_url' => 'nullable|string',
             'product_type' => 'nullable|string',
+            'configuration' => 'nullable|string',
         ]);
 
         $productId = (string) $validated['product_id'];
@@ -27,6 +28,7 @@ class CartController extends Controller
         $price = $request->input('price', 0);
         $imageUrl = $request->input('image_url', '');
         $productType = $request->input('product_type', 'generic');
+        $configuration = $request->input('configuration');
 
         // Rely on the frontend payload for name and price since we have multiple distinct product tables
 
@@ -44,7 +46,8 @@ class CartController extends Controller
                     'name' => $name,
                     'quantity' => $quantity,
                     'price' => $price,
-                    'image_url' => $imageUrl
+                    'image_url' => $imageUrl,
+                    'configuration' => $configuration
                 ]);
             }
             
@@ -64,6 +67,7 @@ class CartController extends Controller
                     'quantity' => $quantity,
                     'price' => $price,
                     'image_url' => $imageUrl,
+                    'configuration' => $configuration,
                 ];
             }
 

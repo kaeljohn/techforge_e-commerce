@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -327,34 +327,41 @@
     <x-footer />
 
     <script>
+        let isScrolling = false;
         window.addEventListener('scroll', () => {
-            const stickyBar = document.getElementById('sticky-bar');
-            const footer = document.querySelector('footer');
-            const mainBtn = document.getElementById('main-add-to-cart');
-            
-            let isFooterVisible = false;
-            if (footer) {
-                const rect = footer.getBoundingClientRect();
-                // Check if the top of the footer is visible in the viewport
-                isFooterVisible = rect.top < window.innerHeight;
-            }
+            if (!isScrolling) {
+                window.requestAnimationFrame(() => {
+                    const stickyBar = document.getElementById('sticky-bar');
+                    const footer = document.querySelector('footer');
+                    const mainBtn = document.getElementById('main-add-to-cart');
+                    
+                    let isFooterVisible = false;
+                    if (footer) {
+                        const rect = footer.getBoundingClientRect();
+                        // Check if the top of the footer is visible in the viewport
+                        isFooterVisible = rect.top < window.innerHeight;
+                    }
 
-            let isMainBtnPast = false;
-            if (mainBtn) {
-                const btnRect = mainBtn.getBoundingClientRect();
-                // We only show the sticky bar if the main button has scrolled completely ABOVE the viewport
-                // meaning the user can no longer see the main add to cart button
-                isMainBtnPast = btnRect.bottom < 0;
-            } else {
-                isMainBtnPast = window.scrollY > 600;
-            }
+                    let isMainBtnPast = false;
+                    if (mainBtn) {
+                        const btnRect = mainBtn.getBoundingClientRect();
+                        // We only show the sticky bar if the main button has scrolled completely ABOVE the viewport
+                        // meaning the user can no longer see the main add to cart button
+                        isMainBtnPast = btnRect.bottom < 0;
+                    } else {
+                        isMainBtnPast = window.scrollY > 600;
+                    }
 
-            if (isMainBtnPast && !isFooterVisible) {
-                stickyBar.classList.remove('translate-y-full');
-            } else {
-                stickyBar.classList.add('translate-y-full');
+                    if (isMainBtnPast && !isFooterVisible) {
+                        stickyBar.classList.remove('translate-y-full');
+                    } else {
+                        stickyBar.classList.add('translate-y-full');
+                    }
+                    isScrolling = false;
+                });
+                isScrolling = true;
             }
-        });
+        }, { passive: true });
 
         function updateMainImage(btn, src) {
             document.getElementById('main-product-image').src = src;

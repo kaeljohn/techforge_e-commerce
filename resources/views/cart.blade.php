@@ -165,7 +165,8 @@
                                 $detailUrl = match($productType) {
                                     'prebuilt' => url('/prebuilt-overview/' . $item['id']),
                                     'laptop' => url('/laptop-overview/' . $item['id']),
-                                    'configurator' => url('/configurator-overview/' . $item['id']),
+                                    'configurator' => url('/custompc-overview/' . $item['id']),
+                                    'custom' => url('/custompc-overview/' . $item['id']),
                                     default => null,
                                 };
                             @endphp

@@ -56,6 +56,50 @@ Route::get('/configurator-overview/{id}', function ($id) {
     return view('configurator-overview', compact('product', 'allComponents'));
 })->name('configurator-overview');
 
+Route::get('/custompc-overview/{id}', function ($id) {
+    if (str_starts_with($id, 'custom-pc-') || str_starts_with($id, 'custom_')) {
+        $configuration = null;
+        if (\Illuminate\Support\Facades\Auth::check()) {
+            $cartItem = \App\Models\CartItem::where('product_id', $id)->first();
+            if ($cartItem) $configuration = $cartItem->configuration;
+        } else {
+            $cart = session()->get('cart', []);
+            if (isset($cart[$id])) $configuration = $cart[$id]['configuration'] ?? null;
+        }
+        
+        if (!$configuration) {
+            return redirect('/cart')->with('error', 'This custom PC build is from an older session and its configuration data was lost. Please remove it and build a new one.');
+        }
+        
+        $config = json_decode($configuration, true);
+        $product = new \App\Models\CustombuiltConfig();
+        $product->id = $id;
+        $product->name = 'Custom PC Build';
+        
+        // Sum total from config
+        $total = 0;
+        foreach($config as $part) {
+            if (isset($part['price'])) $total += floatval($part['price']);
+        }
+        $product->price = $total;
+        
+        if (isset($config['Processor'])) $product->setRelation('intelCpu', new \App\Models\Cpu((array)$config['Processor']));
+        if (isset($config['Motherboard'])) $product->setRelation('intelMotherboard', new \App\Models\Motherboard((array)$config['Motherboard']));
+        if (isset($config['Memory'])) $product->setRelation('intelRam', new \App\Models\Ram((array)$config['Memory']));
+        if (isset($config['Video Card'])) $product->setRelation('gpu', new \App\Models\Gpu((array)$config['Video Card']));
+        if (isset($config['Primary Storage'])) $product->setRelation('storage', new \App\Models\Storage((array)$config['Primary Storage']));
+        if (isset($config['Power Supply'])) $product->setRelation('powerSupply', new \App\Models\PowerSupply((array)$config['Power Supply']));
+        if (isset($config['Case'])) $product->setRelation('pcCase', new \App\Models\PcCase((array)$config['Case']));
+        if (isset($config['Cooling'])) $product->setRelation('cooler', new \App\Models\Cooler((array)$config['Cooling']));
+        
+        return view('custompc-overview', compact('product'));
+    }
+
+    $product = \App\Models\CustombuiltConfig::with(['intelCpu', 'amdCpu', 'gpu', 'intelMotherboard', 'amdMotherboard', 'intelRam', 'amdRam', 'storage', 'powerSupply', 'pcCase', 'cooler'])->findOrFail($id);
+    return view('custompc-overview', compact('product'));
+})->name('custompc-overview');
+
+
 Route::get('/laptop-overview/{id}', function ($id) {
     $product = \App\Models\Laptop::findOrFail($id);
     return view('laptop-overview', compact('product'));

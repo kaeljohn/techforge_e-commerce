@@ -395,24 +395,26 @@
             subtotalEl.textContent = '₱' + subtotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
         }
 
-        window.addToCart = function(productId, name, price, imageUrl, quantity = 1, productType = 'generic') {
+        window.addToCart = function(productId, name, price, imageUrl, quantity = 1, productType = 'generic', configuration = null) {
             if (typeof price === 'string') {
                 price = parseFloat(price.replace(/,/g, ''));
             }
+
             fetch('/cart/add', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': window.csrfToken,
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                     'Accept': 'application/json'
                 },
                 body: JSON.stringify({
                     product_id: productId,
                     name: name,
                     price: price,
-                    image_url: imageUrl,
                     quantity: quantity,
-                    product_type: productType
+                    image_url: imageUrl,
+                    product_type: productType,
+                    configuration: configuration
                 })
             })
             .then(res => res.json())

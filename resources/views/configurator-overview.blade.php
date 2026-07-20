@@ -1185,7 +1185,7 @@
             const imageUrl = caseComponent ? (caseComponent.image_url || caseComponent.image || '') : '';
             const customId = 'custom-pc-' + Date.now();
 
-            window.addToCart(customId, 'Custom PC Build', total, imageUrl, 1, 'custom');
+            window.addToCart(customId, 'Custom PC Build', total, imageUrl, 1, 'custom', engine.getCartPayload());
 
             setTimeout(() => {
                 btn.innerHTML = originalText;
