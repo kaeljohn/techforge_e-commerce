@@ -54,16 +54,21 @@ class PaymentMethodController extends Controller
         $mask = substr($cleanCardNumber, -4);
         if (strlen($mask) < 4) $mask = '0000';
 
-        // Check for duplicates
-        $exists = $user->paymentMethods()
-            ->where('type', $validated['card_type'])
+        // Check for max 10 payment methods
+        if ($user->paymentMethods()->count() >= 10) {
+            if ($request->ajax()) return response()->json(['error' => 'You can only have a maximum of 10 payment methods linked.'], 422);
+            return back()->with('error', 'You can only have a maximum of 10 payment methods linked.');
+        }
+
+        // Check for duplicates across the database
+        $exists = PaymentMethod::where('type', $validated['card_type'])
             ->where('provider', $provider)
             ->where('account_number_mask', $mask)
             ->exists();
 
         if ($exists) {
-            if ($request->ajax()) return response()->json(['error' => 'This card is already linked to your account.'], 422);
-            return back()->with('error', 'This card is already linked to your account.');
+            if ($request->ajax()) return response()->json(['error' => 'This card is already linked to an account.'], 422);
+            return back()->with('error', 'This card is already linked to an account.');
         }
 
         // Check if first payment method, if so make it default
@@ -96,16 +101,21 @@ class PaymentMethodController extends Controller
         $mask = substr($cleanAccountNumber, -4);
         if (strlen($mask) < 4) $mask = '0000';
 
-        // Check for duplicates
-        $exists = $user->paymentMethods()
-            ->where('type', 'bank_account')
+        // Check for max 10 payment methods
+        if ($user->paymentMethods()->count() >= 10) {
+            if ($request->ajax()) return response()->json(['error' => 'You can only have a maximum of 10 payment methods linked.'], 422);
+            return back()->with('error', 'You can only have a maximum of 10 payment methods linked.');
+        }
+
+        // Check for duplicates across the database
+        $exists = PaymentMethod::where('type', 'bank_account')
             ->where('provider', $validated['provider'])
             ->where('account_number_mask', $mask)
             ->exists();
 
         if ($exists) {
-            if ($request->ajax()) return response()->json(['error' => 'This bank account is already linked to your account.'], 422);
-            return back()->with('error', 'This bank account is already linked to your account.');
+            if ($request->ajax()) return response()->json(['error' => 'This bank account is already linked to an account.'], 422);
+            return back()->with('error', 'This bank account is already linked to an account.');
         }
 
         $isDefault = $user->paymentMethods()->count() === 0;

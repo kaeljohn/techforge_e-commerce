@@ -49,6 +49,11 @@ Route::delete('/account/payment-methods/{paymentMethod}', [\App\Http\Controllers
 Route::post('/account/payment-methods/{paymentMethod}/update', [\App\Http\Controllers\PaymentMethodController::class, 'update'])->name('account.payment-methods.update');
 Route::post('/account/payment-methods/{paymentMethod}/default', [\App\Http\Controllers\PaymentMethodController::class, 'setDefault'])->name('account.payment-methods.set-default');
 
+// Address Routes
+Route::post('/account/addresses', [\App\Http\Controllers\AddressController::class, 'store'])->name('account.addresses.store');
+Route::put('/account/addresses/{address}', [\App\Http\Controllers\AddressController::class, 'update'])->name('account.addresses.update');
+Route::delete('/account/addresses/{address}', [\App\Http\Controllers\AddressController::class, 'destroy'])->name('account.addresses.destroy');
+Route::post('/account/addresses/{address}/default', [\App\Http\Controllers\AddressController::class, 'setDefault'])->name('account.addresses.set-default');
 Route::get('/configurator-overview/{id}', function ($id) {
     $product = \App\Models\CustombuiltConfig::with(['intelCpu', 'amdCpu', 'gpu', 'intelMotherboard', 'amdMotherboard', 'intelRam', 'amdRam', 'storage', 'powerSupply', 'pcCase', 'cooler'])->findOrFail($id);
     
